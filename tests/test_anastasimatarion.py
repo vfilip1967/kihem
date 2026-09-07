@@ -61,6 +61,9 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertLess(result.html.index("Κύριε δόξα σοί"), result.html.index("music-attachment"))
         self.assertLess(result.html.index("music-attachment"), result.html.index("τῶν Ἐγκαινίων"))
         self.assertIn("music/ioannis-protopsaltis-1905/tone6-apolytikion/1.png", result.html)
+        self.assertIn('id="music-tone6-apolytikion-1"', result.html)
+        self.assertIn('href="#music-tone6-apolytikion-1"', result.html)
+        self.assertIn("Σελιδοδείκτης · Ἀναστάσιμον Ἀπολυτίκιον", result.html)
 
     def test_repeated_liturgy_apolytikion_gets_an_attachment_each_time(self):
         line = "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"

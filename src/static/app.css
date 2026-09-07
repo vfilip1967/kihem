@@ -228,6 +228,15 @@ button:hover { background: var(--wine-dark); }
 }
 
 .music-attachment-heading { padding: 20px 22px 16px; background: #050505; }
+.music-bookmark {
+  display: inline-block;
+  margin-bottom: 9px;
+  color: #f0cc87;
+  font: 700 0.72rem/1.35 Arial, sans-serif;
+  letter-spacing: 0.025em;
+  text-decoration: none;
+}
+.music-bookmark:hover, .music-bookmark:focus-visible { color: #fff3d7; text-decoration: underline; }
 .music-match-label {
   color: #e4bd73;
   font: 700 0.68rem Arial, sans-serif;

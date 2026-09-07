@@ -349,6 +349,8 @@ def _normalized(value: str) -> str:
 
 def _music_markup(piece: MusicPiece, instance: int) -> str:
     book = BOOKS[piece.book_id]
+    bookmark_id = f"music-{piece.piece_id}-{instance}"
+    bookmark_label = f"Σελιδοδείκτης · {piece.title}"
     pages = ", ".join(str(region.printed_page) for region in piece.regions)
     figures = []
     for index, region in enumerate(piece.regions, start=1):
@@ -364,9 +366,13 @@ def _music_markup(piece: MusicPiece, instance: int) -> str:
             "</figure>"
         )
     return (
-        f'<aside class="music-attachment" data-music-piece="{html.escape(piece.piece_id)}" '
+        f'<aside id="{bookmark_id}" class="music-attachment" '
+        f'data-music-piece="{html.escape(piece.piece_id)}" '
         f'data-music-instance="{instance}">'
         '<div class="music-attachment-heading">'
+        f'<a class="music-bookmark" href="#{bookmark_id}" '
+        f'title="Μόνιμος σύνδεσμος προς αυτό το μουσικό απόσπασμα">'
+        f'🔖 {html.escape(bookmark_label)}</a>'
         '<span class="music-match-label">Μουσικό κείμενο που αντιστοιχίστηκε</span>'
         f"<h3>{html.escape(piece.title)}</h3>"
         f"<p>{html.escape(book.title)} · σελ. {pages}</p>"
