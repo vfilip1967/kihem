@@ -50,6 +50,7 @@ class AppTests(unittest.TestCase):
         self.assertIn('class="music-bookmarks-menu"', text)
         self.assertIn('href="#music-tone6-apolytikion-1"', text)
         self.assertIn('href="#music-tone6-apolytikion-2"', text)
+        self.assertIn("link.closest('.music-bookmarks-menu').open = false", text)
         self.assertNotIn("Μουσικό παράρτημα", text)
 
     def test_default_date_is_initial_pilot_date(self):

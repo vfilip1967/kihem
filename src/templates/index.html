@@ -110,5 +110,12 @@
     <span>Πρωτότυπο στάδιο · να γίνεται έλεγχος Τυπικού πριν από λειτουργική χρήση.</span>
     <a href="?date={{ calendar.current_date.isoformat() }}&services={{ selected_services }}&refresh=1">Ανανέωση από την πηγή</a>
   </footer>
+  <script>
+    document.querySelectorAll('.music-bookmarks-list a').forEach((link) => {
+      link.addEventListener('click', () => {
+        link.closest('.music-bookmarks-menu').open = false;
+      });
+    });
+  </script>
 </body>
 </html>

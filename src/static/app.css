@@ -294,7 +294,7 @@ button:hover { background: var(--wine-dark); }
 }
 .music-attachment h3 { margin: 5px 0 3px; color: #fff8ec; font-size: 1.25rem; font-weight: 500; }
 .music-attachment-heading p { margin: 0; color: #c9bcaa; font: 0.76rem Arial, sans-serif; }
-.music-pages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #54443a; }
+.music-pages { display: grid; grid-template-columns: 1fr; gap: 1px; background: #54443a; }
 .music-page { margin: 0; background: #fff; }
 .music-page a { display: block; background: white; }
 .music-page img { display: block; width: 100%; height: auto; filter: contrast(1.05); }
@@ -316,7 +316,7 @@ button:hover { background: var(--wine-dark); }
   .site-header { align-items: flex-start; padding-top: 28px; }
   .brand-mark { flex-basis: 58px; width: 58px; height: 58px; font-size: 30px; }
   .selector { padding: 22px; }
-  .date-form, .music-pages { grid-template-columns: 1fr; }
+  .date-form { grid-template-columns: 1fr; }
   .date-form button { grid-column: auto; }
   .service-card > header, .service-text { padding: 22px; }
   .result-heading, .site-footer { align-items: flex-start; flex-direction: column; }
