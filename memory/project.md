@@ -19,6 +19,9 @@ Updated: 2026-09-07
 - When both slow and short settings exist, prefer the short setting.
 - Future books must be additive: several verified settings may eventually be
   attached at the same textual position.
+- For the special 8 September Orthros text, attach the first antiphon of the
+  fourth-tone Anavathmoi after its final theotokion; its verified source is
+  pp. 176–177 of the local Ioannis Protopsaltis Anastasimatarion.
 
 ## Current pilot
 

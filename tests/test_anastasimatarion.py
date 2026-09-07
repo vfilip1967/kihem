@@ -15,7 +15,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 13)
+        self.assertEqual(len(pieces), 14)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -27,6 +27,10 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(
             [region.printed_page for region in pieces["plagal4-timiotera"].regions],
             [418, 419],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone4-anavathmoi-first-antiphon"].regions],
+            [176, 177],
         )
         self.assertEqual(
             [region.printed_page for region in pieces["resurrectional-evlogitaria"].regions],
@@ -122,6 +126,24 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(result.html.count('data-music-piece="resurrectional-evlogitaria"'), 1)
         self.assertLess(result.html.rindex("Δόξα σοὶ ὁ Θεός"), result.html.index("resurrectional-evlogitaria"))
         self.assertLess(result.html.index("resurrectional-evlogitaria"), result.html.index("Ἡ Ὑπακοή"))
+
+    def test_tone_fourth_first_antiphon_is_attached_for_the_feast_day_orthros(self):
+        source = (
+            "Ἀναβαθμοί τὸ α΄ Ἀντίφωνον τοῦ δ΄ Ἤχου<br>"
+            "Ἐκ νεότητός μου πολλὰ πολεμεῖ με πάθη.<br>"
+            "Οἱ μισοῦντες Σιών, αἰσχύνθητε ἀπὸ τοῦ Κυρίου.<br>"
+            "Ἁγίῳ Πνεύματι, ἀναβλύζει τὰ τῆς χάριτος ῥεῖθρα, "
+            "ἀρδεύοντα ἅπασαν τὴν κτίσιν, πρὸς ζωογονίαν.<br>"
+            "Προκείμενον Ἦχος δ΄"
+        )
+        result = enrich_service_html(date(2026, 9, 8), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn('data-music-piece="tone4-anavathmoi-first-antiphon"', result.html)
+        self.assertIn("Ἀναβαθμοί · α΄ Ἀντίφωνον δ΄ ἤχου", result.html)
+        self.assertIn("music/ioannis-protopsaltis-1905/tone4-anavathmoi-first-antiphon/1.png", result.html)
+        self.assertLess(result.html.index("ζωογονίαν"), result.html.index("tone4-anavathmoi-first-antiphon"))
+        self.assertLess(result.html.index("tone4-anavathmoi-first-antiphon"), result.html.index("Προκείμενον"))
 
     def test_psalm_50_uses_the_pandekti_after_its_final_verse(self):
         source = (

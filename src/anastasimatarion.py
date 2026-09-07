@@ -159,6 +159,17 @@ PIECES: Final[dict[str, MusicPiece]] = {
         "Ἐν τῷ οὐρανῷ τοὺς ὀφθαλμούς μου αἴρω",
         (_region(283, 0.15), _region(284), _region(285, 0.02, 0.24)),
     ),
+    "tone4-anavathmoi-first-antiphon": MusicPiece(
+        "tone4-anavathmoi-first-antiphon",
+        "Ἀναβαθμοί · α΄ Ἀντίφωνον δ΄ ἤχου",
+        "Ἐκ νεότητός μου πολλὰ πολεμεῖ με πάθη",
+        (
+            # The first antiphon begins in the lower half of p. 176 and
+            # finishes just before the heading for the second antiphon on p. 177.
+            _region(178, 0.46),
+            _region(179, 0.02, 0.22),
+        ),
+    ),
     "tone6-canon-ode-1": MusicPiece(
         "tone6-canon-ode-1",
         "Ἀναστάσιμος Κανών · ᾨδὴ α΄",
@@ -273,6 +284,12 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "orthros",
         "σὺν πάση πνοὴ τῶν κάτω.",
         "tone6-anavathmoi",
+    ),
+    AttachmentRule(
+        "orthros",
+        "πρὸς ζωογονίαν.",
+        "tone4-anavathmoi-first-antiphon",
+        required_text=("Ἀναβαθμοί τὸ α΄ Ἀντίφωνον τοῦ δ΄ Ἤχου",),
     ),
     AttachmentRule(
         "orthros",
