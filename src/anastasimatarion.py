@@ -73,11 +73,12 @@ BOOKS: Final[dict[str, MusicBook]] = {
     PANDEKTI_LITOURGIA_BOOK_ID: MusicBook(
         PANDEKTI_LITOURGIA_BOOK_ID,
         "Μουσικὴ Πανδέκτη · Δ΄ Τόμος Θείας Λειτουργίας",
-        "Πανδέκτη τῆς Ἱερᾶς Ἐκκλησιαστικῆς Ὑμνῳδίας · 1851 · ἐπιλεγμένα σύντομα μέλη",
-        "https://anemi.lib.uoc.gr/metadata/b/8/4/metadata-06-0000088.tkl",
+        "Ἔκδοσις «Ζωή» · Θεία Λειτουργία · ἐπιλεγμένα μέλη σε ἦχο δ΄ ἅγια",
+        "https://melodos.com/bibliothiki/?cat=157",
         "pandekti-tomos-d-liturgy-excerpts.pdf",
-        2,
-        "Ανέμη · Πανεπιστήμιο Κρήτης · ψηφιοποίηση έκδοσης 1851",
+        12,
+        "Μελωδός · ψηφιοποιημένος Μουσικὸς Πανδέκτης Δ΄",
+        "https://melodos.com/bibliothiki/wp-content/uploads/2019/09/04-%CE%9C%CE%9F%CE%A5%CE%A3%CE%99%CE%9A%CE%9F%CE%A3-%CE%A0%CE%91%CE%9D%CE%94%CE%95%CE%9A%CE%A4%CE%97%CE%A3-%CE%94%CE%84-%CE%A4%CE%9F%CE%9C%CE%9F%CE%A3-%CE%BC%CE%B5-%CE%A3%CE%B5%CE%BB-.pdf",
     ),
 }
 
@@ -278,6 +279,33 @@ PIECES: Final[dict[str, MusicPiece]] = {
         (ScanRegion(2, 29),),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
+    "litourgia-cherouvikon-pandekti": MusicPiece(
+        "litourgia-cherouvikon-pandekti",
+        "Χερουβικὸν · ἦχος δ΄ ἅγια · Πέτρου Λαμπαδαρίου",
+        "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+        (ScanRegion(3, 95), ScanRegion(4, 96)),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-leitourgika-pandekti": MusicPiece(
+        "litourgia-leitourgika-pandekti",
+        "Λειτουργικά · ἦχος δ΄ ἅγια · Μουσικὴ Πανδέκτη",
+        "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ",
+        (
+            ScanRegion(5, 270),
+            ScanRegion(6, 271),
+            ScanRegion(7, 272),
+            ScanRegion(8, 273),
+            ScanRegion(9, 274),
+        ),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-koinonikon-pandekti": MusicPiece(
+        "litourgia-koinonikon-pandekti",
+        "Κοινωνικὸν · ἦχος δ΄ ἅγια · Ποτήριον σωτηρίου",
+        "Ποτήριον σωτηρίου λήψομαι",
+        (ScanRegion(10, 341), ScanRegion(11, 342), ScanRegion(12, 343)),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
 }
 
 
@@ -382,6 +410,33 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.",
         "litourgia-trisagion-pandekti",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+        "litourgia-cherouvikon-pandekti",
+        required_text=(
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
+        ),
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Ἄξιον καὶ δίκαιον.",
+        "litourgia-leitourgika-pandekti",
+        required_text=(
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
+        ),
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Ποτήριον σωτηρίου λήψομαι, καὶ τὸ ὄνομα Κυρίου ἐπικαλέσομαι.",
+        "litourgia-koinonikon-pandekti",
+        required_text=(
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
+        ),
     ),
 )
 

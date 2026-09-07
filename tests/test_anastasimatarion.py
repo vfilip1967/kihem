@@ -16,7 +16,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 16)
+        self.assertEqual(len(pieces), 19)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -199,3 +199,26 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn('data-music-piece="litourgia-trisagion-pandekti"', result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-eisodikon-pandekti/1.png", result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-trisagion-pandekti/1.png", result.html)
+
+    def test_theotokos_feast_adds_fourth_tone_liturgy_music(self):
+        note = (
+            "Σύμφωνα με το άγραφο Τυπικό της Μεγάλης του Χριστου Εκκλησίας, "
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια.<br>"
+        )
+        source = (
+            note
+            + "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες, καὶ τῇ ζωοποιῷ "
+            "Τριάδι τὸν τρισάγιον ὕμνον προσᾴδοντες.<br>"
+            + "Ἄξιον καὶ δίκαιον.<br>"
+            + "Ποτήριον σωτηρίου λήψομαι, καὶ τὸ ὄνομα Κυρίου ἐπικαλέσομαι.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
+
+        self.assertEqual(result.attachment_count, 3)
+        self.assertIn('data-music-piece="litourgia-cherouvikon-pandekti"', result.html)
+        self.assertIn('data-music-piece="litourgia-leitourgika-pandekti"', result.html)
+        self.assertIn('data-music-piece="litourgia-koinonikon-pandekti"', result.html)
+        self.assertIn("music/pandekti-litourgia-1851/litourgia-cherouvikon-pandekti/1.png", result.html)
+        self.assertIn("music/pandekti-litourgia-1851/litourgia-leitourgika-pandekti/1.png", result.html)
+        self.assertIn("music/pandekti-litourgia-1851/litourgia-koinonikon-pandekti/1.png", result.html)
