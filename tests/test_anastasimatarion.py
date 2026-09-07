@@ -3,6 +3,7 @@ from datetime import date
 
 from src.anastasimatarion import (
     BOOK_ID,
+    IRMOLOGION_BOOK_ID,
     PANDEKTI_BOOK_ID,
     catalog_books,
     catalog_pieces,
@@ -14,7 +15,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 12)
+        self.assertEqual(len(pieces), 13)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -35,9 +36,14 @@ class AnastasimatarionTests(unittest.TestCase):
             [region.printed_page for region in pieces["psalm-50-tone2"].regions],
             [490, 491, 492, 493, 494],
         )
+        self.assertEqual(
+            [region.printed_page for region in pieces["cross-katavasies"].regions],
+            [87, 88, 89, 90, 91, 92],
+        )
         self.assertEqual(get_piece(BOOK_ID, "tone6-apolytikion").incipit, "Ἀγγελικαὶ Δυνάμεις")
         self.assertEqual(get_piece(PANDEKTI_BOOK_ID, "psalm-50-tone2").book_id, PANDEKTI_BOOK_ID)
-        self.assertEqual(len(catalog_books()), 2)
+        self.assertEqual(get_piece(IRMOLOGION_BOOK_ID, "cross-katavasies").book_id, IRMOLOGION_BOOK_ID)
+        self.assertEqual(len(catalog_books()), 3)
 
     def test_matching_is_driven_by_content_not_weekday_or_date(self):
         source = "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"
@@ -120,3 +126,22 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn("Μουσικὴ Πανδέκτη · Τόμος Β΄", result.html)
         self.assertLess(result.html.index("μόσχους"), result.html.index("psalm-50-tone2"))
         self.assertLess(result.html.index("psalm-50-tone2"), result.html.index("Δόξα Πατρί"))
+
+    def test_cross_katavasies_use_the_eirmologion_after_the_ninth_ode(self):
+        source = (
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ<br>"
+            "Σταυρὸν χαράξας Μωσῆς.<br>"
+            "ἣν πᾶσαι αἱ Δυνάμεις, τῶν οὐρανῶν μεγαλύνουσι.<br>"
+            "Μετὰ τὴν καταβασίαν τῆς θ΄ ᾠδῆς"
+        )
+        result = enrich_service_html(date(2026, 9, 13), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn('data-music-piece="cross-katavasies"', result.html)
+        self.assertIn(
+            "music/ioannis-protopsaltis-eirmologion-1903/cross-katavasies/1.png",
+            result.html,
+        )
+        self.assertIn("Εἱρμολόγιον Καταβασιῶν Ἰωάννου Πρωτοψάλτου", result.html)
+        self.assertLess(result.html.index("μεγαλύνουσι"), result.html.index("cross-katavasies"))
+        self.assertLess(result.html.index("cross-katavasies"), result.html.index("Μετὰ τὴν"))

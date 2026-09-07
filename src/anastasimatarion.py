@@ -24,6 +24,7 @@ DOWNLOAD_URL: Final = (
     "anastasimatarion-ioannou-protopsaltou-1905.pdf"
 )
 PANDEKTI_BOOK_ID: Final = "pandekti-orthrou-1851"
+IRMOLOGION_BOOK_ID: Final = "ioannis-protopsaltis-eirmologion-1903"
 
 
 @dataclass(frozen=True)
@@ -57,6 +58,16 @@ BOOKS: Final[dict[str, MusicBook]] = {
         "pandekti-tomos-b-1851-pages-490-494.pdf",
         5,
         "Ψηφιακή Βιβλιοθήκη «Ανέμη» · Πανεπιστήμιο Κρήτης",
+    ),
+    IRMOLOGION_BOOK_ID: MusicBook(
+        IRMOLOGION_BOOK_ID,
+        "Εἱρμολόγιον Καταβασιῶν Ἰωάννου Πρωτοψάλτου",
+        "Εἱρμολόγιον Καταβασιῶν τοῦ ὅλου ἐνιαυτοῦ, ἀργὸν τε καὶ σύντομον · Κωνσταντινούπολη 1903",
+        "https://repository.mmb.org.gr/digma/handle/123456789/5481/",
+        "eirmologion-katavasion-ioannou-protopsaltou-1903.pdf",
+        500,
+        "Μουσική Βιβλιοθήκη «Λίλιαν Βουδούρη» · CC BY-NC",
+        "https://backend.mmb.org.gr/files/original/1103/5481/Eirmologion_Katavasion_No1_Byzantine.pdf",
     ),
 }
 
@@ -200,6 +211,20 @@ PIECES: Final[dict[str, MusicPiece]] = {
         ),
         book_id=PANDEKTI_BOOK_ID,
     ),
+    "cross-katavasies": MusicPiece(
+        "cross-katavasies",
+        "Καταβασίαι Ὑψώσεως Τιμίου Σταυροῦ · Πέτρου Πελοποννησίου",
+        "Σταυρὸν χαράξας Μωσῆς",
+        (
+            ScanRegion(95, 87, (0.02, 0.235, 0.98, 0.98)),
+            ScanRegion(96, 88),
+            ScanRegion(97, 89),
+            ScanRegion(98, 90),
+            ScanRegion(99, 91),
+            ScanRegion(100, 92, (0.02, 0.02, 0.98, 0.305)),
+        ),
+        book_id=IRMOLOGION_BOOK_ID,
+    ),
 }
 
 
@@ -250,6 +275,16 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
             "Ἦχος πλ δ΄ Ωδή της θεοτόκου",
         ),
         match_number=6,
+    ),
+    AttachmentRule(
+        "orthros",
+        "ἣν πᾶσαι αἱ Δυνάμεις, τῶν οὐρανῶν μεγαλύνουσι.",
+        "cross-katavasies",
+        required_text=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            # The decorated initial sigma is a separate span in Melodos.
+            "ταυρὸν χαράξας Μωσῆς",
+        ),
     ),
     AttachmentRule(
         "orthros",
@@ -414,6 +449,12 @@ class AnastasimatarionRenderer:
                 os.environ.get(
                     "KIHEM_PANDEKTI_PDF",
                     self.books_dir / BOOKS[PANDEKTI_BOOK_ID].local_filename,
+                )
+            ),
+            IRMOLOGION_BOOK_ID: Path(
+                os.environ.get(
+                    "KIHEM_IRMOLOGION_PDF",
+                    self.books_dir / BOOKS[IRMOLOGION_BOOK_ID].local_filename,
                 )
             ),
         }
