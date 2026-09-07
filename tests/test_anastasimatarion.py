@@ -71,6 +71,15 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(result.attachment_count, 3)
         self.assertEqual(result.html.count('class="music-attachment"'), 3)
 
+    def test_bookmarks_keep_unique_ids_when_services_are_combined(self):
+        source = "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"
+        result = enrich_service_html(
+            date(2026, 9, 13), "litourgia", source, instance_offset=11
+        )
+
+        self.assertEqual(result.bookmarks[0].anchor_id, "music-tone6-apolytikion-12")
+        self.assertIn('id="music-tone6-apolytikion-12"', result.html)
+
     def test_great_doxology_requires_the_matching_tone_context(self):
         doxology_end = "γιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
         without_tone = enrich_service_html(date(2026, 9, 8), "orthros", doxology_end)

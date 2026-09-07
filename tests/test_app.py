@@ -47,6 +47,9 @@ class AppTests(unittest.TestCase):
         self.assertIn("Θεία Λειτουργία", text)
         self.assertIn("2 μουσικές ενθέσεις", text)
         self.assertIn("music/ioannis-protopsaltis-1905/tone6-apolytikion/1.png", text)
+        self.assertIn('class="music-bookmarks-menu"', text)
+        self.assertIn('href="#music-tone6-apolytikion-1"', text)
+        self.assertIn('href="#music-tone6-apolytikion-2"', text)
         self.assertNotIn("Μουσικό παράρτημα", text)
 
     def test_default_date_is_initial_pilot_date(self):

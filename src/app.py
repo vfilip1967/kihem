@@ -43,6 +43,7 @@ def create_app(config: dict | None = None) -> Flask:
         composition = None
         attachment_count = 0
         unmatched_piece_ids: list[str] = []
+        music_bookmarks: list[dict[str, str]] = []
 
         try:
             calendar = LiturgicalCalendar(selected_raw)
@@ -67,10 +68,20 @@ def create_app(config: dict | None = None) -> Flask:
         if composition:
             for item in composition.documents:
                 enriched = enrich_service_html(
-                    composition.selected_date, item.service, item.service_html
+                    composition.selected_date,
+                    item.service,
+                    item.service_html,
+                    instance_offset=attachment_count,
                 )
                 attachment_count += enriched.attachment_count
                 unmatched_piece_ids.extend(enriched.unmatched_piece_ids)
+                music_bookmarks.extend(
+                    {
+                        "anchor_id": bookmark.anchor_id,
+                        "label": f"{item.label} · {bookmark.title}",
+                    }
+                    for bookmark in enriched.bookmarks
+                )
                 documents.append(
                     {
                         "service": item.service,
@@ -89,6 +100,7 @@ def create_app(config: dict | None = None) -> Flask:
             documents=documents,
             tone=composition.tone if composition else None,
             attachment_count=attachment_count,
+            music_bookmarks=music_bookmarks,
             unmatched_count=len(unmatched_piece_ids),
             music_books=catalog_books(),
             error=error,

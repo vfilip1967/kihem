@@ -105,6 +105,15 @@ class EnrichmentResult:
     html: str
     attachment_count: int
     unmatched_piece_ids: tuple[str, ...]
+    bookmarks: tuple["MusicBookmark", ...]
+
+
+@dataclass(frozen=True)
+class MusicBookmark:
+    """A navigable entry for one inserted musical excerpt."""
+
+    anchor_id: str
+    title: str
 
 
 def _region(pdf_page: int, y0: float = 0.02, y1: float = 0.98) -> ScanRegion:
@@ -347,9 +356,13 @@ def _normalized(value: str) -> str:
     return "".join(ch for ch in value if unicodedata.category(ch) != "Mn")
 
 
+def _bookmark_id(piece: MusicPiece, instance: int) -> str:
+    return f"music-{piece.piece_id}-{instance}"
+
+
 def _music_markup(piece: MusicPiece, instance: int) -> str:
     book = BOOKS[piece.book_id]
-    bookmark_id = f"music-{piece.piece_id}-{instance}"
+    bookmark_id = _bookmark_id(piece, instance)
     bookmark_label = f"Σελιδοδείκτης · {piece.title}"
     pages = ", ".join(str(region.printed_page) for region in piece.regions)
     figures = []
@@ -398,7 +411,13 @@ def _insertion_point(text_node: NavigableString) -> NavigableString | Tag:
     return point
 
 
-def enrich_service_html(selected_date: date, service: str, service_html: str) -> EnrichmentResult:
+def enrich_service_html(
+    selected_date: date,
+    service: str,
+    service_html: str,
+    *,
+    instance_offset: int = 0,
+) -> EnrichmentResult:
     """Attach verified book matches based on the actual text returned by Melodos."""
     # The date remains part of the API because later books may contain rules
     # tied to a movable or fixed feast. Current Anastasimatarion rules are
@@ -409,6 +428,7 @@ def enrich_service_html(selected_date: date, service: str, service_html: str) ->
     soup = BeautifulSoup(service_html, "html.parser")
     attachment_count = 0
     unmatched: list[str] = []
+    bookmarks: list[MusicBookmark] = []
 
     for rule in rules:
         needle = _normalized(rule.after_text)
@@ -431,12 +451,14 @@ def enrich_service_html(selected_date: date, service: str, service_html: str) ->
         piece = PIECES[rule.piece_id]
         for text_node in matches:
             attachment_count += 1
-            fragment = BeautifulSoup(_music_markup(piece, attachment_count), "html.parser").aside
+            instance = instance_offset + attachment_count
+            fragment = BeautifulSoup(_music_markup(piece, instance), "html.parser").aside
             if fragment is None:
                 continue
             _insertion_point(text_node).insert_after(fragment)
+            bookmarks.append(MusicBookmark(_bookmark_id(piece, instance), piece.title))
 
-    return EnrichmentResult(str(soup), attachment_count, tuple(unmatched))
+    return EnrichmentResult(str(soup), attachment_count, tuple(unmatched), tuple(bookmarks))
 
 
 class AnastasimatarionRenderer:

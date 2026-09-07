@@ -61,6 +61,16 @@
         {% for document in documents %}
           <a href="#{{ document.service }}">{{ document.label }}</a>
         {% endfor %}
+        {% if music_bookmarks %}
+          <details class="music-bookmarks-menu">
+            <summary>🔖 Μουσικά κείμενα <span>{{ music_bookmarks|length }}</span></summary>
+            <div class="music-bookmarks-list" aria-label="Σελιδοδείκτες μουσικών κειμένων">
+              {% for bookmark in music_bookmarks %}
+                <a href="#{{ bookmark.anchor_id }}">{{ bookmark.label }}</a>
+              {% endfor %}
+            </div>
+          </details>
+        {% endif %}
       </nav>
 
       {% if attachment_count %}

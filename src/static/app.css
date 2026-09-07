@@ -159,6 +159,55 @@ button:hover { background: var(--wine-dark); }
   text-decoration: none;
 }
 
+.music-bookmarks-menu { position: relative; }
+.music-bookmarks-menu summary {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--card);
+  cursor: pointer;
+  font: 0.82rem Arial, sans-serif;
+  list-style: none;
+}
+.music-bookmarks-menu summary::-webkit-details-marker { display: none; }
+.music-bookmarks-menu summary::after { content: "⌄"; margin-left: 7px; color: var(--wine); }
+.music-bookmarks-menu[open] summary { border-color: var(--gold); }
+.music-bookmarks-menu summary span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  margin-left: 5px;
+  border-radius: 999px;
+  color: white;
+  background: var(--wine);
+  font-size: 0.7rem;
+}
+.music-bookmarks-list {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 7px);
+  right: 0;
+  display: grid;
+  width: min(410px, calc(100vw - 32px));
+  max-height: min(60vh, 540px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.music-bookmarks-list a {
+  padding: 10px 13px;
+  border: 0;
+  border-bottom: 1px solid var(--paper-deep);
+  color: var(--wine-dark);
+  background: transparent;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+.music-bookmarks-list a:hover, .music-bookmarks-list a:focus-visible { background: var(--paper); }
+
 .service-card { margin-top: 18px; border: 1px solid #303030; background: #000; box-shadow: var(--shadow); }
 .service-card > header { padding: 30px 34px 22px; border-bottom: 1px solid #303030; background: #000; }
 .service-card > header h2 { margin: 0; color: #ffff00; font-size: 2rem; font-weight: 500; }
@@ -271,6 +320,7 @@ button:hover { background: var(--wine-dark); }
   .date-form button { grid-column: auto; }
   .service-card > header, .service-text { padding: 22px; }
   .result-heading, .site-footer { align-items: flex-start; flex-direction: column; }
+  .music-bookmarks-list { right: auto; left: 0; }
 }
 
 @media print {

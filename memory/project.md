@@ -14,6 +14,8 @@ Updated: 2026-09-07
   text. Matching is content-driven, not based only on weekday or tone.
 - Every inserted excerpt has a visible in-page bookmark with related wording and
   a stable `#music-{piece-id}-{instance}` anchor.
+- The contents menu includes a dropdown of the current page's musical bookmarks,
+  each linking directly to its inserted excerpt.
 - When both slow and short settings exist, prefer the short setting.
 - Future books must be additive: several verified settings may eventually be
   attached at the same textual position.
