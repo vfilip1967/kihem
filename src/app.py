@@ -1,72 +1,121 @@
-from flask import Flask, render_template_string, request
-from datetime import datetime
+from __future__ import annotations
+
+import os
+
+from flask import Flask, abort, render_template, request, send_file
+from markupsafe import Markup
+
+from src.anastasimatarion import (
+    BOOK_TITLE,
+    SOURCE_PAGE,
+    AnastasimatarionRenderer,
+    enrich_service_html,
+)
+from src.composer import ServiceComposer
 from src.liturgical_calendar import LiturgicalCalendar
-from src.rules import RuleEngine
-from src.composer import Composer
+from src.melodos import MELODOS_HOME, MelodosClient, MelodosError
 
-app = Flask(__name__)
 
-# Initialize components
-calendar = LiturgicalCalendar()
-rules = RuleEngine()
-composer = Composer()
+def create_app(config: dict | None = None) -> Flask:
+    app = Flask(__name__, template_folder="templates", static_folder="static")
+    app.config.from_mapping(
+        CACHE_DIR=os.environ.get("KIHEM_CACHE_DIR", "/tmp/kihem-cache"),
+        DEFAULT_DATE="2026-09-13",
+    )
+    if config:
+        app.config.update(config)
 
-HTML_TEMPLATE = '''
-<!DOCTYPE html>
-<html lang="el">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kihem - Λειτουργικός Συνθέτης</title>
-    <style>
-        body { font-family: "Times New Roman", serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #fdfdfd; color: #333; }
-        h1 { color: #8b0000; border-bottom: 2px solid #8b0000; padding-bottom: 10px; text-align: center; }
-        .date-info { text-align: center; font-style: italic; margin-bottom: 30px; font-size: 1.2em; }
-        .service-text { white-space: pre-wrap; background: white; padding: 30px; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 1.1em; }
-        .nav { text-align: center; margin-bottom: 20px; }
-        .nav a { margin: 0 10px; text-decoration: none; color: #8b0000; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <h1>Kihem - Λειτουργικός Συνθέτης</h1>
-    <div class="nav">
-        <a href="/">Σήμερα</a>
-        <form style="display: inline-block; margin-left: 20px;" method="get" action="/">
-            <input type="date" name="date" style="font-family: inherit;">
-            <button type="submit" style="font-family: inherit;">Πήγαινε</button>
-        </form>
-    </div>
-    <div class="date-info">{{ date_str }}</div>
-    <div class="service-text">{{ service_text }}</div>
-</body>
-</html>
-'''
+    composer = app.config.get("COMPOSER") or ServiceComposer(
+        MelodosClient(cache_dir=app.config["CACHE_DIR"])
+    )
+    music_renderer = app.config.get("MUSIC_RENDERER") or AnastasimatarionRenderer(
+        app.config["CACHE_DIR"]
+    )
+    app.extensions["kihem_composer"] = composer
+    app.extensions["kihem_music_renderer"] = music_renderer
 
-@app.route('/')
-def index():
-    date_param = request.args.get('date')
-    if date_param:
+    @app.get("/")
+    def index():
+        selected_raw = request.args.get("date", app.config["DEFAULT_DATE"])
+        selected_services = request.args.get("services", "both")
+        refresh = request.args.get("refresh") == "1"
+        error = None
+        composition = None
+        attachment_count = 0
+        unmatched_piece_ids: list[str] = []
+
         try:
-            date_obj = datetime.strptime(date_param, '%Y-%m-%d').date()
-        except ValueError:
-            return "Invalid date format. Please use YYYY-MM-DD", 400
-    else:
-        date_obj = datetime.now().date()
+            calendar = LiturgicalCalendar(selected_raw)
+        except (ValueError, TypeError):
+            calendar = LiturgicalCalendar(app.config["DEFAULT_DATE"])
+            error = "Η ημερομηνία δεν είναι έγκυρη. Χρησιμοποίησε τη μορφή ΕΕΕΕ-ΜΜ-ΗΗ."
 
-    date_str = f"{date_obj.strftime('%d %B %Y')} ({calendar.get_day_name(date_obj)})"
-    # For the purpose of current demonstration and the specific target date requested previously:
-    # if date_obj == datetime(2026, 9, 6).date():
-    #    ... (this is handled by the composer logic)
-    
-    # Synthesize the service
-    structure = rules.get_orthros_structure(date_obj)
-    service_text = composer.compose(structure)
-    
-    # If the result is empty (mock data missing), provide a fallback
-    if not service_text or service_text.strip() == "":
-        service_text = "Δεν βρέθηκαν κείμενα για την επιλεγμένη ημερομηνία. (Προσθήκη δεδομένων σε εξέλιξη)"
+        if not error:
+            services = {
+                "orthros": ("orthros",),
+                "litourgia": ("litourgia",),
+                "both": ("orthros", "litourgia"),
+            }.get(selected_services, ("orthros", "litourgia"))
+            try:
+                composition = composer.compose(
+                    calendar.current_date, services=services, refresh=refresh
+                )
+            except (MelodosError, ValueError) as exc:
+                error = str(exc)
 
-    return render_template_string(HTML_TEMPLATE, date_str=date_str, service_text=service_text)
+        documents = []
+        if composition:
+            for item in composition.documents:
+                enriched = enrich_service_html(
+                    composition.selected_date, item.service, item.service_html
+                )
+                attachment_count += enriched.attachment_count
+                unmatched_piece_ids.extend(enriched.unmatched_piece_ids)
+                documents.append(
+                    {
+                        "service": item.service,
+                        "label": item.label,
+                        "html": Markup(enriched.html),
+                        "tone_label": item.tone_label,
+                        "fetched_at": item.fetched_at,
+                        "attachment_count": enriched.attachment_count,
+                    }
+                )
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+        return render_template(
+            "index.html",
+            calendar=calendar,
+            selected_services=selected_services,
+            documents=documents,
+            tone=composition.tone if composition else None,
+            attachment_count=attachment_count,
+            unmatched_count=len(unmatched_piece_ids),
+            book_title=BOOK_TITLE,
+            error=error,
+            melodos_url=MELODOS_HOME,
+            book_source_url=SOURCE_PAGE,
+        )
+
+    @app.get("/music/<book_id>/<piece_id>/<int:part>.png")
+    def music_excerpt(book_id: str, piece_id: str, part: int):
+        try:
+            output = music_renderer.render(book_id, piece_id, part)
+        except KeyError:
+            abort(404)
+        except Exception as exc:
+            app.logger.exception("Could not render Anastasimatarion excerpt: %s", exc)
+            abort(503, description="Το μουσικό απόσπασμα δεν είναι προσωρινά διαθέσιμο.")
+        return send_file(output, mimetype="image/png", max_age=86400)
+
+    @app.get("/health")
+    def health():
+        return {"status": "ok", "calendar": "gregorian", "services": ["orthros", "litourgia"]}
+
+    return app
+
+
+app = create_app()
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", "5000")), debug=False)

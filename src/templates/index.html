@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Κιβωτός Ακολουθιών</title>
+  <link rel="stylesheet" href="static/app.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-mark" aria-hidden="true">☦</div>
+    <div>
+      <p class="eyebrow">Νέο ημερολόγιο · όλες οι ημέρες</p>
+      <h1>Κιβωτός Ακολουθιών</h1>
+      <p class="subtitle">Όρθρος και Θεία Λειτουργία με μουσικά κείμενα</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="selector" aria-labelledby="selection-heading">
+      <div>
+        <p class="step">01 · Επιλογή ημέρας</p>
+        <h2 id="selection-heading">Διάλεξε ημερομηνία</h2>
+      </div>
+      <form method="get" action="./" class="date-form">
+        <label>
+          <span>Ημερομηνία</span>
+          <input type="date" name="date" value="{{ calendar.current_date.isoformat() }}" min="2015-01-01" max="2029-12-31" required>
+        </label>
+        <label>
+          <span>Ακολουθίες</span>
+          <select name="services">
+            <option value="both" {{ 'selected' if selected_services == 'both' else '' }}>Όρθρος + Θεία Λειτουργία</option>
+            <option value="orthros" {{ 'selected' if selected_services == 'orthros' else '' }}>Μόνο Όρθρος</option>
+            <option value="litourgia" {{ 'selected' if selected_services == 'litourgia' else '' }}>Μόνο Θεία Λειτουργία</option>
+          </select>
+        </label>
+        <button type="submit">Σύνθεση ακολουθίας</button>
+      </form>
+      <p class="calendar-note">Κυριακή, μεγάλη εορτή ή καθημερινή · πάντοτε με το Γρηγοριανό (νέο) ημερολόγιο.</p>
+    </section>
+
+    {% if error %}
+      <section class="notice" role="alert">
+        <strong>Δεν ολοκληρώθηκε η σύνθεση.</strong>
+        <p>{{ error }}</p>
+      </section>
+    {% endif %}
+
+    {% if documents %}
+      <section class="result-heading">
+        <div>
+          <p class="step">02 · Ανασύνθεση</p>
+          <h2>{{ calendar.format_long() }}</h2>
+        </div>
+        {% if tone %}<span class="tone">{{ documents[0].tone_label }}</span>{% endif %}
+      </section>
+
+      <nav class="service-nav" aria-label="Περιεχόμενα ακολουθίας">
+        {% for document in documents %}
+          <a href="#{{ document.service }}">{{ document.label }}</a>
+        {% endfor %}
+      </nav>
+
+      {% if attachment_count %}
+        <section class="enrichment-status" aria-label="Κατάσταση μουσικής αντιστοίχισης">
+          <div>
+            <strong>{% if attachment_count == 1 %}1 μουσική ένθεση{% else %}{{ attachment_count }} μουσικές ενθέσεις{% endif %}</strong>
+            <span>τοποθετήθηκαν κάτω από τα αντίστοιχα μέλη</span>
+          </div>
+          <a href="{{ book_source_url }}" target="_blank" rel="noreferrer">{{ book_title }}</a>
+        </section>
+      {% else %}
+        <section class="pilot-note">
+          Το πλήρες κείμενο βάσης ανακτήθηκε από τον Μελωδό. Δεν βρέθηκε ακόμη επαληθευμένο μουσικό απόσπασμα στα διαθέσιμα σαρωμένα βιβλία για τα μέλη αυτής της ακολουθίας.
+        </section>
+      {% endif %}
+
+      {% for document in documents %}
+        <article class="service-card" id="{{ document.service }}">
+          <header>
+            <p class="source-label">Κείμενο βάσης{% if document.attachment_count == 1 %} · 1 μουσική ένθεση{% elif document.attachment_count %} · {{ document.attachment_count }} μουσικές ενθέσεις{% endif %}</p>
+            <h2>{{ document.label }}</h2>
+          </header>
+          <div class="service-text">{{ document.html }}</div>
+          <footer>
+            Πηγή κειμένου: <a href="{{ melodos_url }}" target="_blank" rel="noreferrer">Μελωδός — Ακολουθίες</a>
+          </footer>
+        </article>
+      {% endfor %}
+    {% endif %}
+  </main>
+
+  <footer class="site-footer">
+    <span>Πρωτότυπο στάδιο · να γίνεται έλεγχος Τυπικού πριν από λειτουργική χρήση.</span>
+    <a href="?date={{ calendar.current_date.isoformat() }}&services={{ selected_services }}&refresh=1">Ανανέωση από την πηγή</a>
+  </footer>
+</body>
+</html>

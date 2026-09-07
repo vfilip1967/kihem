@@ -1,25 +1,30 @@
-from liturgical_calendar import LiturgicalCalendar
-from composer import ServiceComposer
-from rules import RuleEngine
+from __future__ import annotations
 
-def run_composition():
-    print("--- KIHEM Liturgical Composer ---")
-    
-    # 1. Setup Date (Only Gregorian)
-    cal = LiturgicalCalendar(date_str="2026-09-06")
-    print(f"Date: {cal.current_date.date()} ({cal.get_day_of_week()})")
-    
-    # 2. Get Structure from Rule Engine
-    rules = RuleEngine()
-    structure = rules.get_orthros_structure(cal)
-    
-    # 3. Compose Final Text
-    composer = ServiceComposer()
-    service_text = composer.compose(structure)
-    
-    print("\n--- ASSEMBLED SERVICE ---")
-    print(service_text)
-    print("\n-------------------------")
+import argparse
+
+from src.composer import ServiceComposer
+from src.liturgical_calendar import LiturgicalCalendar
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Σύνθεση ακολουθιών ημερομηνίας από τον Μελωδό")
+    parser.add_argument("date", nargs="?", default="2026-09-13", help="Ημερομηνία σε μορφή YYYY-MM-DD")
+    parser.add_argument(
+        "--service",
+        choices=("orthros", "litourgia", "both"),
+        default="both",
+        help="Ακολουθία προς σύνθεση",
+    )
+    args = parser.parse_args()
+
+    calendar = LiturgicalCalendar(args.date)
+    services = ("orthros", "litourgia") if args.service == "both" else (args.service,)
+    result = ServiceComposer().compose(calendar.current_date, services=services)
+    print(calendar.format_long())
+    for document in result.documents:
+        print(f"\n--- {document.label} ---\n")
+        print(document.plain_text)
+
 
 if __name__ == "__main__":
-    run_composition()
+    main()
