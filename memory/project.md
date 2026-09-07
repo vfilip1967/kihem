@@ -22,6 +22,8 @@ Updated: 2026-09-07
 - For the special 8 September Orthros text, attach the first antiphon of the
   fourth-tone Anavathmoi after its final theotokion; its verified source is
   pp. 176–177 of the local Ioannis Protopsaltis Anastasimatarion.
+- The first Liturgy pilot excerpts use the 1851 Pandekti fourth volume: the
+  Eisodikon (p. 27) and short Trisagion (p. 29), each exposed as a bookmark.
 
 ## Current pilot
 

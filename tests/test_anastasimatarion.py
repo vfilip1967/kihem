@@ -4,6 +4,7 @@ from datetime import date
 from src.anastasimatarion import (
     BOOK_ID,
     IRMOLOGION_BOOK_ID,
+    PANDEKTI_LITOURGIA_BOOK_ID,
     PANDEKTI_BOOK_ID,
     catalog_books,
     catalog_pieces,
@@ -15,7 +16,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 14)
+        self.assertEqual(len(pieces), 16)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -47,7 +48,11 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(get_piece(BOOK_ID, "tone6-apolytikion").incipit, "Ἀγγελικαὶ Δυνάμεις")
         self.assertEqual(get_piece(PANDEKTI_BOOK_ID, "psalm-50-tone2").book_id, PANDEKTI_BOOK_ID)
         self.assertEqual(get_piece(IRMOLOGION_BOOK_ID, "cross-katavasies").book_id, IRMOLOGION_BOOK_ID)
-        self.assertEqual(len(catalog_books()), 3)
+        self.assertEqual(len(catalog_books()), 4)
+        self.assertEqual(
+            get_piece(PANDEKTI_LITOURGIA_BOOK_ID, "litourgia-eisodikon-pandekti").book_id,
+            PANDEKTI_LITOURGIA_BOOK_ID,
+        )
 
     def test_matching_is_driven_by_content_not_weekday_or_date(self):
         source = "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"
@@ -180,3 +185,17 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn("Εἱρμολόγιον Καταβασιῶν Ἰωάννου Πρωτοψάλτου", result.html)
         self.assertLess(result.html.index("μεγαλύνουσι"), result.html.index("cross-katavasies"))
         self.assertLess(result.html.index("cross-katavasies"), result.html.index("Μετὰ τὴν"))
+
+    def test_litourgia_gets_pandekti_eisodikon_and_trisagion(self):
+        source = (
+            "Δεῦτε προσκυνήσωμεν καὶ προσπέσωμεν Χριστῷ.<br>"
+            "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
+            "Πρόσχωμεν."
+        )
+        result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
+
+        self.assertEqual(result.attachment_count, 2)
+        self.assertIn('data-music-piece="litourgia-eisodikon-pandekti"', result.html)
+        self.assertIn('data-music-piece="litourgia-trisagion-pandekti"', result.html)
+        self.assertIn("music/pandekti-litourgia-1851/litourgia-eisodikon-pandekti/1.png", result.html)
+        self.assertIn("music/pandekti-litourgia-1851/litourgia-trisagion-pandekti/1.png", result.html)

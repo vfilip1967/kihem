@@ -25,6 +25,7 @@ DOWNLOAD_URL: Final = (
 )
 PANDEKTI_BOOK_ID: Final = "pandekti-orthrou-1851"
 IRMOLOGION_BOOK_ID: Final = "ioannis-protopsaltis-eirmologion-1903"
+PANDEKTI_LITOURGIA_BOOK_ID: Final = "pandekti-litourgia-1851"
 
 
 @dataclass(frozen=True)
@@ -68,6 +69,15 @@ BOOKS: Final[dict[str, MusicBook]] = {
         500,
         "Μουσική Βιβλιοθήκη «Λίλιαν Βουδούρη» · CC BY-NC",
         "https://backend.mmb.org.gr/files/original/1103/5481/Eirmologion_Katavasion_No1_Byzantine.pdf",
+    ),
+    PANDEKTI_LITOURGIA_BOOK_ID: MusicBook(
+        PANDEKTI_LITOURGIA_BOOK_ID,
+        "Μουσικὴ Πανδέκτη · Δ΄ Τόμος Θείας Λειτουργίας",
+        "Πανδέκτη τῆς Ἱερᾶς Ἐκκλησιαστικῆς Ὑμνῳδίας · 1851 · ἐπιλεγμένα σύντομα μέλη",
+        "https://anemi.lib.uoc.gr/metadata/b/8/4/metadata-06-0000088.tkl",
+        "pandekti-tomos-d-liturgy-excerpts.pdf",
+        2,
+        "Ανέμη · Πανεπιστήμιο Κρήτης · ψηφιοποίηση έκδοσης 1851",
     ),
 }
 
@@ -254,6 +264,20 @@ PIECES: Final[dict[str, MusicPiece]] = {
         ),
         book_id=IRMOLOGION_BOOK_ID,
     ),
+    "litourgia-eisodikon-pandekti": MusicPiece(
+        "litourgia-eisodikon-pandekti",
+        "Εἰσοδικόν · Μουσικὴ Πανδέκτη",
+        "Δεῦτε προσκυνήσωμεν καὶ προσπέσωμεν Χριστῷ",
+        (ScanRegion(1, 27),),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-trisagion-pandekti": MusicPiece(
+        "litourgia-trisagion-pandekti",
+        "Τρισάγιος ὕμνος · σύντομον · Μουσικὴ Πανδέκτη",
+        "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος",
+        (ScanRegion(2, 29),),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
 }
 
 
@@ -348,6 +372,16 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.",
         "tone6-apolytikion",
         occurrences="all",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Δεῦτε προσκυνήσωμεν καὶ προσπέσωμεν Χριστῷ.",
+        "litourgia-eisodikon-pandekti",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.",
+        "litourgia-trisagion-pandekti",
     ),
 )
 
@@ -511,6 +545,7 @@ class AnastasimatarionRenderer:
                     self.books_dir / BOOKS[IRMOLOGION_BOOK_ID].local_filename,
                 )
             ),
+            PANDEKTI_LITOURGIA_BOOK_ID: self.books_dir / BOOKS[PANDEKTI_LITOURGIA_BOOK_ID].local_filename,
         }
         self.session = session or requests.Session()
         self.session.headers.update({"User-Agent": "Kihem/0.3 (+personal liturgical reading tool)"})
