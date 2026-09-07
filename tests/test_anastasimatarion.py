@@ -38,7 +38,7 @@ class AnastasimatarionTests(unittest.TestCase):
         )
         self.assertEqual(
             [region.printed_page for region in pieces["cross-katavasies"].regions],
-            [87, 88, 89, 90, 91, 92],
+            [225, 226, 227, 227, 228, 228, 229, 230, 231, 232, 233, 234, 235],
         )
         self.assertEqual(get_piece(BOOK_ID, "tone6-apolytikion").incipit, "Ἀγγελικαὶ Δυνάμεις")
         self.assertEqual(get_piece(PANDEKTI_BOOK_ID, "psalm-50-tone2").book_id, PANDEKTI_BOOK_ID)
@@ -142,6 +142,7 @@ class AnastasimatarionTests(unittest.TestCase):
             "music/ioannis-protopsaltis-eirmologion-1903/cross-katavasies/1.png",
             result.html,
         )
+        self.assertIn("Σύντομες Καταβασίαι", result.html)
         self.assertIn("Εἱρμολόγιον Καταβασιῶν Ἰωάννου Πρωτοψάλτου", result.html)
         self.assertLess(result.html.index("μεγαλύνουσι"), result.html.index("cross-katavasies"))
         self.assertLess(result.html.index("cross-katavasies"), result.html.index("Μετὰ τὴν"))
