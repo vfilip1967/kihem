@@ -16,7 +16,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 22)
+        self.assertEqual(len(pieces), 25)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -240,3 +240,16 @@ class AnastasimatarionTests(unittest.TestCase):
         ):
             self.assertIn(f'data-music-piece="{piece_id}"', result.html)
         self.assertNotIn("litourgia-leitourgika-pandekti", result.html)
+
+    def test_litourgia_gets_paraschou_and_agapiso_responses(self):
+        source = (
+            "Παράσχου Κύριε.<br>"
+            "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.<br>"
+            "Ἀγαπήσω σε, Κύριε, ἡ ἰσχύς μου, Κύριος στερέωμά μου.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
+
+        self.assertEqual(result.attachment_count, 3)
+        self.assertIn('data-music-piece="litourgia-paraschou-pandekti"', result.html)
+        self.assertIn('data-music-piece="litourgia-patera-pandekti"', result.html)
+        self.assertIn('data-music-piece="litourgia-agapiso-pandekti"', result.html)

@@ -76,7 +76,7 @@ BOOKS: Final[dict[str, MusicBook]] = {
         "Ἔκδοσις «Ζωή» · Θεία Λειτουργία · ἐπιλεγμένα μέλη σε ἦχο δ΄ ἅγια",
         "https://melodos.com/bibliothiki/?cat=157",
         "pandekti-tomos-d-liturgy-excerpts.pdf",
-        12,
+        22,
         "Μελωδός · ψηφιοποιημένος Μουσικὸς Πανδέκτης Δ΄",
         "https://melodos.com/bibliothiki/wp-content/uploads/2019/09/04-%CE%9C%CE%9F%CE%A5%CE%A3%CE%99%CE%9A%CE%9F%CE%A3-%CE%A0%CE%91%CE%9D%CE%94%CE%95%CE%9A%CE%A4%CE%97%CE%A3-%CE%94%CE%84-%CE%A4%CE%9F%CE%9C%CE%9F%CE%A3-%CE%BC%CE%B5-%CE%A3%CE%B5%CE%BB-.pdf",
     ),
@@ -283,7 +283,7 @@ PIECES: Final[dict[str, MusicPiece]] = {
         "litourgia-cherouvikon-pandekti",
         "Χερουβικὸν · ἦχος δ΄ ἅγια · Πέτρου Λαμπαδαρίου",
         "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
-        (ScanRegion(3, 95), ScanRegion(4, 96)),
+        (ScanRegion(3, 95), ScanRegion(4, 96), ScanRegion(17, 97)),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
     "litourgia-koinonikon-pandekti": MusicPiece(
@@ -319,6 +319,27 @@ PIECES: Final[dict[str, MusicPiece]] = {
         "Ὁ Μονογενὴς Υἱὸς καὶ Λόγος · Μουσικὴ Πανδέκτη",
         "Ὁ Μονογενὴς Υἱὸς καὶ Λόγος τοῦ Θεοῦ",
         (ScanRegion(16, 12),),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-paraschou-pandekti": MusicPiece(
+        "litourgia-paraschou-pandekti",
+        "Παράσχου Κύριε · σύντομα · Μουσικὴ Πανδέκτη",
+        "Παράσχου Κύριε",
+        (ScanRegion(18, 8), ScanRegion(19, 9), ScanRegion(20, 10)),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-patera-pandekti": MusicPiece(
+        "litourgia-patera-pandekti",
+        "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα · ἦχος δ΄ ἅγια",
+        "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα",
+        (ScanRegion(21, 251), ScanRegion(22, 252)),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-agapiso-pandekti": MusicPiece(
+        "litourgia-agapiso-pandekti",
+        "Ἀγαπήσω σε, Κύριε · ἦχος δ΄ ἅγια",
+        "Ἀγαπήσω σε, Κύριε, ἡ ἰσχύς μου",
+        (ScanRegion(21, 251), ScanRegion(22, 252)),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
 }
@@ -463,6 +484,21 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Μονογενὴς Υἱὸς καὶ Λόγος",
         "litourgia-monogenis-pandekti",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Παράσχου Κύριε.",
+        "litourgia-paraschou-pandekti",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.",
+        "litourgia-patera-pandekti",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Ἀγαπήσω σε, Κύριε, ἡ ἰσχύς μου",
+        "litourgia-agapiso-pandekti",
     ),
 )
 
