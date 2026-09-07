@@ -23,6 +23,42 @@ DOWNLOAD_URL: Final = (
     "anastasimatarion-ioannou-protopsaltou-1905/"
     "anastasimatarion-ioannou-protopsaltou-1905.pdf"
 )
+PANDEKTI_BOOK_ID: Final = "pandekti-orthrou-1851"
+
+
+@dataclass(frozen=True)
+class MusicBook:
+    book_id: str
+    title: str
+    details: str
+    source_page: str
+    local_filename: str
+    minimum_pdf_pages: int
+    attribution: str
+    download_url: str | None = None
+
+
+BOOKS: Final[dict[str, MusicBook]] = {
+    BOOK_ID: MusicBook(
+        BOOK_ID,
+        BOOK_TITLE,
+        BOOK_DETAILS,
+        SOURCE_PAGE,
+        "anastasimatarion-ioannou-protopsaltou-1905.pdf",
+        600,
+        "Μουσική Βιβλιοθήκη «Λίλιαν Βουδούρη» · CC BY-NC",
+        DOWNLOAD_URL,
+    ),
+    PANDEKTI_BOOK_ID: MusicBook(
+        PANDEKTI_BOOK_ID,
+        "Μουσικὴ Πανδέκτη · Τόμος Β΄",
+        "Πανδέκτη τῆς Ἱερᾶς Ἐκκλησιαστικῆς Ὑμνῳδίας · Μαθήματα τοῦ Ὄρθρου · 1851",
+        "https://anemi.lib.uoc.gr/metadata/b/8/4/metadata-06-0000088.tkl",
+        "pandekti-tomos-b-1851-pages-490-494.pdf",
+        5,
+        "Ψηφιακή Βιβλιοθήκη «Ανέμη» · Πανεπιστήμιο Κρήτης",
+    ),
+}
 
 
 @dataclass(frozen=True)
@@ -40,6 +76,7 @@ class MusicPiece:
     title: str
     incipit: str
     regions: tuple[ScanRegion, ...]
+    book_id: str = BOOK_ID
 
 
 @dataclass(frozen=True)
@@ -84,6 +121,17 @@ PIECES: Final[dict[str, MusicPiece]] = {
         "Καθίσματα μετὰ τὴν β΄ Στιχολογίαν",
         "Ἡ Ζωή, ἐν τῷ τάφῳ ἀνέκειτο",
         (_region(281, 0.78), _region(282, 0.02, 0.74)),
+    ),
+    "resurrectional-evlogitaria": MusicPiece(
+        "resurrectional-evlogitaria",
+        "Ἀναστάσιμα Εὐλογητάρια, πλ. α΄ · Πέτρου Λαμπαδαρίου",
+        "Εὐλογητὸς εἶ, Κύριε, δίδαξόν με τὰ δικαιώματά σου",
+        (
+            _region(19, 0.22),
+            _region(20),
+            _region(21),
+            _region(22, 0.02, 0.86),
+        ),
     ),
     "tone6-anavathmoi": MusicPiece(
         "tone6-anavathmoi",
@@ -139,6 +187,19 @@ PIECES: Final[dict[str, MusicPiece]] = {
             _region(312, 0.02, 0.17),
         ),
     ),
+    "psalm-50-tone2": MusicPiece(
+        "psalm-50-tone2",
+        "Ν΄ Ψαλμός, ἦχος β΄ · Πέτρου Λαμπαδαρίου",
+        "Ἐλέησόν με, ὁ Θεός, κατὰ τὸ μέγα ἔλεός σου",
+        (
+            ScanRegion(1, 490, (0.02, 0.405, 0.98, 0.98)),
+            ScanRegion(2, 491),
+            ScanRegion(3, 492),
+            ScanRegion(4, 493),
+            ScanRegion(5, 494, (0.02, 0.02, 0.98, 0.55)),
+        ),
+        book_id=PANDEKTI_BOOK_ID,
+    ),
 }
 
 
@@ -157,6 +218,13 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "orthros",
         "Χριστὲ ὁ Θεὸς ἡμῶν, φωτίσας τοὺς ἐν σκότει.",
         "tone6-kathismata-b",
+    ),
+    AttachmentRule(
+        "orthros",
+        "λληλούϊα, Ἀλληλούϊα, Ἀλληλούϊα. Δόξα σοὶ ὁ Θεός.",
+        "resurrectional-evlogitaria",
+        required_text=("Ἐν συνεχεία ψάλλονται τά Ἀναστάσιμα εὐλογητάρια.",),
+        match_number=3,
     ),
     AttachmentRule(
         "orthros",
@@ -195,6 +263,12 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "orthros",
+        "ότε ἀνοίσουσιν ἐπὶ τὸ θυσιαστήριόν σου μόσχους.",
+        "psalm-50-tone2",
+        required_text=("Οι Χοροί, ψάλλουν σε ήχο β΄ τον Ν΄ Ψαλμόν, κατ’ αντιφωνίαν",),
+    ),
+    AttachmentRule(
+        "orthros",
         "γιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.",
         "tone6-great-doxology",
         required_text=("Ἦχος πλ β΄",),
@@ -213,8 +287,13 @@ def catalog_pieces() -> tuple[MusicPiece, ...]:
     return tuple(PIECES[piece_id] for piece_id in piece_ids)
 
 
+def catalog_books() -> tuple[MusicBook, ...]:
+    book_ids = dict.fromkeys(piece.book_id for piece in catalog_pieces())
+    return tuple(BOOKS[book_id] for book_id in book_ids)
+
+
 def get_piece(book_id: str, piece_id: str) -> MusicPiece:
-    if book_id != BOOK_ID or piece_id not in PIECES:
+    if piece_id not in PIECES or PIECES[piece_id].book_id != book_id:
         raise KeyError(f"Άγνωστο μουσικό τεκμήριο: {book_id}/{piece_id}")
     return PIECES[piece_id]
 
@@ -225,11 +304,12 @@ def _normalized(value: str) -> str:
 
 
 def _music_markup(piece: MusicPiece, instance: int) -> str:
+    book = BOOKS[piece.book_id]
     pages = ", ".join(str(region.printed_page) for region in piece.regions)
     figures = []
     for index, region in enumerate(piece.regions, start=1):
         # Relative URLs work both at / locally and behind the public /kihem/ prefix.
-        url = f"music/{BOOK_ID}/{piece.piece_id}/{index}.png"
+        url = f"music/{piece.book_id}/{piece.piece_id}/{index}.png"
         figures.append(
             '<figure class="music-page">'
             f'<a href="{url}" target="_blank" title="Άνοιγμα σε πλήρες μέγεθος">'
@@ -245,12 +325,12 @@ def _music_markup(piece: MusicPiece, instance: int) -> str:
         '<div class="music-attachment-heading">'
         '<span class="music-match-label">Μουσικό κείμενο που αντιστοιχίστηκε</span>'
         f"<h3>{html.escape(piece.title)}</h3>"
-        f"<p>{html.escape(BOOK_TITLE)} · σελ. {pages}</p>"
+        f"<p>{html.escape(book.title)} · σελ. {pages}</p>"
         "</div>"
         f'<div class="music-pages">{"".join(figures)}</div>'
         '<p class="music-source">'
-        f'<a href="{SOURCE_PAGE}" target="_blank" rel="noreferrer">{html.escape(BOOK_DETAILS)}</a>'
-        " · Μουσική Βιβλιοθήκη «Λίλιαν Βουδούρη» · CC BY-NC"
+        f'<a href="{book.source_page}" target="_blank" rel="noreferrer">{html.escape(book.details)}</a>'
+        f" · {html.escape(book.attribution)}"
         "</p>"
         "</aside>"
     )
@@ -310,14 +390,33 @@ def enrich_service_html(selected_date: date, service: str, service_html: str) ->
 
 
 class AnastasimatarionRenderer:
-    """Download once and render verified regions from the scanned book."""
+    """Render verified regions from the server's persistent local book library."""
 
     _download_lock = threading.Lock()
 
-    def __init__(self, cache_dir: str | Path = "/tmp/kihem-cache", session=None):
-        self.cache_dir = Path(cache_dir) / "anastasimatarion"
+    def __init__(
+        self,
+        cache_dir: str | Path = "/tmp/kihem-cache",
+        books_dir: str | Path | None = None,
+        session=None,
+    ):
+        self.cache_dir = Path(cache_dir) / "music"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self.pdf_path = Path(os.environ.get("KIHEM_ANASTASIMATARION_PDF", self.cache_dir / "source.pdf"))
+        self.books_dir = Path(books_dir or os.environ.get("KIHEM_BOOKS_DIR", "/var/lib/kihem/books"))
+        self.pdf_paths = {
+            BOOK_ID: Path(
+                os.environ.get(
+                    "KIHEM_ANASTASIMATARION_PDF",
+                    self.books_dir / BOOKS[BOOK_ID].local_filename,
+                )
+            ),
+            PANDEKTI_BOOK_ID: Path(
+                os.environ.get(
+                    "KIHEM_PANDEKTI_PDF",
+                    self.books_dir / BOOKS[PANDEKTI_BOOK_ID].local_filename,
+                )
+            ),
+        }
         self.session = session or requests.Session()
         self.session.headers.update({"User-Agent": "Kihem/0.3 (+personal liturgical reading tool)"})
 
@@ -326,15 +425,20 @@ class AnastasimatarionRenderer:
         if part < 1 or part > len(piece.regions):
             raise KeyError(f"Άγνωστο μέρος μουσικού τεκμηρίου: {piece_id}/{part}")
         region = piece.regions[part - 1]
-        output = self.cache_dir / f"{piece.piece_id}-{part}-p{region.pdf_page}.png"
+        clip_key = "-".join(str(round(value * 1000)) for value in region.clip)
+        output = self.cache_dir / (
+            f"{book_id}-{piece.piece_id}-{part}-p{region.pdf_page}-{clip_key}.png"
+        )
         if output.exists():
             return output
 
-        self._ensure_pdf()
-        document = pymupdf.open(self.pdf_path)
+        book = BOOKS[book_id]
+        pdf_path = self.pdf_paths[book_id]
+        self._ensure_pdf(book, pdf_path)
+        document = pymupdf.open(pdf_path)
         try:
             if document.page_count < region.pdf_page:
-                raise RuntimeError("Το PDF του Αναστασιματαρίου δεν περιέχει την αναμενόμενη σελίδα.")
+                raise RuntimeError(f"Το PDF «{book.title}» δεν περιέχει την αναμενόμενη σελίδα.")
             page = document.load_page(region.pdf_page - 1)
             x0, y0, x1, y1 = region.clip
             clip = pymupdf.Rect(
@@ -349,33 +453,36 @@ class AnastasimatarionRenderer:
             document.close()
         return output
 
-    def _ensure_pdf(self) -> None:
-        if self._valid_pdf(self.pdf_path):
+    def _ensure_pdf(self, book: MusicBook, pdf_path: Path) -> None:
+        if self._valid_pdf(pdf_path, book.minimum_pdf_pages):
             return
+        if not book.download_url:
+            raise RuntimeError(f"Λείπει το τοπικό μουσικό βιβλίο: {pdf_path}")
         with self._download_lock:
-            if self._valid_pdf(self.pdf_path):
+            if self._valid_pdf(pdf_path, book.minimum_pdf_pages):
                 return
-            temporary = self.pdf_path.with_suffix(".download")
+            pdf_path.parent.mkdir(parents=True, exist_ok=True)
+            temporary = pdf_path.with_suffix(".download")
             try:
-                with self.session.get(DOWNLOAD_URL, stream=True, timeout=(10, 180)) as response:
+                with self.session.get(book.download_url, stream=True, timeout=(10, 180)) as response:
                     response.raise_for_status()
                     with temporary.open("wb") as handle:
                         for chunk in response.iter_content(chunk_size=1024 * 1024):
                             if chunk:
                                 handle.write(chunk)
-                if not self._valid_pdf(temporary):
-                    raise RuntimeError("Η λήψη του Αναστασιματαρίου δεν είναι έγκυρο PDF.")
-                temporary.replace(self.pdf_path)
+                if not self._valid_pdf(temporary, book.minimum_pdf_pages):
+                    raise RuntimeError(f"Η λήψη του βιβλίου «{book.title}» δεν είναι έγκυρο PDF.")
+                temporary.replace(pdf_path)
             finally:
                 temporary.unlink(missing_ok=True)
 
     @staticmethod
-    def _valid_pdf(path: Path) -> bool:
-        if not path.exists() or path.stat().st_size < 1_000_000:
+    def _valid_pdf(path: Path, minimum_pages: int) -> bool:
+        if not path.exists() or path.stat().st_size < 10_000:
             return False
         try:
             document = pymupdf.open(path)
-            valid = document.page_count >= 600
+            valid = document.page_count >= minimum_pages
             document.close()
             return valid
         except Exception:

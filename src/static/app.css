@@ -211,6 +211,8 @@ button:hover { background: var(--wine-dark); }
 .enrichment-status div { display: flex; gap: 7px; flex-wrap: wrap; }
 .enrichment-status strong { color: var(--wine-dark); }
 .enrichment-status span, .pilot-note { color: var(--muted); }
+.enrichment-status .book-links { display: flex; gap: 6px 14px; flex-wrap: wrap; justify-content: flex-end; }
+.enrichment-status .book-links a { color: var(--wine-dark); }
 
 .music-attachment {
   display: block;

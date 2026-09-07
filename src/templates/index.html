@@ -69,7 +69,11 @@
             <strong>{% if attachment_count == 1 %}1 μουσική ένθεση{% else %}{{ attachment_count }} μουσικές ενθέσεις{% endif %}</strong>
             <span>τοποθετήθηκαν κάτω από τα αντίστοιχα μέλη</span>
           </div>
-          <a href="{{ book_source_url }}" target="_blank" rel="noreferrer">{{ book_title }}</a>
+          <span class="book-links">
+            {% for book in music_books %}
+              <a href="{{ book.source_page }}" target="_blank" rel="noreferrer">{{ book.title }}</a>
+            {% endfor %}
+          </span>
         </section>
       {% else %}
         <section class="pilot-note">

@@ -6,9 +6,8 @@ from flask import Flask, abort, render_template, request, send_file
 from markupsafe import Markup
 
 from src.anastasimatarion import (
-    BOOK_TITLE,
-    SOURCE_PAGE,
     AnastasimatarionRenderer,
+    catalog_books,
     enrich_service_html,
 )
 from src.composer import ServiceComposer
@@ -20,6 +19,7 @@ def create_app(config: dict | None = None) -> Flask:
     app = Flask(__name__, template_folder="templates", static_folder="static")
     app.config.from_mapping(
         CACHE_DIR=os.environ.get("KIHEM_CACHE_DIR", "/tmp/kihem-cache"),
+        BOOKS_DIR=os.environ.get("KIHEM_BOOKS_DIR", "/var/lib/kihem/books"),
         DEFAULT_DATE="2026-09-13",
     )
     if config:
@@ -29,7 +29,7 @@ def create_app(config: dict | None = None) -> Flask:
         MelodosClient(cache_dir=app.config["CACHE_DIR"])
     )
     music_renderer = app.config.get("MUSIC_RENDERER") or AnastasimatarionRenderer(
-        app.config["CACHE_DIR"]
+        app.config["CACHE_DIR"], app.config["BOOKS_DIR"]
     )
     app.extensions["kihem_composer"] = composer
     app.extensions["kihem_music_renderer"] = music_renderer
@@ -90,10 +90,9 @@ def create_app(config: dict | None = None) -> Flask:
             tone=composition.tone if composition else None,
             attachment_count=attachment_count,
             unmatched_count=len(unmatched_piece_ids),
-            book_title=BOOK_TITLE,
+            music_books=catalog_books(),
             error=error,
             melodos_url=MELODOS_HOME,
-            book_source_url=SOURCE_PAGE,
         )
 
     @app.get("/music/<book_id>/<piece_id>/<int:part>.png")
