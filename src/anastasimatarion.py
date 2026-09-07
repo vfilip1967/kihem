@@ -286,24 +286,39 @@ PIECES: Final[dict[str, MusicPiece]] = {
         (ScanRegion(3, 95), ScanRegion(4, 96)),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
-    "litourgia-leitourgika-pandekti": MusicPiece(
-        "litourgia-leitourgika-pandekti",
-        "Λειτουργικά · ἦχος δ΄ ἅγια · Μουσικὴ Πανδέκτη",
-        "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ",
-        (
-            ScanRegion(5, 270),
-            ScanRegion(6, 271),
-            ScanRegion(7, 272),
-            ScanRegion(8, 273),
-            ScanRegion(9, 274),
-        ),
-        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
-    ),
     "litourgia-koinonikon-pandekti": MusicPiece(
         "litourgia-koinonikon-pandekti",
         "Κοινωνικὸν · ἦχος δ΄ ἅγια · Ποτήριον σωτηρίου",
         "Ποτήριον σωτηρίου λήψομαι",
         (ScanRegion(10, 341), ScanRegion(11, 342), ScanRegion(12, 343)),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-kyrie-eleison-pandekti": MusicPiece(
+        "litourgia-kyrie-eleison-pandekti",
+        "Κύριε ἐλέησον · σύντομα · Μουσικὴ Πανδέκτη",
+        "Κύριε ἐλέησον",
+        (ScanRegion(13, 5), ScanRegion(14, 6)),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-tais-presveiais-pandekti": MusicPiece(
+        "litourgia-tais-presveiais-pandekti",
+        "Ταῖς πρεσβείαις τῆς Θεοτόκου · Μουσικὴ Πανδέκτη",
+        "Ταῖς πρεσβείαις τῆς Θεοτόκου, Σῶτερ, σῶσον ἡμᾶς",
+        (ScanRegion(15, 11),),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-soson-yie-pandekti": MusicPiece(
+        "litourgia-soson-yie-pandekti",
+        "Σῶσον ἡμᾶς Υἱὲ Θεοῦ · Μουσικὴ Πανδέκτη",
+        "Σῶσον ἡμᾶς Υἱὲ Θεοῦ",
+        (ScanRegion(15, 11),),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-monogenis-pandekti": MusicPiece(
+        "litourgia-monogenis-pandekti",
+        "Ὁ Μονογενὴς Υἱὸς καὶ Λόγος · Μουσικὴ Πανδέκτη",
+        "Ὁ Μονογενὴς Υἱὸς καὶ Λόγος τοῦ Θεοῦ",
+        (ScanRegion(16, 12),),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
 }
@@ -422,8 +437,8 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "litourgia",
-        "Ἄξιον καὶ δίκαιον.",
-        "litourgia-leitourgika-pandekti",
+        "Ποτήριον σωτηρίου λήψομαι, καὶ τὸ ὄνομα Κυρίου ἐπικαλέσομαι.",
+        "litourgia-koinonikon-pandekti",
         required_text=(
             "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
             "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
@@ -431,12 +446,23 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "litourgia",
-        "Ποτήριον σωτηρίου λήψομαι, καὶ τὸ ὄνομα Κυρίου ἐπικαλέσομαι.",
-        "litourgia-koinonikon-pandekti",
-        required_text=(
-            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
-            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
-        ),
+        "Κύριε, ἐλέησον.",
+        "litourgia-kyrie-eleison-pandekti",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Ταῖς πρεσβείαις τῆς Θεοτόκου, Σῶτερ, σῶσον ἡμᾶς.",
+        "litourgia-tais-presveiais-pandekti",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Σῶσον ἡμᾶς Υἱὲ Θεοῦ, ὁ ἐν Ἁγίοις θαυμαστός ψάλλοντάς σοι, Ἀλληλούϊα.",
+        "litourgia-soson-yie-pandekti",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Μονογενὴς Υἱὸς καὶ Λόγος",
+        "litourgia-monogenis-pandekti",
     ),
 )
 

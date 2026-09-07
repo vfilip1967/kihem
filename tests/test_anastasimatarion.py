@@ -16,7 +16,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 19)
+        self.assertEqual(len(pieces), 22)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -215,10 +215,28 @@ class AnastasimatarionTests(unittest.TestCase):
         )
         result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
 
-        self.assertEqual(result.attachment_count, 3)
+        self.assertEqual(result.attachment_count, 2)
         self.assertIn('data-music-piece="litourgia-cherouvikon-pandekti"', result.html)
-        self.assertIn('data-music-piece="litourgia-leitourgika-pandekti"', result.html)
         self.assertIn('data-music-piece="litourgia-koinonikon-pandekti"', result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-cherouvikon-pandekti/1.png", result.html)
-        self.assertIn("music/pandekti-litourgia-1851/litourgia-leitourgika-pandekti/1.png", result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-koinonikon-pandekti/1.png", result.html)
+
+    def test_litourgia_beginning_gets_kyrie_and_antiphon_music(self):
+        source = (
+            "Κύριε, ἐλέησον.<br>"
+            "Ταῖς πρεσβείαις τῆς Θεοτόκου, Σῶτερ, σῶσον ἡμᾶς.<br>"
+            "Σῶσον ἡμᾶς Υἱὲ Θεοῦ, ὁ ἐν Ἁγίοις θαυμαστός ψάλλοντάς σοι, "
+            "Ἀλληλούϊα.<br>"
+            "Ὁ Μονογενὴς Υἱὸς καὶ Λόγος τοῦ Θεοῦ, ... σῶσον ἡμᾶς.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
+
+        self.assertEqual(result.attachment_count, 4)
+        for piece_id in (
+            "litourgia-kyrie-eleison-pandekti",
+            "litourgia-tais-presveiais-pandekti",
+            "litourgia-soson-yie-pandekti",
+            "litourgia-monogenis-pandekti",
+        ):
+            self.assertIn(f'data-music-piece="{piece_id}"', result.html)
+        self.assertNotIn("litourgia-leitourgika-pandekti", result.html)
