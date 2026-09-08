@@ -110,6 +110,7 @@ class AttachmentRule:
     required_text: tuple[str, ...] = ()
     match_number: int = 1
     preceding_text: str | None = None
+    following_text: str | None = None
 
 
 @dataclass(frozen=True)
@@ -468,6 +469,14 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "litourgia",
+        "Κύριε, ἐλέησον.",
+        "litourgia-kyrie-eleison-pandekti",
+        # The opening petitions are independent of the weekly tone.  Keep
+        # this rule distinct from the later post-Cheroubikon Kyrie below.
+        following_text="Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+    ),
+    AttachmentRule(
+        "litourgia",
         "Δεῦτε προσκυνήσωμεν καὶ προσπέσωμεν Χριστῷ.",
         "litourgia-eisodikon-pandekti",
     ),
@@ -665,6 +674,10 @@ def enrich_service_html(
             if rule.preceding_text:
                 preceding = _normalized(" ".join(str(item) for item in text_nodes[:node_index]))
                 if _normalized(rule.preceding_text) not in preceding:
+                    continue
+            if rule.following_text:
+                following = _normalized(" ".join(str(item) for item in text_nodes[node_index + 1 :]))
+                if _normalized(rule.following_text) not in following:
                     continue
             matches.append(node)
         if rule.occurrences == "first":

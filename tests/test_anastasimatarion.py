@@ -322,6 +322,30 @@ class AnastasimatarionTests(unittest.TestCase):
             self.assertIn(f'data-music-piece="{piece_id}"', result.html)
         self.assertNotIn("litourgia-leitourgika-pandekti", result.html)
 
+    def test_litourgia_opening_kyrie_is_first_bookmark_and_is_tone_independent(self):
+        opening = (
+            "Εὐλογημένη ἡ βασιλεία τοῦ Πατρὸς καὶ τοῦ Υἱοῦ καὶ τοῦ Ἁγίου Πνεύματος.<br>"
+            "Ἀμήν.<br>"
+            + ("Κύριε, ἐλέησον.<br>" * 12)
+            + "Σύμφωνα με το άγραφο Τυπικό της Μεγάλης του Χριστου Εκκλησίας, "
+            + "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            + "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια.<br>"
+            + "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+            + "Κύριε, ἐλέησον.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 8), "litourgia", opening)
+
+        self.assertEqual(result.attachment_count, 3)
+        self.assertEqual(result.bookmarks[0].anchor_id, "music-litourgia-kyrie-eleison-pandekti-1")
+        self.assertEqual(result.bookmarks[1].anchor_id, "music-litourgia-cherouvikon-pandekti-2")
+        self.assertEqual(result.bookmarks[2].anchor_id, "music-litourgia-kyrie-eleison-pandekti-3")
+        # The later Kyrie is intentionally kept separate from the opening one.
+        self.assertEqual(result.html.count('data-music-piece="litourgia-kyrie-eleison-pandekti"'), 2)
+        self.assertLess(
+            result.html.index("music-litourgia-kyrie-eleison-pandekti-1"),
+            result.html.index("music-litourgia-cherouvikon-pandekti-2"),
+        )
+
     def test_post_cherouvikon_kyrie_and_paraschou_are_attached_in_order(self):
         note = (
             "Σύμφωνα με το άγραφο Τυπικό της Μεγάλης του Χριστου Εκκλησίας, "
