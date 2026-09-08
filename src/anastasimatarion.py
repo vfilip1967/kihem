@@ -287,6 +287,19 @@ PIECES: Final[dict[str, MusicPiece]] = {
         (ScanRegion(95, 95), ScanRegion(96, 96), ScanRegion(97, 97)),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
+    "litourgia-epinikios-pandekti": MusicPiece(
+        "litourgia-epinikios-pandekti",
+        "Λειτουργικά · Ἔλεον εἰρήνης… Ἅγιος… Ὡσαννὰ · Μουσικὴ Πανδέκτη",
+        "Ἔλεον εἰρήνης, θυσίαν αἰνέσεως",
+        (
+            # Page 255 continues from the Patera response through the
+            # beginning of the Sanctus; page 256 completes the Sanctus and
+            # the two Hosanna responses.
+            ScanRegion(255, 255, (0.02, 0.42, 0.98, 0.98)),
+            ScanRegion(256, 256, (0.02, 0.02, 0.98, 0.57)),
+        ),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
     "litourgia-koinonikon-pandekti": MusicPiece(
         "litourgia-koinonikon-pandekti",
         "Κοινωνικὸν · ἦχος δ΄ ἅγια · Ποτήριον σωτηρίου",
@@ -455,6 +468,15 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
         "litourgia-cherouvikon-pandekti",
+        required_text=(
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
+        ),
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.",
+        "litourgia-epinikios-pandekti",
         required_text=(
             "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
             "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",

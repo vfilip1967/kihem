@@ -16,7 +16,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 25)
+        self.assertEqual(len(pieces), 26)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -250,6 +250,30 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn('data-music-piece="litourgia-koinonikon-pandekti"', result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-cherouvikon-pandekti/1.png", result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-koinonikon-pandekti/1.png", result.html)
+
+    def test_litourgia_epinikios_is_one_excerpt_after_the_full_sanctus(self):
+        note = (
+            "Σύμφωνα με το άγραφο Τυπικό της Μεγάλης του Χριστου Εκκλησίας, "
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια.<br>"
+        )
+        sanctus = (
+            "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ "
+            "τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος "
+            "ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις."
+        )
+        result = enrich_service_html(
+            date(2026, 9, 8),
+            "litourgia",
+            note + "Ἔλεον εἰρήνης, θυσίαν αἰνέσεως.<br>" + sanctus + "<br>Σὲ ὑμνοῦμεν.",
+        )
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertEqual(len(result.bookmarks), 1)
+        self.assertIn('data-music-piece="litourgia-epinikios-pandekti"', result.html)
+        self.assertIn("σελ. 255, 256", result.html)
+        self.assertLess(result.html.index(sanctus), result.html.index("litourgia-epinikios-pandekti"))
+        self.assertLess(result.html.index("litourgia-epinikios-pandekti"), result.html.index("Σὲ ὑμνοῦμεν"))
 
     def test_litourgia_beginning_gets_kyrie_and_antiphon_music(self):
         source = (
