@@ -626,7 +626,17 @@ def enrich_service_html(
             _insertion_point(text_node).insert_after(fragment)
             bookmarks.append(MusicBookmark(_bookmark_id(piece, instance), piece.title))
 
-    return EnrichmentResult(str(soup), attachment_count, tuple(unmatched), tuple(bookmarks))
+    # Rules are maintained by source/matching concerns, not by the order in
+    # which a particular service prints its hymns.  Re-read the inserted
+    # anchors from the finished document so the bookmark menu follows the same
+    # top-to-bottom order as the attached excerpts.
+    bookmarks_by_id = {bookmark.anchor_id: bookmark for bookmark in bookmarks}
+    ordered_bookmarks = tuple(
+        bookmarks_by_id[aside["id"]]
+        for aside in soup.find_all("aside", class_="music-attachment")
+        if aside.get("id") in bookmarks_by_id
+    )
+    return EnrichmentResult(str(soup), attachment_count, tuple(unmatched), ordered_bookmarks)
 
 
 class AnastasimatarionRenderer:

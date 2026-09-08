@@ -89,6 +89,26 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(result.bookmarks[0].anchor_id, "music-tone6-apolytikion-12")
         self.assertIn('id="music-tone6-apolytikion-12"', result.html)
 
+    def test_bookmarks_follow_excerpt_order_in_the_finished_litourgia(self):
+        # The matching rules are intentionally not the display order.  The
+        # menu must follow the inserted excerpts in the returned document.
+        source = (
+            "Κύριε, ἐλέησον.<br>"
+            "Μονογενὴς Υἱὸς καὶ Λόγος.<br>"
+            "Παράσχου Κύριε.<br>"
+            "Ποτήριον σωτηρίου λήψομαι, καὶ τὸ ὄνομα Κυρίου ἐπικαλέσομαι.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
+
+        self.assertEqual(
+            [bookmark.title for bookmark in result.bookmarks],
+            [
+                "Κύριε ἐλέησον · σύντομα · Μουσικὴ Πανδέκτη",
+                "Ὁ Μονογενὴς Υἱὸς καὶ Λόγος · Μουσικὴ Πανδέκτη",
+                "Παράσχου Κύριε · σύντομα · Μουσικὴ Πανδέκτη",
+            ],
+        )
+
     def test_great_doxology_requires_the_matching_tone_context(self):
         doxology_end = "γιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
         without_tone = enrich_service_html(date(2026, 9, 8), "orthros", doxology_end)
