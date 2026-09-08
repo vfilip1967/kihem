@@ -307,8 +307,8 @@ PIECES: Final[dict[str, MusicPiece]] = {
         (
             # The lower half of p. 256 contains the two Amens and the first
             # part of the response; p. 257 completes «ὁ Θεὸς ἡμῶν».
-            ScanRegion(256, 256, (0.02, 0.59, 0.98, 0.98)),
-            ScanRegion(257, 257, (0.02, 0.02, 0.98, 0.18)),
+            ScanRegion(256, 256, (0.02, 0.54, 0.98, 0.98)),
+            ScanRegion(257, 257, (0.02, 0.02, 0.98, 0.15)),
         ),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
