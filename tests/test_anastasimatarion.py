@@ -54,6 +54,10 @@ class AnastasimatarionTests(unittest.TestCase):
             PANDEKTI_LITOURGIA_BOOK_ID,
         )
         self.assertEqual(
+            [region.printed_page for region in pieces["litourgia-eisodikon-pandekti"].regions],
+            [41],
+        )
+        self.assertEqual(
             [region.printed_page for region in pieces["litourgia-patera-pandekti"].regions],
             [255],
         )
