@@ -300,6 +300,18 @@ PIECES: Final[dict[str, MusicPiece]] = {
         ),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
+    "litourgia-amin-se-ymnoumen-pandekti": MusicPiece(
+        "litourgia-amin-se-ymnoumen-pandekti",
+        "Ἀμήν · Σὲ ὑμνοῦμεν… · Λειτουργικά · Μουσικὴ Πανδέκτη",
+        "Ἀμήν · Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν",
+        (
+            # The lower half of p. 256 contains the two Amens and the first
+            # part of the response; p. 257 completes «ὁ Θεὸς ἡμῶν».
+            ScanRegion(256, 256, (0.02, 0.59, 0.98, 0.98)),
+            ScanRegion(257, 257, (0.02, 0.02, 0.98, 0.18)),
+        ),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
     "litourgia-koinonikon-pandekti": MusicPiece(
         "litourgia-koinonikon-pandekti",
         "Κοινωνικὸν · ἦχος δ΄ ἅγια · Ποτήριον σωτηρίου",
@@ -477,6 +489,15 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.",
         "litourgia-epinikios-pandekti",
+        required_text=(
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
+        ),
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν.",
+        "litourgia-amin-se-ymnoumen-pandekti",
         required_text=(
             "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
             "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",

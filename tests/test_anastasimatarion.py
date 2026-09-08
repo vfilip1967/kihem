@@ -16,7 +16,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 26)
+        self.assertEqual(len(pieces), 27)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -274,6 +274,32 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn("σελ. 255, 256", result.html)
         self.assertLess(result.html.index(sanctus), result.html.index("litourgia-epinikios-pandekti"))
         self.assertLess(result.html.index("litourgia-epinikios-pandekti"), result.html.index("Σὲ ὑμνοῦμεν"))
+
+    def test_litourgia_two_amens_and_se_ymnoumen_follow_the_full_response(self):
+        note = (
+            "Σύμφωνα με το άγραφο Τυπικό της Μεγάλης του Χριστου Εκκλησίας, "
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια.<br>"
+        )
+        response = (
+            "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, "
+            "καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν."
+        )
+        result = enrich_service_html(
+            date(2026, 9, 8),
+            "litourgia",
+            note + response + "<br>Μετὰ τούτων καὶ ἡμεῖς.",
+        )
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertEqual(len(result.bookmarks), 1)
+        self.assertIn('data-music-piece="litourgia-amin-se-ymnoumen-pandekti"', result.html)
+        self.assertIn("σελ. 256, 257", result.html)
+        self.assertLess(result.html.index(response), result.html.index("litourgia-amin-se-ymnoumen-pandekti"))
+        self.assertLess(
+            result.html.index("litourgia-amin-se-ymnoumen-pandekti"),
+            result.html.index("Μετὰ τούτων"),
+        )
 
     def test_litourgia_beginning_gets_kyrie_and_antiphon_music(self):
         source = (
