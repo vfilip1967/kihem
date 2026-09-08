@@ -116,8 +116,30 @@
   </footer>
   <script>
     document.querySelectorAll('.music-bookmarks-list a').forEach((link) => {
-      link.addEventListener('click', () => {
+      link.addEventListener('click', (event) => {
+        const target = document.querySelector(link.hash);
+        if (!target) return;
+
+        // Close the menu before scrolling and wait for the scanned pages that
+        // precede the target to settle. Otherwise lazy-loaded image heights
+        // can move a late excerpt and leave the browser on the previous one.
+        event.preventDefault();
         link.closest('.music-bookmarks-menu').open = false;
+        history.pushState(null, '', link.hash);
+        const precedingImages = [...document.images].filter((image) =>
+          image.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING
+        );
+        const ready = precedingImages.map((image) => {
+          if (image.complete) return Promise.resolve();
+          image.loading = 'eager';
+          return new Promise((resolve) => {
+            image.addEventListener('load', resolve, { once: true });
+            image.addEventListener('error', resolve, { once: true });
+          });
+        });
+        Promise.all(ready).then(() => {
+          requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+        });
       });
     });
   </script>
