@@ -53,6 +53,14 @@ class AnastasimatarionTests(unittest.TestCase):
             get_piece(PANDEKTI_LITOURGIA_BOOK_ID, "litourgia-eisodikon-pandekti").book_id,
             PANDEKTI_LITOURGIA_BOOK_ID,
         )
+        self.assertEqual(
+            [region.printed_page for region in pieces["litourgia-patera-pandekti"].regions],
+            [255],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["litourgia-agapiso-pandekti"].regions],
+            [251, 252],
+        )
 
     def test_matching_is_driven_by_content_not_weekday_or_date(self):
         source = "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"
