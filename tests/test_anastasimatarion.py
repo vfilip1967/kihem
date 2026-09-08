@@ -4,6 +4,7 @@ from datetime import date
 from src.anastasimatarion import (
     BOOK_ID,
     IRMOLOGION_BOOK_ID,
+    KYPSELI_BOOK_ID,
     PANDEKTI_LITOURGIA_BOOK_ID,
     PANDEKTI_BOOK_ID,
     catalog_books,
@@ -16,7 +17,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 27)
+        self.assertEqual(len(pieces), 31)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -48,7 +49,7 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(get_piece(BOOK_ID, "tone6-apolytikion").incipit, "Ἀγγελικαὶ Δυνάμεις")
         self.assertEqual(get_piece(PANDEKTI_BOOK_ID, "psalm-50-tone2").book_id, PANDEKTI_BOOK_ID)
         self.assertEqual(get_piece(IRMOLOGION_BOOK_ID, "cross-katavasies").book_id, IRMOLOGION_BOOK_ID)
-        self.assertEqual(len(catalog_books()), 4)
+        self.assertEqual(len(catalog_books()), 5)
         self.assertEqual(
             get_piece(PANDEKTI_LITOURGIA_BOOK_ID, "litourgia-eisodikon-pandekti").book_id,
             PANDEKTI_LITOURGIA_BOOK_ID,
@@ -64,6 +65,14 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(
             [region.printed_page for region in pieces["litourgia-agapiso-pandekti"].regions],
             [251, 252],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["kypseli-09-doxastikon"].regions],
+            [57, 58],
+        )
+        self.assertEqual(
+            get_piece(KYPSELI_BOOK_ID, "kypseli-08-apolytikion").book_id,
+            KYPSELI_BOOK_ID,
         )
 
     def test_matching_is_driven_by_content_not_weekday_or_date(self):
@@ -254,6 +263,46 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn('data-music-piece="litourgia-koinonikon-pandekti"', result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-cherouvikon-pandekti/1.png", result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-koinonikon-pandekti/1.png", result.html)
+
+    def test_september_ninth_orthros_uses_fixed_feast_excerpts(self):
+        source = (
+            "Ἀπολυτίκιον των Γενεθλίων<br>"
+            "Ἡ γέννησίς σου Θεοτόκε, χαρὰν ἐμήνυσε πάσῃ τῇ οἰκουμένῃ· "
+            "καὶ καταργήσας τὸν θάνατον, ἐδωρήσατο ἡμῖν ζωὴν τὴν αἰώνιον.<br>"
+            "Σήμερον ἡ πανάμωμος Ἁγνὴ προῆλθεν ἐκ τῆς στείρας· "
+            "Ἡμεῖς δὲ δοξολογοῦντες βοῶμεν· Δόξα ἐν ὑψίστοις Θεῷ, "
+            "καὶ ἐπὶ γῆς εἰρήνη, ἐν ἀνθρώποις εὐδοκία.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 9), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 2)
+        self.assertIn('data-music-piece="kypseli-08-apolytikion"', result.html)
+        self.assertIn('data-music-piece="kypseli-09-doxastikon"', result.html)
+        self.assertNotIn('data-music-piece="kypseli-08-doxastikon"', result.html)
+        self.assertLess(
+            result.html.index("kypseli-08-apolytikion"),
+            result.html.index("kypseli-09-doxastikon"),
+        )
+
+    def test_september_ninth_liturgy_uses_the_day_tone_and_previous_feast_text(self):
+        note = (
+            "Σύμφωνα με το άγραφο Τυπικό της Μεγάλης του Χριστου Εκκλησίας, "
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, απλή Τετάρτη, "
+            "ψάλλονται σε ήχο δ΄ άγια.<br>"
+        )
+        source = (
+            note
+            + "Ἡ γέννησίς σου Θεοτόκε, χαρὰν ἐμήνυσε πάσῃ τῇ οἰκουμένῃ· "
+            + "καὶ καταργήσας τὸν θάνατον, ἐδωρήσατο ἡμῖν ζωὴν τὴν αἰώνιον.<br>"
+            + "Ἰωακεὶμ καὶ Ἄννα ὀνειδισμοῦ ἀτεκνίας, καὶ Ἀδὰμ καὶ Εὔα, "
+            + "Ἡ στεῖρα τίκτει τὴν Θεοτόκον, καὶ τροφὸν τῆς ζωῆς ἡμῶν.<br>"
+            + "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 9), "litourgia", source)
+
+        self.assertIn('data-music-piece="kypseli-08-apolytikion"', result.html)
+        self.assertIn('data-music-piece="kypseli-08-kontakion"', result.html)
+        self.assertIn('data-music-piece="litourgia-cherouvikon-pandekti"', result.html)
 
     def test_litourgia_epinikios_is_one_excerpt_after_the_full_sanctus(self):
         note = (

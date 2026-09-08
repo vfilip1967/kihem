@@ -26,6 +26,7 @@ DOWNLOAD_URL: Final = (
 PANDEKTI_BOOK_ID: Final = "pandekti-orthrou-1851"
 IRMOLOGION_BOOK_ID: Final = "ioannis-protopsaltis-eirmologion-1903"
 PANDEKTI_LITOURGIA_BOOK_ID: Final = "pandekti-litourgia-1851"
+KYPSELI_BOOK_ID: Final = "kypseli-stefanou-lampadariou-minaia"
 
 
 @dataclass(frozen=True)
@@ -80,6 +81,16 @@ BOOKS: Final[dict[str, MusicBook]] = {
         "Μελωδός · ψηφιοποιημένος Μουσικὸς Πανδέκτης Δ΄",
         "https://melodos.com/bibliothiki/wp-content/uploads/2019/09/04-%CE%9C%CE%9F%CE%A5%CE%A3%CE%99%CE%9A%CE%9F%CE%A3-%CE%A0%CE%91%CE%9D%CE%94%CE%95%CE%9A%CE%A4%CE%97%CE%A3-%CE%94%CE%84-%CE%A4%CE%9F%CE%9C%CE%9F%CE%A3-%CE%BC%CE%B5-%CE%A3%CE%B5%CE%BB-.pdf",
     ),
+    KYPSELI_BOOK_ID: MusicBook(
+        KYPSELI_BOOK_ID,
+        "Μουσικὴ Κυψέλη Στεφάνου Λαμπαδαρίου · Μηναία",
+        "Μηναία · ἰδιόμελα, δοξαστικά, ἀπολυτίκια καὶ κοντάκια τοῦ ὅλου ἐνιαυτοῦ",
+        "https://melodos.com/bibliothiki/?cat=157",
+        "kypseli-stefanou-lampadariou-minaia.pdf",
+        1075,
+        "Μελωδός · ψηφιοποιημένη Μουσικὴ Κυψέλη",
+        "https://melodos.com/bibliothiki/wp-content/uploads/1622/02/Κυψέλη-Στεφάνου-Λαμπαδαρίου.-Μηναία.pdf",
+    ),
 }
 
 
@@ -108,6 +119,8 @@ class AttachmentRule:
     piece_id: str
     occurrences: Literal["first", "all"] = "first"
     required_text: tuple[str, ...] = ()
+    required_text_any: tuple[str, ...] = ()
+    month_days: tuple[tuple[int, int], ...] = ()
     match_number: int = 1
     preceding_text: str | None = None
     following_text: str | None = None
@@ -266,6 +279,37 @@ PIECES: Final[dict[str, MusicPiece]] = {
             ScanRegion(243, 235, (0.02, 0.55, 0.98, 0.86)),
         ),
         book_id=IRMOLOGION_BOOK_ID,
+    ),
+    "kypseli-08-apolytikion": MusicPiece(
+        "kypseli-08-apolytikion",
+        "Ἀπολυτίκιον Γενεθλίου Θεοτόκου · ἦχος δ΄ · Μηναία",
+        "Ἡ γέννησίς σου Θεοτόκε, χαρὰν ἐμήνυσε",
+        (ScanRegion(640, 51, (0.02, 0.56, 0.98, 0.99)),),
+        book_id=KYPSELI_BOOK_ID,
+    ),
+    "kypseli-08-kontakion": MusicPiece(
+        "kypseli-08-kontakion",
+        "Κοντάκιον Γενεθλίου Θεοτόκου · ἦχος δ΄ · Μηναία",
+        "Ἰωακεὶμ καὶ Ἄννα ὀνειδισμοῦ ἀτεκνίας",
+        (ScanRegion(641, 52, (0.02, 0.12, 0.98, 0.72)),),
+        book_id=KYPSELI_BOOK_ID,
+    ),
+    "kypseli-08-doxastikon": MusicPiece(
+        "kypseli-08-doxastikon",
+        "Δοξαστικὸν Γενεθλίου Θεοτόκου · ἦχος πλ. α΄ · Μηναία",
+        "Αὕτη ἡ ἡμέρα Κυρίου, ἀγαλλιάσθε λαοί",
+        (ScanRegion(623, 34, (0.02, 0.02, 0.98, 0.88)),),
+        book_id=KYPSELI_BOOK_ID,
+    ),
+    "kypseli-09-doxastikon": MusicPiece(
+        "kypseli-09-doxastikon",
+        "Δοξαστικὸν Θεοπατόρων · ἦχος δ΄ · Μηναία",
+        "Σήμερον ἡ πανάμωμος Ἁγνὴ προῆλθεν ἐκ τῆς στείρας",
+        (
+            ScanRegion(647, 57, (0.02, 0.10, 0.98, 0.98)),
+            ScanRegion(648, 58, (0.02, 0.02, 0.98, 0.30)),
+        ),
+        book_id=KYPSELI_BOOK_ID,
     ),
     "litourgia-eisodikon-pandekti": MusicPiece(
         "litourgia-eisodikon-pandekti",
@@ -464,10 +508,40 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         required_text=("Ἦχος πλ β΄",),
     ),
     AttachmentRule(
+        "orthros",
+        "καὶ καταργήσας τὸν θάνατον, ἐδωρήσατο ἡμῖν ζωὴν τὴν αἰώνιον.",
+        "kypseli-08-apolytikion",
+        month_days=((9, 8), (9, 9)),
+    ),
+    AttachmentRule(
+        "orthros",
+        "πρὸς σωτηρίαν τῶν ψυχῶν ἡμῶν.",
+        "kypseli-08-doxastikon",
+        month_days=((9, 8),),
+    ),
+    AttachmentRule(
+        "orthros",
+        "Ἡμεῖς δὲ δοξολογοῦντες βοῶμεν· Δόξα ἐν ὑψίστοις Θεῷ, καὶ ἐπὶ γῆς εἰρήνη, ἐν ἀνθρώποις εὐδοκία.",
+        "kypseli-09-doxastikon",
+        month_days=((9, 9),),
+    ),
+    AttachmentRule(
         "litourgia",
         "ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.",
         "tone6-apolytikion",
         occurrences="all",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "καὶ καταργήσας τὸν θάνατον, ἐδωρήσατο ἡμῖν ζωὴν τὴν αἰώνιον.",
+        "kypseli-08-apolytikion",
+        month_days=((9, 8), (9, 9)),
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Ἡ στεῖρα τίκτει τὴν Θεοτόκον, καὶ τροφὸν τῆς ζωῆς ἡμῶν.",
+        "kypseli-08-kontakion",
+        month_days=((9, 8), (9, 9)),
     ),
     AttachmentRule(
         "litourgia",
@@ -491,36 +565,32 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
         "litourgia-cherouvikon-pandekti",
-        required_text=(
-            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
-            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
+        required_text_any=(
+            "ψάλλονται σε ήχο δ΄ άγια",
         ),
     ),
     AttachmentRule(
         "litourgia",
         "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.",
         "litourgia-epinikios-pandekti",
-        required_text=(
-            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
-            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
+        required_text_any=(
+            "ψάλλονται σε ήχο δ΄ άγια",
         ),
     ),
     AttachmentRule(
         "litourgia",
         "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν.",
         "litourgia-amin-se-ymnoumen-pandekti",
-        required_text=(
-            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
-            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
+        required_text_any=(
+            "ψάλλονται σε ήχο δ΄ άγια",
         ),
     ),
     AttachmentRule(
         "litourgia",
         "Ποτήριον σωτηρίου λήψομαι, καὶ τὸ ὄνομα Κυρίου ἐπικαλέσομαι.",
         "litourgia-koinonikon-pandekti",
-        required_text=(
-            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
-            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια",
+        required_text_any=(
+            "ψάλλονται σε ήχο δ΄ άγια",
         ),
     ),
     AttachmentRule(
@@ -650,11 +720,6 @@ def enrich_service_html(
     instance_offset: int = 0,
 ) -> EnrichmentResult:
     """Attach verified book matches based on the actual text returned by Melodos."""
-    # The date remains part of the API because later books may contain rules
-    # tied to a movable or fixed feast. Current Anastasimatarion rules are
-    # selected from the content itself, regardless of weekday.
-    _ = selected_date
-
     rules = tuple(rule for rule in PILOT_RULES if rule.service == service)
     soup = BeautifulSoup(service_html, "html.parser")
     attachment_count = 0
@@ -662,9 +727,15 @@ def enrich_service_html(
     bookmarks: list[MusicBookmark] = []
 
     for rule in rules:
+        if rule.month_days and (selected_date.month, selected_date.day) not in rule.month_days:
+            continue
         needle = _normalized(rule.after_text)
         normalized_document = _normalized(soup.get_text(" ", strip=True))
         if any(_normalized(required) not in normalized_document for required in rule.required_text):
+            continue
+        if rule.required_text_any and not any(
+            _normalized(required) in normalized_document for required in rule.required_text_any
+        ):
             continue
         text_nodes = list(soup.find_all(string=True))
         matches = []
@@ -746,6 +817,7 @@ class AnastasimatarionRenderer:
                 )
             ),
             PANDEKTI_LITOURGIA_BOOK_ID: self.books_dir / BOOKS[PANDEKTI_LITOURGIA_BOOK_ID].local_filename,
+            KYPSELI_BOOK_ID: self.books_dir / BOOKS[KYPSELI_BOOK_ID].local_filename,
         }
         self.session = session or requests.Session()
         self.session.headers.update({"User-Agent": "Kihem/0.3 (+personal liturgical reading tool)"})

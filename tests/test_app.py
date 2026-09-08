@@ -66,9 +66,9 @@ class AppTests(unittest.TestCase):
         self.assertIn('id="orthros"', text)
         self.assertNotIn('id="litourgia"', text)
 
-    def test_default_date_is_initial_pilot_date(self):
+    def test_default_date_is_requested_feast_date(self):
         response = self.client.get("/")
-        self.assertIn('value="2026-09-13"', response.get_data(as_text=True))
+        self.assertIn('value="2026-09-09"', response.get_data(as_text=True))
 
     def test_index_composes_non_sunday_instead_of_rejecting_it(self):
         response = self.client.get("/?date=2026-09-14")

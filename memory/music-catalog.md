@@ -1,6 +1,6 @@
 # Kihem music-source memory
 
-Updated: 2026-09-07
+Updated: 2026-09-08
 
 ## Persistent books
 
@@ -26,6 +26,15 @@ Updated: 2026-09-07
    - Official record: `https://anemi.lib.uoc.gr/metadata/b/8/4/metadata-06-0000088.tkl`
    - SHA-256: `d1b5d5bc97f78841d7d489c1e640a661ae28e4e537dc2592599434304e8ea4b3`
 
+4. `kypseli-stefanou-lampadariou-minaia`
+   - Μουσικὴ Κυψέλη Στεφάνου Λαμπαδαρίου, Μηναία· ιδιόμελα, δοξαστικά,
+     απολυτίκια και κοντάκια του όλου ενιαυτού.
+   - Local file:
+     `/var/lib/kihem/books/kypseli-stefanou-lampadariou-minaia.pdf`
+   - Official category and source PDF:
+     `https://melodos.com/bibliothiki/?cat=157`
+   - SHA-256: `478195e43530092f0398c1ec6dcf7ff7714a7a48953a201cb71c2f70a3a14619`
+
 ## Verified mappings for 2026-09-13
 
 - Anastasimatarion: resurrectional apolytikion, two kathisma groups,
@@ -38,6 +47,18 @@ Updated: 2026-09-07
   deliberately omit the intervening troparia of the complete canon. Do not use
   the slower continuous setting on printed pp. 87–92 when a short setting is
   requested or available.
+
+## Verified fixed-feast mappings for 8–9 September 2026
+
+- 8 September: the Kypseli scan has the Nativity of the Theotokos
+  apolytikion (printed p. 51), kontakion (p. 52) and doxastikon (p. 34).
+- 9 September: the Kypseli scan has the Theopatores doxastikon on printed
+  pp. 57–58. The 9/9 service also repeats the preceding feast's apolytikion
+  and kontakion, so the corresponding Kypseli excerpts are attached there.
+- The 9/9 Melodos note says the Cheroubikon, leitourgika and koinonikon are
+  sung in fourth-tone agia on a simple Wednesday. The existing Pandekti
+  fourth-tone excerpts are therefore enabled for that note; a non-matching
+  special koinonikon is left unattached rather than guessed.
 
 ## Matching and rendering invariants
 

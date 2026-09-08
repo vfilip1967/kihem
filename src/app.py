@@ -20,7 +20,7 @@ def create_app(config: dict | None = None) -> Flask:
     app.config.from_mapping(
         CACHE_DIR=os.environ.get("KIHEM_CACHE_DIR", "/tmp/kihem-cache"),
         BOOKS_DIR=os.environ.get("KIHEM_BOOKS_DIR", "/var/lib/kihem/books"),
-        DEFAULT_DATE="2026-09-13",
+        DEFAULT_DATE="2026-09-09",
     )
     if config:
         app.config.update(config)
