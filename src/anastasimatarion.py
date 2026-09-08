@@ -539,7 +539,10 @@ def _music_markup(piece: MusicPiece, instance: int) -> str:
     figures = []
     for index, region in enumerate(piece.regions, start=1):
         # Relative URLs work both at / locally and behind the public /kihem/ prefix.
-        url = f"music/{piece.book_id}/{piece.piece_id}/{index}.png"
+        # Include the source region in the URL so a corrected scan cannot be
+        # hidden by a browser's old 24-hour image cache.
+        version = "-".join(str(round(value * 1000)) for value in region.clip)
+        url = f"music/{piece.book_id}/{piece.piece_id}/{index}.png?v=p{region.pdf_page}-{version}"
         figures.append(
             '<figure class="music-page">'
             f'<a href="{url}" target="_blank" title="Άνοιγμα σε πλήρες μέγεθος">'
