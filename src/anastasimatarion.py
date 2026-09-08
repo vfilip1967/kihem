@@ -273,7 +273,7 @@ PIECES: Final[dict[str, MusicPiece]] = {
         "Δεῦτε προσκυνήσωμεν καὶ προσπέσωμεν Χριστῷ",
         # The Eisodikon is printed on p. 41.  Keep the first setting and its
         # heading, stopping before the alternate setting on the same page.
-        (ScanRegion(41, 41, (0.02, 0.02, 0.98, 0.53)),),
+        (ScanRegion(41, 41, (0.02, 0.02, 0.98, 0.48)),),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
     "litourgia-trisagion-pandekti": MusicPiece(
