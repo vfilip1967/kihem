@@ -104,6 +104,7 @@ class AnastasimatarionTests(unittest.TestCase):
             "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
             "Κύριε, ἐλέησον.<br>"
             "Μονογενὴς Υἱὸς καὶ Λόγος.<br>"
+            "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>"
             "Παράσχου Κύριε.<br>"
             "Ποτήριον σωτηρίου λήψομαι, καὶ τὸ ὄνομα Κυρίου ἐπικαλέσομαι.<br>"
         )
@@ -281,6 +282,7 @@ class AnastasimatarionTests(unittest.TestCase):
             note
             + "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
             + "Κύριε, ἐλέησον.<br>"
+            + "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>"
             + "Παράσχου Κύριε.<br>"
         )
         result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
@@ -296,6 +298,7 @@ class AnastasimatarionTests(unittest.TestCase):
 
     def test_litourgia_gets_paraschou_and_agapiso_responses(self):
         source = (
+            "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>"
             "Παράσχου Κύριε.<br>"
             "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.<br>"
             "Ἀγαπήσω σε, Κύριε, ἡ ἰσχύς μου, Κύριος στερέωμά μου.<br>"

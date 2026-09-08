@@ -494,6 +494,7 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Παράσχου Κύριε.",
         "litourgia-paraschou-pandekti",
+        preceding_text="Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν",
     ),
     AttachmentRule(
         "litourgia",
