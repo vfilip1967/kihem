@@ -37,7 +37,12 @@ def create_app(config: dict | None = None) -> Flask:
     @app.get("/")
     def index():
         selected_raw = request.args.get("date", app.config["DEFAULT_DATE"])
-        selected_services = request.args.get("services", "both")
+        # The web view deliberately renders one service per request.  This keeps
+        # the heavy scanned music excerpts from being downloaded twice on one
+        # very long page.  Treat the old ``services=both`` links as the Orthros
+        # page so existing bookmarks continue to open a useful result.
+        requested_services = request.args.get("services", "orthros")
+        selected_services = requested_services if requested_services in {"orthros", "litourgia"} else "orthros"
         refresh = request.args.get("refresh") == "1"
         error = None
         composition = None
@@ -52,11 +57,7 @@ def create_app(config: dict | None = None) -> Flask:
             error = "Η ημερομηνία δεν είναι έγκυρη. Χρησιμοποίησε τη μορφή ΕΕΕΕ-ΜΜ-ΗΗ."
 
         if not error:
-            services = {
-                "orthros": ("orthros",),
-                "litourgia": ("litourgia",),
-                "both": ("orthros", "litourgia"),
-            }.get(selected_services, ("orthros", "litourgia"))
+            services = (selected_services,)
             try:
                 composition = composer.compose(
                     calendar.current_date, services=services, refresh=refresh

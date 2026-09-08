@@ -31,14 +31,13 @@
         <label>
           <span>Ακολουθίες</span>
           <select name="services">
-            <option value="both" {{ 'selected' if selected_services == 'both' else '' }}>Όρθρος + Θεία Λειτουργία</option>
-            <option value="orthros" {{ 'selected' if selected_services == 'orthros' else '' }}>Μόνο Όρθρος</option>
-            <option value="litourgia" {{ 'selected' if selected_services == 'litourgia' else '' }}>Μόνο Θεία Λειτουργία</option>
+            <option value="orthros" {{ 'selected' if selected_services == 'orthros' else '' }}>Σελίδα Όρθρου</option>
+            <option value="litourgia" {{ 'selected' if selected_services == 'litourgia' else '' }}>Σελίδα Θείας Λειτουργίας</option>
           </select>
         </label>
-        <button type="submit">Σύνθεση ακολουθίας</button>
+        <button type="submit">Άνοιγμα σελίδας</button>
       </form>
-      <p class="calendar-note">Κυριακή, μεγάλη εορτή ή καθημερινή · πάντοτε με το Γρηγοριανό (νέο) ημερολόγιο.</p>
+      <p class="calendar-note">Κυριακή, μεγάλη εορτή ή καθημερινή · κάθε ακολουθία ανοίγει σε ξεχωριστή σελίδα για ταχύτερη φόρτωση.</p>
     </section>
 
     {% if error %}
@@ -56,6 +55,11 @@
         </div>
         {% if tone %}<span class="tone">{{ documents[0].tone_label }}</span>{% endif %}
       </section>
+
+      <nav class="service-switcher" aria-label="Εναλλαγή ακολουθίας">
+        <a class="{{ 'active' if selected_services == 'orthros' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=orthros">Όρθρος</a>
+        <a class="{{ 'active' if selected_services == 'litourgia' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=litourgia">Θεία Λειτουργία</a>
+      </nav>
 
       <nav class="service-nav" aria-label="Περιεχόμενα ακολουθίας">
         {% for document in documents %}
