@@ -109,6 +109,7 @@ class AttachmentRule:
     occurrences: Literal["first", "all"] = "first"
     required_text: tuple[str, ...] = ()
     match_number: int = 1
+    preceding_text: str | None = None
 
 
 @dataclass(frozen=True)
@@ -472,6 +473,7 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Κύριε, ἐλέησον.",
         "litourgia-kyrie-eleison-pandekti",
+        preceding_text="Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
     ),
     AttachmentRule(
         "litourgia",
@@ -609,12 +611,18 @@ def enrich_service_html(
         normalized_document = _normalized(soup.get_text(" ", strip=True))
         if any(_normalized(required) not in normalized_document for required in rule.required_text):
             continue
-        matches = [
-            node
-            for node in list(soup.find_all(string=True))
-            if needle in _normalized(str(node))
-            and not (isinstance(node.parent, Tag) and node.parent.find_parent("aside"))
-        ]
+        text_nodes = list(soup.find_all(string=True))
+        matches = []
+        for node_index, node in enumerate(text_nodes):
+            if needle not in _normalized(str(node)):
+                continue
+            if isinstance(node.parent, Tag) and node.parent.find_parent("aside"):
+                continue
+            if rule.preceding_text:
+                preceding = _normalized(" ".join(str(item) for item in text_nodes[:node_index]))
+                if _normalized(rule.preceding_text) not in preceding:
+                    continue
+            matches.append(node)
         if rule.occurrences == "first":
             match_index = rule.match_number - 1
             matches = matches[match_index : match_index + 1]

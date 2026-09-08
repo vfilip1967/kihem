@@ -101,6 +101,7 @@ class AnastasimatarionTests(unittest.TestCase):
         # The matching rules are intentionally not the display order.  The
         # menu must follow the inserted excerpts in the returned document.
         source = (
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
             "Κύριε, ἐλέησον.<br>"
             "Μονογενὴς Υἱὸς καὶ Λόγος.<br>"
             "Παράσχου Κύριε.<br>"
@@ -251,6 +252,7 @@ class AnastasimatarionTests(unittest.TestCase):
 
     def test_litourgia_beginning_gets_kyrie_and_antiphon_music(self):
         source = (
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
             "Κύριε, ἐλέησον.<br>"
             "Ταῖς πρεσβείαις τῆς Θεοτόκου, Σῶτερ, σῶσον ἡμᾶς.<br>"
             "Σῶσον ἡμᾶς Υἱὲ Θεοῦ, ὁ ἐν Ἁγίοις θαυμαστός ψάλλοντάς σοι, "
@@ -268,6 +270,29 @@ class AnastasimatarionTests(unittest.TestCase):
         ):
             self.assertIn(f'data-music-piece="{piece_id}"', result.html)
         self.assertNotIn("litourgia-leitourgika-pandekti", result.html)
+
+    def test_post_cherouvikon_kyrie_and_paraschou_are_attached_in_order(self):
+        note = (
+            "Σύμφωνα με το άγραφο Τυπικό της Μεγάλης του Χριστου Εκκλησίας, "
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+            "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια.<br>"
+        )
+        source = (
+            note
+            + "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+            + "Κύριε, ἐλέησον.<br>"
+            + "Παράσχου Κύριε.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
+
+        self.assertEqual(
+            [bookmark.anchor_id for bookmark in result.bookmarks],
+            [
+                "music-litourgia-cherouvikon-pandekti-1",
+                "music-litourgia-kyrie-eleison-pandekti-2",
+                "music-litourgia-paraschou-pandekti-3",
+            ],
+        )
 
     def test_litourgia_gets_paraschou_and_agapiso_responses(self):
         source = (
