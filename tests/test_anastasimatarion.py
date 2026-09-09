@@ -17,7 +17,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 70)
+        self.assertEqual(len(pieces), 75)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -450,6 +450,7 @@ class AnastasimatarionTests(unittest.TestCase):
             1: "ψάλλονται σε ήχο α΄",
             2: "ψάλλονται σε ήχο β΄",
             3: "ψάλλονται σε ήχο γ΄",
+            4: "ψάλλονται σε ήχο δ΄",
             5: "ψάλλονται σε ήχο πλ α΄",
             6: "ψάλλονται σε ήχο πλ β΄",
             7: "ψάλλονται σε ήχο βαρύ",
@@ -480,6 +481,33 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn('data-music-piece="litourgia-tone-8-cherouvikon"', result.html)
         self.assertIn('data-music-piece="litourgia-tone-8-leitourgika"', result.html)
         self.assertIn('data-music-piece="litourgia-koinonikon-thursday-pandekti"', result.html)
+
+    def test_sunday_koinonikon_does_not_leak_from_alleluia_instructions(self):
+        source = (
+            "ψάλλονται σε ήχο πλ α΄.<br>"
+            "ΑΛΛΗΛΟΥΑΡΙΟΝ 1ου ΕΥΑΓΓΕΛΙΟΥ.<br>"
+            "Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν.<br>"
+            "Στίχ. 2 Αἰνεῖτε αὐτὸν, πάντες οἱ ἄγγελοι αὐτοῦ.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 10), "litourgia", source)
+        self.assertEqual(result.attachment_count, 0)
+        self.assertNotIn("litourgia-tone-5-koinonikon", result.html)
+
+    def test_fourth_tone_agia_uses_the_feast_setting_without_regular_tone_duplicates(self):
+        note = "ψάλλονται σε ήχο δ΄ άγια.<br>"
+        source = (
+            note
+            + "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+            + "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ "
+            + "τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος "
+            + "ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.<br>"
+            + "Ἄξιον καὶ δίκαιον.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
+        self.assertIn('data-music-piece="litourgia-cherouvikon-pandekti"', result.html)
+        self.assertIn('data-music-piece="litourgia-axion-tone4-pandekti"', result.html)
+        self.assertNotIn('data-music-piece="litourgia-tone-4-cherouvikon"', result.html)
+        self.assertNotIn('data-music-piece="litourgia-tone-4-leitourgika"', result.html)
 
     def test_menaia_pages_never_leak_from_a_neighbouring_date(self):
         # 10 September is not represented in the verified Kypseli catalogue.

@@ -69,6 +69,7 @@ PDFs under `/var/lib/kihem/books`:
 - `melodos-liturgy-tone-1.pdf`, source post `?p=2063`;
 - `melodos-liturgy-tone-2.pdf`, source post `?p=2087`;
 - `melodos-liturgy-tone-3.pdf`, source post `?p=2167`;
+- `melodos-liturgy-tone-4.pdf`, source category `?cat=157`;
 - `melodos-liturgy-tone-5.pdf`, source post `?p=2238`;
 - `melodos-liturgy-tone-6.pdf`, source post `?p=1932`;
 - `melodos-liturgy-tone-7.pdf`, source post `?p=1967`;
@@ -76,10 +77,12 @@ PDFs under `/var/lib/kihem/books`:
 
 Each has verified regions for the short Cheroubikon, the Litourgika, the two
 Amens/«Σὲ ὑμνοῦμεν», the «Ἄξιον καὶ δίκαιον» response and the Sunday
-«Αἰνεῖτε τὸν Κύριον» social. The fourth-tone agia feast remains backed by the
-D΄ Pandekti scan; a separate fourth-tone PDF supplies the «Ἄξιον καὶ δίκαιον»
-region. The D΄ volume also supplies the verified Thursday, Friday and Cross
-Elevation socials (printed pp. 348–350, 354–355 and 492–493).
+«Αἰνεῖτε τὸν Κύριον» social. The regular fourth-tone days use the local
+fourth-tone scan (Cheroubikon pp. 1–4, Litourgika pp. 5–10, Koinonikon pp.
+11–12). The fourth-tone agia feast remains backed by the D΄ Pandekti scan,
+with its separate «Καὶ μετὰ τοῦ πνεύματός σου» and «Ἄξιον καὶ δίκαιον»
+responses. The D΄ volume also supplies the verified Thursday and Friday
+socials (printed pp. 348–350 and 354–355).
 
 The Melodos note is a hard gate: a tone-specific excerpt is attached only when
 the note names that tone. No page from another tone is used as fallback. In

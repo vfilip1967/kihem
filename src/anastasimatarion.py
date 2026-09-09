@@ -123,6 +123,8 @@ class AttachmentRule:
     occurrences: Literal["first", "all"] = "first"
     required_text: tuple[str, ...] = ()
     required_text_any: tuple[str, ...] = ()
+    excluded_text_any: tuple[str, ...] = ()
+    weekdays: tuple[int, ...] = ()
     month_days: tuple[tuple[int, int], ...] = ()
     match_number: int = 1
     preceding_text: str | None = None
@@ -465,6 +467,17 @@ _TONE_SOURCE_SPECS: Final[dict[int, tuple[str, str, str, str, str, int, tuple[in
         (7, 8),
         (11, 12),
     ),
+    4: (
+        "melodos-liturgy-tone-4",
+        "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος δ΄",
+        "melodos-liturgy-tone-4.pdf",
+        "https://melodos.com/bibliothiki/?cat=157",
+        "https://melodos.com/bibliothiki/wp-content/uploads/04-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-Δ΄-ήχο.pdf",
+        13,
+        (1, 2, 3, 4),
+        (5, 6, 7, 8, 9, 10),
+        (11, 12),
+    ),
     5: (
         "melodos-liturgy-tone-5",
         "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος πλ. α΄",
@@ -515,6 +528,7 @@ _TONE_LABEL_TEXT: Final[dict[int, str]] = {
     1: "α΄",
     2: "β΄",
     3: "γ΄",
+    4: "δ΄",
     5: "πλ. α΄",
     6: "πλ. β΄",
     7: "βαρύς",
@@ -525,6 +539,7 @@ _TONE_AMIN_PAGES: Final[dict[int, tuple[int, ...]]] = {
     1: (12,),
     2: (10,),
     3: (8, 9),
+    4: (8, 9),
     5: (11, 12),
     6: (9,),
     7: (9,),
@@ -814,6 +829,10 @@ _TONE_REQUIREMENTS: Final[dict[int, tuple[str, ...]]] = {
     1: ("ψάλλονται σε ήχο α΄",),
     2: ("ψάλλονται σε ήχο β΄",),
     3: ("ψάλλονται σε ήχο γ΄",),
+    # A simple fourth-tone day uses the compact fourth-tone scan below.  The
+    # feast-day «δ΄ ἅγια» note is intentionally excluded: it has its own
+    # verified settings in the D΄ volume and must not receive both variants.
+    4: ("ψάλλονται σε ήχο δ΄",),
     5: (
         "ψάλλονται σε ήχο πλ α΄",
         "ψάλλονται στον πλ α΄",
@@ -839,30 +858,40 @@ for _tone, _requirements in _TONE_REQUIREMENTS.items():
                 "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
                 f"litourgia-tone-{_tone}-cherouvikon",
                 required_text_any=_requirements,
+                excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
             ),
             AttachmentRule(
                 "litourgia",
                 _LITOURGIA_SANCTUS,
                 f"litourgia-tone-{_tone}-leitourgika",
                 required_text_any=_requirements,
+                excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
             ),
             AttachmentRule(
                 "litourgia",
                 "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν",
                 f"litourgia-tone-{_tone}-amin-se-ymnoumen",
                 required_text_any=_requirements,
+                excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
             ),
             AttachmentRule(
                 "litourgia",
                 "Ἄξιον καὶ δίκαιον",
                 f"litourgia-tone-{_tone}-axion-kai-dikaion",
                 required_text_any=_requirements,
+                excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
             ),
             AttachmentRule(
                 "litourgia",
                 "Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν",
                 f"litourgia-tone-{_tone}-koinonikon",
                 required_text_any=_requirements,
+                excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
+                # This is the Sunday Koinonikon.  The same phrase also occurs
+                # in Melodos' weekday Gospel/Alleluia instructions, so the
+                # weekday gate prevents a Sunday setting from leaking into a
+                # Monday–Saturday service.
+                weekdays=(6,),
             ),
         )
     )
@@ -870,16 +899,6 @@ for _tone, _requirements in _TONE_REQUIREMENTS.items():
 # The daily-cycle socials are kept in the same D΄ volume, with their printed
 # headings checked against the day named by Melodos.  They complement the
 # Sunday «Αἰνεῖτε» setting in each tone-specific scan above.
-BOOKS["melodos-liturgy-tone-4"] = MusicBook(
-    "melodos-liturgy-tone-4",
-    "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος δ΄",
-    "Χερουβικόν, Λειτουργικά καὶ Κοινωνικόν · σύντομη τονική έκδοση",
-    "https://melodos.com/bibliothiki/?p=2037",
-    "melodos-liturgy-tone-4.pdf",
-    13,
-    "Μελωδός · ψηφιοποιημένο μουσικό τεκμήριο",
-    "https://melodos.com/bibliothiki/wp-content/uploads/04-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-Δ΄-ήχο.pdf",
-)
 PIECES.update(
     {
         "litourgia-koinonikon-thursday-pandekti": MusicPiece(
@@ -896,18 +915,16 @@ PIECES.update(
             (ScanRegion(354, 354), ScanRegion(355, 355)),
             book_id=PANDEKTI_LITOURGIA_BOOK_ID,
         ),
-        "litourgia-koinonikon-cross-pandekti": MusicPiece(
-            "litourgia-koinonikon-cross-pandekti",
-            "Κοινωνικὸν Ὑψώσεως Τιμίου Σταυροῦ · ἦχος πλ. δ΄",
-            "Ἐσημειώθη ἐφ᾿ ἡμᾶς τὸ φῶς τοῦ προσώπου σου",
-            # This short setting begins on p. 492 and continues at the top
-            # of p. 493, before the following tone changes.
-            (ScanRegion(492, 492), ScanRegion(493, 493, (0.02, 0.02, 0.98, 0.43))),
-            book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+        "litourgia-tone4-meta-pneumatos": MusicPiece(
+            "litourgia-tone4-meta-pneumatos",
+            "Καὶ μετὰ τοῦ πνεύματός σου · ἦχος δ΄ · Μελωδός",
+            "Καὶ μετὰ τοῦ πνεύματός σου",
+            (ScanRegion(7, 7, (0.02, 0.02, 0.98, 0.62)),),
+            book_id="melodos-liturgy-tone-4",
         ),
         "litourgia-axion-tone4-pandekti": MusicPiece(
             "litourgia-axion-tone4-pandekti",
-            "Ἄξιον καὶ δίκαιον · ἦχος δ΄ · Μουσικὴ Πανδέκτη",
+            "Ἄξιον καὶ δίκαιον · ἦχος δ΄ · Μελωδός",
             "Ἄξιον καὶ δίκαιον",
             # The response appears at the foot of the fourth-tone setting;
             # retain the complete musical line rather than cutting its neumes.
@@ -932,8 +949,8 @@ _TONE_ATTACHMENT_RULES.extend(
         ),
         AttachmentRule(
             "litourgia",
-            "Ἐσημειώθη ἐφ᾿ ἡμᾶς τὸ φῶς τοῦ προσώπου σου",
-            "litourgia-koinonikon-cross-pandekti",
+            "Καὶ μετὰ τοῦ πνεύματός σου",
+            "litourgia-tone4-meta-pneumatos",
             required_text_any=("ψάλλονται σε ήχο δ΄ άγια",),
         ),
         AttachmentRule(
@@ -1059,9 +1076,15 @@ def enrich_service_html(
             continue
         if rule.month_days and (selected_date.month, selected_date.day) not in rule.month_days:
             continue
+        if rule.weekdays and selected_date.weekday() not in rule.weekdays:
+            continue
         needle = _normalized(rule.after_text)
         normalized_document = _normalized(soup.get_text(" ", strip=True))
         if any(_normalized(required) not in normalized_document for required in rule.required_text):
+            continue
+        if rule.excluded_text_any and any(
+            _normalized(excluded) in normalized_document for excluded in rule.excluded_text_any
+        ):
             continue
         if rule.required_text_any and not any(
             _normalized(required) in normalized_document for required in rule.required_text_any
