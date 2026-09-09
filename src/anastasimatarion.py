@@ -27,6 +27,9 @@ PANDEKTI_BOOK_ID: Final = "pandekti-orthrou-1851"
 IRMOLOGION_BOOK_ID: Final = "ioannis-protopsaltis-eirmologion-1903"
 PANDEKTI_LITOURGIA_BOOK_ID: Final = "pandekti-litourgia-1851"
 KYPSELI_BOOK_ID: Final = "kypseli-stefanou-lampadariou-minaia"
+# The Menaia are date-indexed source material. A page from a neighbouring
+# feast must never be used as a fallback for the selected date.
+DATE_SCOPED_BOOK_IDS: Final[frozenset[str]] = frozenset({KYPSELI_BOOK_ID})
 
 
 @dataclass(frozen=True)
@@ -421,6 +424,176 @@ PIECES: Final[dict[str, MusicPiece]] = {
 }
 
 
+# The D΄ volume above contains the original fourth-tone agia material used
+# for the September feasts.  For ordinary days Melodos explicitly names the
+# tone of the Cheroubikon, the Litourgika and the Koinonikon.  Melodos also
+# publishes compact, tone-specific scans for those three members.  Register
+# those scans as first-class local books so the same three positions are
+# filled for every one of the eight weekly tones, without reusing a page from
+# a different tone.
+_TONE_SOURCE_SPECS: Final[dict[int, tuple[str, str, str, str, str, int, tuple[int, ...], tuple[int, ...], tuple[int, ...]]]] = {
+    1: (
+        "melodos-liturgy-tone-1",
+        "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος α΄",
+        "melodos-liturgy-tone-1.pdf",
+        "https://melodos.com/bibliothiki/?p=2063",
+        "https://melodos.com/bibliothiki/wp-content/uploads/01-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-Α΄-ήχο.pdf",
+        17,
+        (1, 2, 3, 4),
+        (10, 11),
+        (15, 16),
+    ),
+    2: (
+        "melodos-liturgy-tone-2",
+        "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος β΄",
+        "melodos-liturgy-tone-2.pdf",
+        "https://melodos.com/bibliothiki/?p=2087",
+        "https://melodos.com/bibliothiki/wp-content/uploads/02-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-B΄-ήχο.mel.pdf",
+        16,
+        (1, 2, 3, 4),
+        (8, 9),
+        (14, 15),
+    ),
+    3: (
+        "melodos-liturgy-tone-3",
+        "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος γ΄",
+        "melodos-liturgy-tone-3.pdf",
+        "https://melodos.com/bibliothiki/?p=2167",
+        "https://melodos.com/bibliothiki/wp-content/uploads/03-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-Γ΄-ήχο.pdf",
+        12,
+        (1, 2, 3, 4),
+        (7, 8),
+        (11, 12),
+    ),
+    5: (
+        "melodos-liturgy-tone-5",
+        "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος πλ. α΄",
+        "melodos-liturgy-tone-5.pdf",
+        "https://melodos.com/bibliothiki/?p=2238",
+        "https://melodos.com/bibliothiki/wp-content/uploads/05-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-Πλ.-Α΄-ήχο.pdf",
+        23,
+        (1, 2, 3, 4),
+        (9, 10),
+        (22, 23),
+    ),
+    6: (
+        "melodos-liturgy-tone-6",
+        "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος πλ. β΄",
+        "melodos-liturgy-tone-6.pdf",
+        "https://melodos.com/bibliothiki/?p=1932",
+        "https://melodos.com/bibliothiki/wp-content/uploads/06-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-πλ.-β΄.pdf",
+        14,
+        (1, 2, 3, 4),
+        (8, 9),
+        (12, 13),
+    ),
+    7: (
+        "melodos-liturgy-tone-7",
+        "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος βαρύς",
+        "melodos-liturgy-tone-7.pdf",
+        "https://melodos.com/bibliothiki/?p=1967",
+        "https://melodos.com/bibliothiki/wp-content/uploads/07-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-βαρύ.pdf",
+        14,
+        (1, 2, 3, 4),
+        (5, 6, 7, 8),
+        (12, 13),
+    ),
+    8: (
+        "melodos-liturgy-tone-8",
+        "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος πλ. δ΄",
+        "melodos-liturgy-tone-8.pdf",
+        "https://melodos.com/bibliothiki/?p=2037",
+        "https://melodos.com/bibliothiki/wp-content/uploads/08-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-Πλ.-δ΄.pdf",
+        15,
+        (1, 2, 3, 4),
+        (10, 11),
+        (13, 14),
+    ),
+}
+
+_TONE_LABEL_TEXT: Final[dict[int, str]] = {
+    1: "α΄",
+    2: "β΄",
+    3: "γ΄",
+    5: "πλ. α΄",
+    6: "πλ. β΄",
+    7: "βαρύς",
+    8: "πλ. δ΄",
+}
+
+_TONE_AMIN_PAGES: Final[dict[int, tuple[int, ...]]] = {
+    1: (12,),
+    2: (10,),
+    3: (8, 9),
+    5: (11, 12),
+    6: (9,),
+    7: (9,),
+    8: (11, 12),
+}
+
+
+def _tone_scan_regions(pages: tuple[int, ...]) -> tuple[ScanRegion, ...]:
+    return tuple(ScanRegion(page, page) for page in pages)
+
+
+for _tone, (
+    _book_id,
+    _book_title,
+    _filename,
+    _source_page,
+    _download_url,
+    _minimum_pages,
+    _cherouvikon_pages,
+    _leitourgika_pages,
+    _koinonikon_pages,
+) in _TONE_SOURCE_SPECS.items():
+    BOOKS[_book_id] = MusicBook(
+        _book_id,
+        _book_title,
+        "Χερουβικόν, Λειτουργικά καὶ Κοινωνικόν · σύντομη τονική έκδοση",
+        _source_page,
+        _filename,
+        _minimum_pages,
+        "Μελωδός · ψηφιοποιημένο μουσικό τεκμήριο",
+        _download_url,
+    )
+    PIECES[f"litourgia-tone-{_tone}-cherouvikon"] = MusicPiece(
+        f"litourgia-tone-{_tone}-cherouvikon",
+        f"Χερουβικὸν · σύντομον · ἦχος {_TONE_LABEL_TEXT[_tone]} · Μελωδός",
+        "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+        _tone_scan_regions(_cherouvikon_pages),
+        book_id=_book_id,
+    )
+    PIECES[f"litourgia-tone-{_tone}-leitourgika"] = MusicPiece(
+        f"litourgia-tone-{_tone}-leitourgika",
+        f"Λειτουργικά · ἦχος {_TONE_LABEL_TEXT[_tone]} · Μελωδός",
+        "Ἔλεον εἰρήνης, θυσίαν αἰνέσεως",
+        _tone_scan_regions(_leitourgika_pages),
+        book_id=_book_id,
+    )
+    PIECES[f"litourgia-tone-{_tone}-amin-se-ymnoumen"] = MusicPiece(
+        f"litourgia-tone-{_tone}-amin-se-ymnoumen",
+        f"Ἀμήν · Σὲ ὑμνοῦμεν… · ἦχος {_TONE_LABEL_TEXT[_tone]} · Μελωδός",
+        "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν",
+        _tone_scan_regions(_TONE_AMIN_PAGES[_tone]),
+        book_id=_book_id,
+    )
+    PIECES[f"litourgia-tone-{_tone}-axion-kai-dikaion"] = MusicPiece(
+        f"litourgia-tone-{_tone}-axion-kai-dikaion",
+        f"Ἄξιον καὶ δίκαιον · ἦχος {_TONE_LABEL_TEXT[_tone]} · Μελωδός",
+        "Ἄξιον καὶ δίκαιον",
+        _tone_scan_regions(_leitourgika_pages),
+        book_id=_book_id,
+    )
+    PIECES[f"litourgia-tone-{_tone}-koinonikon"] = MusicPiece(
+        f"litourgia-tone-{_tone}-koinonikon",
+        f"Κοινωνικόν · Αἰνεῖτε τὸν Κύριον · ἦχος {_TONE_LABEL_TEXT[_tone]} · Μελωδός",
+        "Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν",
+        _tone_scan_regions(_koinonikon_pages),
+        book_id=_book_id,
+    )
+
+
 PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     AttachmentRule(
         "orthros",
@@ -629,8 +802,149 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Ἀγαπήσω σε, Κύριε, ἡ ἰσχύς μου",
         "litourgia-agapiso-pandekti",
+        # The existing D΄-volume scan is the fourth-tone agia setting.  Do
+        # not display it on a day whose Melodos note selects another tone;
+        # those days use the matching setting from the tone-specific scan.
+        required_text_any=("ψάλλονται σε ήχο δ΄ άγια",),
     ),
 )
+
+
+_TONE_REQUIREMENTS: Final[dict[int, tuple[str, ...]]] = {
+    1: ("ψάλλονται σε ήχο α΄",),
+    2: ("ψάλλονται σε ήχο β΄",),
+    3: ("ψάλλονται σε ήχο γ΄",),
+    5: (
+        "ψάλλονται σε ήχο πλ α΄",
+        "ψάλλονται στον πλ α΄",
+        "ήχο της εβδομάδος  πλ α΄",
+    ),
+    6: ("ψάλλονται σε ήχο πλ β΄", "ήχο πλ β΄"),
+    7: ("ψάλλονται σε ήχο βαρύ",),
+    8: ("ψάλλονται σε ήχο πλ δ΄",),
+}
+
+_LITOURGIA_SANCTUS: Final[str] = (
+    "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ "
+    "τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος "
+    "ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις."
+)
+
+_TONE_ATTACHMENT_RULES: list[AttachmentRule] = []
+for _tone, _requirements in _TONE_REQUIREMENTS.items():
+    _TONE_ATTACHMENT_RULES.extend(
+        (
+            AttachmentRule(
+                "litourgia",
+                "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+                f"litourgia-tone-{_tone}-cherouvikon",
+                required_text_any=_requirements,
+            ),
+            AttachmentRule(
+                "litourgia",
+                _LITOURGIA_SANCTUS,
+                f"litourgia-tone-{_tone}-leitourgika",
+                required_text_any=_requirements,
+            ),
+            AttachmentRule(
+                "litourgia",
+                "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν",
+                f"litourgia-tone-{_tone}-amin-se-ymnoumen",
+                required_text_any=_requirements,
+            ),
+            AttachmentRule(
+                "litourgia",
+                "Ἄξιον καὶ δίκαιον",
+                f"litourgia-tone-{_tone}-axion-kai-dikaion",
+                required_text_any=_requirements,
+            ),
+            AttachmentRule(
+                "litourgia",
+                "Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν",
+                f"litourgia-tone-{_tone}-koinonikon",
+                required_text_any=_requirements,
+            ),
+        )
+    )
+
+# The daily-cycle socials are kept in the same D΄ volume, with their printed
+# headings checked against the day named by Melodos.  They complement the
+# Sunday «Αἰνεῖτε» setting in each tone-specific scan above.
+BOOKS["melodos-liturgy-tone-4"] = MusicBook(
+    "melodos-liturgy-tone-4",
+    "Μουσικὰ μέλη Θείας Λειτουργίας · ἦχος δ΄",
+    "Χερουβικόν, Λειτουργικά καὶ Κοινωνικόν · σύντομη τονική έκδοση",
+    "https://melodos.com/bibliothiki/?p=2037",
+    "melodos-liturgy-tone-4.pdf",
+    13,
+    "Μελωδός · ψηφιοποιημένο μουσικό τεκμήριο",
+    "https://melodos.com/bibliothiki/wp-content/uploads/04-Χερουβικό-Λειτουργικά-και-Κοινωνικό-σε-Δ΄-ήχο.pdf",
+)
+PIECES.update(
+    {
+        "litourgia-koinonikon-thursday-pandekti": MusicPiece(
+            "litourgia-koinonikon-thursday-pandekti",
+            "Κοινωνικὸν Πέμπτης · ἦχος πλ. δ΄ · Εἰς πᾶσαν τὴν γῆν",
+            "Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν ὁ φθόγγος αὐτῶν",
+            (ScanRegion(348, 348), ScanRegion(349, 349), ScanRegion(350, 350)),
+            book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+        ),
+        "litourgia-koinonikon-friday-pandekti": MusicPiece(
+            "litourgia-koinonikon-friday-pandekti",
+            "Κοινωνικὸν Παρασκευῆς · ἦχος πλ. α΄ · Σωτηρίαν εἰργάσω",
+            "Σωτηρίαν εἰργάσω ἐν μέσῳ τῆς γῆς",
+            (ScanRegion(354, 354), ScanRegion(355, 355)),
+            book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+        ),
+        "litourgia-koinonikon-cross-pandekti": MusicPiece(
+            "litourgia-koinonikon-cross-pandekti",
+            "Κοινωνικὸν Ὑψώσεως Τιμίου Σταυροῦ · ἦχος πλ. δ΄",
+            "Ἐσημειώθη ἐφ᾿ ἡμᾶς τὸ φῶς τοῦ προσώπου σου",
+            # This short setting begins on p. 492 and continues at the top
+            # of p. 493, before the following tone changes.
+            (ScanRegion(492, 492), ScanRegion(493, 493, (0.02, 0.02, 0.98, 0.43))),
+            book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+        ),
+        "litourgia-axion-tone4-pandekti": MusicPiece(
+            "litourgia-axion-tone4-pandekti",
+            "Ἄξιον καὶ δίκαιον · ἦχος δ΄ · Μουσικὴ Πανδέκτη",
+            "Ἄξιον καὶ δίκαιον",
+            # The response appears at the foot of the fourth-tone setting;
+            # retain the complete musical line rather than cutting its neumes.
+            (ScanRegion(7, 7, (0.02, 0.66, 0.98, 0.98)),),
+            book_id="melodos-liturgy-tone-4",
+        ),
+    }
+)
+_TONE_ATTACHMENT_RULES.extend(
+    (
+        AttachmentRule(
+            "litourgia",
+            "Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν ὁ φθόγγος αὐτῶν",
+            "litourgia-koinonikon-thursday-pandekti",
+            required_text_any=("ψάλλονται σε ήχο πλ δ΄",),
+        ),
+        AttachmentRule(
+            "litourgia",
+            "Σωτηρίαν εἰργάσω ἐν μέσῳ τῆς γῆς",
+            "litourgia-koinonikon-friday-pandekti",
+            required_text_any=("ψάλλονται σε ήχο πλ α΄",),
+        ),
+        AttachmentRule(
+            "litourgia",
+            "Ἐσημειώθη ἐφ᾿ ἡμᾶς τὸ φῶς τοῦ προσώπου σου",
+            "litourgia-koinonikon-cross-pandekti",
+            required_text_any=("ψάλλονται σε ήχο δ΄ άγια",),
+        ),
+        AttachmentRule(
+            "litourgia",
+            "Ἄξιον καὶ δίκαιον",
+            "litourgia-axion-tone4-pandekti",
+            required_text_any=("ψάλλονται σε ήχο δ΄ άγια",),
+        ),
+    )
+)
+PILOT_RULES += tuple(_TONE_ATTACHMENT_RULES)
 
 
 def catalog_pieces() -> tuple[MusicPiece, ...]:
@@ -651,7 +965,16 @@ def get_piece(book_id: str, piece_id: str) -> MusicPiece:
 
 def _normalized(value: str) -> str:
     value = unicodedata.normalize("NFD", value.casefold())
-    return "".join(ch for ch in value if unicodedata.category(ch) != "Mn")
+    # Melodos alternates commas, Greek ano teleia, apostrophes and full stops
+    # between otherwise identical liturgical lines.  Strip punctuation for
+    # matching only; the source HTML and all displayed polytonic text remain
+    # untouched.
+    cleaned = "".join(
+        ch
+        for ch in value
+        if unicodedata.category(ch) not in {"Mn", "Pc", "Pd", "Pe", "Pf", "Pi", "Po", "Ps"}
+    )
+    return " ".join(cleaned.split())
 
 
 def _bookmark_id(piece: MusicPiece, instance: int) -> str:
@@ -727,6 +1050,13 @@ def enrich_service_html(
     bookmarks: list[MusicBookmark] = []
 
     for rule in rules:
+        piece = PIECES[rule.piece_id]
+        # Date-scoped books (currently the Menaia) are intentionally strict:
+        # every attachment must carry an exact month/day entry. This keeps a
+        # feast's musical pages from leaking into an ordinary weekday or from
+        # being guessed from the preceding/following day.
+        if piece.book_id in DATE_SCOPED_BOOK_IDS and not rule.month_days:
+            continue
         if rule.month_days and (selected_date.month, selected_date.day) not in rule.month_days:
             continue
         needle = _normalized(rule.after_text)
@@ -760,7 +1090,6 @@ def enrich_service_html(
             unmatched.append(rule.piece_id)
             continue
 
-        piece = PIECES[rule.piece_id]
         for text_node in matches:
             attachment_count += 1
             instance = instance_offset + attachment_count
@@ -819,6 +1148,11 @@ class AnastasimatarionRenderer:
             PANDEKTI_LITOURGIA_BOOK_ID: self.books_dir / BOOKS[PANDEKTI_LITOURGIA_BOOK_ID].local_filename,
             KYPSELI_BOOK_ID: self.books_dir / BOOKS[KYPSELI_BOOK_ID].local_filename,
         }
+        # Tone-specific Melodos scans are registered in the catalogue above;
+        # keep their persistent paths in the same renderer map so they are
+        # downloaded lazily on the first requested excerpt.
+        for book_id, book in BOOKS.items():
+            self.pdf_paths.setdefault(book_id, self.books_dir / book.local_filename)
         self.session = session or requests.Session()
         self.session.headers.update({"User-Agent": "Kihem/0.3 (+personal liturgical reading tool)"})
 

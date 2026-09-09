@@ -14,6 +14,7 @@
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
+html.is-auto-scrolling { scroll-behavior: auto; }
 
 body {
   margin: 0;
@@ -158,6 +159,7 @@ button:hover { background: var(--wine-dark); }
   z-index: 2;
   top: 0;
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   padding: 12px 0;
@@ -223,6 +225,45 @@ button:hover { background: var(--wine-dark); }
   line-height: 1.35;
 }
 .music-bookmarks-list a:hover, .music-bookmarks-list a:focus-visible { background: var(--paper); }
+
+.scroll-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+  padding: 3px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-family: Arial, sans-serif;
+}
+.scroll-controls-label {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.scroll-controls button {
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: var(--wine-dark);
+  background: transparent;
+  cursor: pointer;
+  font: 700 0.84rem/1 Arial, sans-serif;
+}
+.scroll-controls button:hover,
+.scroll-controls button:focus-visible {
+  border-color: var(--gold);
+  color: white;
+  background: var(--wine);
+}
+.scroll-controls button:disabled {
+  color: #bdb3a6;
+  cursor: default;
+}
+.scroll-controls button:disabled:hover { border-color: transparent; color: #bdb3a6; background: transparent; }
 
 .service-card { margin-top: 18px; border: 1px solid #303030; background: #000; box-shadow: var(--shadow); }
 .service-card > header { padding: 30px 34px 22px; border-bottom: 1px solid #303030; background: #000; }
@@ -338,6 +379,7 @@ button:hover { background: var(--wine-dark); }
   .service-card > header, .service-text { padding: 22px; }
   .result-heading, .site-footer { align-items: flex-start; flex-direction: column; }
   .music-bookmarks-list { right: auto; left: 0; }
+  .scroll-controls { margin-left: 0; }
 }
 
 @media print {

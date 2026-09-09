@@ -51,6 +51,10 @@ class AppTests(unittest.TestCase):
         self.assertIn('href="#music-tone6-apolytikion-1"', text)
         self.assertNotIn('href="#music-tone6-apolytikion-2"', text)
         self.assertIn("link.closest('.music-bookmarks-menu').open = false", text)
+        self.assertIn('data-scroll-controls', text)
+        self.assertIn('data-scroll-slower', text)
+        self.assertIn('data-scroll-faster', text)
+        self.assertIn("kihem-scroll-level", text)
         self.assertNotIn("Μουσικό παράρτημα", text)
 
     def test_index_renders_litourgia_on_its_own_page(self):

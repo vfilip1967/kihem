@@ -17,7 +17,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 31)
+        self.assertEqual(len(pieces), 70)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -49,7 +49,7 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(get_piece(BOOK_ID, "tone6-apolytikion").incipit, "Ἀγγελικαὶ Δυνάμεις")
         self.assertEqual(get_piece(PANDEKTI_BOOK_ID, "psalm-50-tone2").book_id, PANDEKTI_BOOK_ID)
         self.assertEqual(get_piece(IRMOLOGION_BOOK_ID, "cross-katavasies").book_id, IRMOLOGION_BOOK_ID)
-        self.assertEqual(len(catalog_books()), 5)
+        self.assertEqual(len(catalog_books()), 13)
         self.assertEqual(
             get_piece(PANDEKTI_LITOURGIA_BOOK_ID, "litourgia-eisodikon-pandekti").book_id,
             PANDEKTI_LITOURGIA_BOOK_ID,
@@ -258,9 +258,10 @@ class AnastasimatarionTests(unittest.TestCase):
         )
         result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
 
-        self.assertEqual(result.attachment_count, 2)
+        self.assertEqual(result.attachment_count, 3)
         self.assertIn('data-music-piece="litourgia-cherouvikon-pandekti"', result.html)
         self.assertIn('data-music-piece="litourgia-koinonikon-pandekti"', result.html)
+        self.assertIn('data-music-piece="litourgia-axion-tone4-pandekti"', result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-cherouvikon-pandekti/1.png", result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-koinonikon-pandekti/1.png", result.html)
 
@@ -425,6 +426,8 @@ class AnastasimatarionTests(unittest.TestCase):
 
     def test_litourgia_gets_paraschou_and_agapiso_responses(self):
         source = (
+            "Σύμφωνα με το άγραφο Τυπικό της Μεγάλης του Χριστου Εκκλησίας, "
+            "ψάλλονται σε ήχο δ΄ άγια.<br>"
             "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>"
             "Παράσχου Κύριε.<br>"
             "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.<br>"
@@ -436,3 +439,58 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn('data-music-piece="litourgia-paraschou-pandekti"', result.html)
         self.assertIn('data-music-piece="litourgia-patera-pandekti"', result.html)
         self.assertIn('data-music-piece="litourgia-agapiso-pandekti"', result.html)
+
+    def test_every_weekly_tone_gets_tone_specific_core_members(self):
+        sanctus = (
+            "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ "
+            "τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος "
+            "ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις."
+        )
+        notes = {
+            1: "ψάλλονται σε ήχο α΄",
+            2: "ψάλλονται σε ήχο β΄",
+            3: "ψάλλονται σε ήχο γ΄",
+            5: "ψάλλονται σε ήχο πλ α΄",
+            6: "ψάλλονται σε ήχο πλ β΄",
+            7: "ψάλλονται σε ήχο βαρύ",
+            8: "ψάλλονται σε ήχο πλ δ΄",
+        }
+        for tone, note in notes.items():
+            source = (
+                f"{note}<br>Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+                f"{sanctus}<br>Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, "
+                "Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν."
+            )
+            result = enrich_service_html(date(2026, 9, 10), "litourgia", source)
+            self.assertEqual(result.attachment_count, 3, tone)
+            for member in ("cherouvikon", "leitourgika", "amin-se-ymnoumen"):
+                self.assertIn(f'data-music-piece="litourgia-tone-{tone}-{member}"', result.html)
+
+    def test_tenth_september_adds_plagal_fourth_thursday_social(self):
+        source = (
+            "ψάλλονται σε ήχο πλ δ΄.<br>"
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+            "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ "
+            "τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος "
+            "ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.<br>"
+            "Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν ὁ φθόγγος αὐτῶν."
+        )
+        result = enrich_service_html(date(2026, 9, 10), "litourgia", source)
+        self.assertEqual(result.attachment_count, 3)
+        self.assertIn('data-music-piece="litourgia-tone-8-cherouvikon"', result.html)
+        self.assertIn('data-music-piece="litourgia-tone-8-leitourgika"', result.html)
+        self.assertIn('data-music-piece="litourgia-koinonikon-thursday-pandekti"', result.html)
+
+    def test_menaia_pages_never_leak_from_a_neighbouring_date(self):
+        # 10 September is not represented in the verified Kypseli catalogue.
+        # Even if the Melodos text repeats a nearby feast's wording, its pages
+        # must stay unattached until the exact date is catalogued.
+        source = (
+            "Ἡ γέννησίς σου Θεοτόκε, χαρὰν ἐμήνυσε πάσῃ τῇ οἰκουμένῃ· "
+            "καὶ καταργήσας τὸν θάνατον, ἐδωρήσατο ἡμῖν ζωὴν τὴν αἰώνιον.<br>"
+            "Σήμερον ἡ πανάμωμος Ἁγνὴ προῆλθεν ἐκ τῆς στείρας· "
+            "Ἡμεῖς δὲ δοξολογοῦντες βοῶμεν· Δόξα ἐν ὑψίστοις Θεῷ.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 10), "orthros", source)
+
+        self.assertNotIn("data-music-piece=\"kypseli-", result.html)

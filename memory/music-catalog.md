@@ -1,6 +1,6 @@
 # Kihem music-source memory
 
-Updated: 2026-09-08
+Updated: 2026-09-09
 
 ## Persistent books
 
@@ -59,6 +59,42 @@ Updated: 2026-09-08
   sung in fourth-tone agia on a simple Wednesday. The existing Pandekti
   fourth-tone excerpts are therefore enabled for that note; a non-matching
   special koinonikon is left unattached rather than guessed.
+
+## Tone-specific Divine Liturgy core
+
+Melodos publishes compact, localizable scans containing the three central
+tone-dependent members. The application registers and lazily downloads these
+PDFs under `/var/lib/kihem/books`:
+
+- `melodos-liturgy-tone-1.pdf`, source post `?p=2063`;
+- `melodos-liturgy-tone-2.pdf`, source post `?p=2087`;
+- `melodos-liturgy-tone-3.pdf`, source post `?p=2167`;
+- `melodos-liturgy-tone-5.pdf`, source post `?p=2238`;
+- `melodos-liturgy-tone-6.pdf`, source post `?p=1932`;
+- `melodos-liturgy-tone-7.pdf`, source post `?p=1967`;
+- `melodos-liturgy-tone-8.pdf`, source post `?p=2037`.
+
+Each has verified regions for the short Cheroubikon, the Litourgika, the two
+Amens/«Σὲ ὑμνοῦμεν», the «Ἄξιον καὶ δίκαιον» response and the Sunday
+«Αἰνεῖτε τὸν Κύριον» social. The fourth-tone agia feast remains backed by the
+D΄ Pandekti scan; a separate fourth-tone PDF supplies the «Ἄξιον καὶ δίκαιον»
+region. The D΄ volume also supplies the verified Thursday, Friday and Cross
+Elevation socials (printed pp. 348–350, 354–355 and 492–493).
+
+The Melodos note is a hard gate: a tone-specific excerpt is attached only when
+the note names that tone. No page from another tone is used as fallback. In
+the 8–16 September 2026 verification window every Divine Liturgy has at
+least 12 attachments; 10 September has 14, including the plagal-fourth
+Thursday social «Εἰς πᾶσαν τὴν γῆν…».
+
+## Exact-date Menaia policy
+
+At composition time, inspect the Menaia for the exact selected date. Every
+verified excerpt found for that date is attached to its matching position in
+the Orthros, Divine Liturgy, or (once implemented) Vespers. A neighbouring
+date is never used as a fallback, and a text or tone match alone is not enough.
+The current Kypseli scan has no verified entry for 10 September 2026, so no
+Kypseli page is attached for that day.
 
 ## Matching and rendering invariants
 
