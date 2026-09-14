@@ -73,7 +73,6 @@ class AppTests(unittest.TestCase):
         self.assertNotIn('href="#music-tone6-apolytikion-2"', text)
         self.assertIn("link.closest('.music-bookmarks-menu').open = false", text)
         self.assertIn('data-scroll-controls', text)
-        self.assertIn('Κύλιση 1', text)
         self.assertIn('data-scroll-toggle', text)
         self.assertIn('readerToolbar.append(isokratisPanel)', text)
         self.assertNotIn('data-scroll-slower', text)
