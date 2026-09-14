@@ -273,12 +273,15 @@ button:hover { background: var(--wine-dark); }
 .service-nav > .isokratis-panel .ison-stepper output { min-width: 29px; padding: 0 5px; font-size: 0.76rem; }
 .service-nav > .isokratis-panel .ison-stepper .ison-natural { min-width: 26px; }
 .service-nav > .isokratis-panel .ison-actions { grid-column: 2; grid-row: 2; gap: 5px; margin: 0; }
-.service-nav > .isokratis-panel .ison-actions button { min-height: 29px; padding: 0 8px; font-size: 0.68rem; }
+.service-nav > .isokratis-panel .ison-actions button { min-height: 25px; padding: 0 8px; font-size: 0.68rem; }
 .service-nav > .isokratis-panel .prosomia-player {
   display: grid;
   grid-template-columns: minmax(100px, 0.75fr) minmax(140px, 1.35fr) auto;
   gap: 7px;
   align-items: end;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 .service-nav > .isokratis-panel .prosomia-player > label { gap: 2px; margin: 0; font-size: 0.61rem; }
 .service-nav > .isokratis-panel .prosomia-player select { min-height: 29px; padding: 0 6px; font-size: 0.72rem; }

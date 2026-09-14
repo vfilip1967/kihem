@@ -94,14 +94,14 @@
         <section class="prosomia-player" aria-labelledby="prosomia-heading">
           <h3 id="prosomia-heading">Προσόμοια και ηχογραφήσεις</h3>
           {% if prosomia_groups %}
-            <label>Κατηγορία
+            <label aria-label="Κατηγορία">
               <select data-prosomia-group>
                 {% for group in prosomia_groups %}
                   <option value="{{ loop.index0 }}">{{ group.label }}</option>
                 {% endfor %}
               </select>
             </label>
-            <label>Ηχογράφηση
+            <label aria-label="Ηχογράφηση">
               <select data-prosomia-track>
                 {% for track in prosomia_groups[0].tracks %}
                   <option value="{{ track.url }}">{{ track.label }}</option>
