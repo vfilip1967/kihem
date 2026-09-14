@@ -189,6 +189,15 @@
     <a href="?date={{ calendar.current_date.isoformat() }}&services={{ selected_services }}&refresh=1">Ανανέωση από την πηγή</a>
   </footer>
   <script>
+    // Keep the complete audio desk inside the same sticky toolbar as the
+    // service, music-bookmark and reading-scroll controls. Audio interaction
+    // itself needs JavaScript too, so this runs before initializing players.
+    (() => {
+      const readerToolbar = document.querySelector('.service-nav');
+      const isokratisPanel = document.querySelector('[data-isokratis]');
+      if (readerToolbar && isokratisPanel) readerToolbar.append(isokratisPanel);
+    })();
+
     document.querySelectorAll('.music-bookmarks-list a').forEach((link) => {
       link.addEventListener('click', (event) => {
         const target = document.querySelector(link.hash);

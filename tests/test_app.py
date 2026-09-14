@@ -75,6 +75,7 @@ class AppTests(unittest.TestCase):
         self.assertIn('data-scroll-controls', text)
         self.assertIn('Κύλιση 1', text)
         self.assertIn('data-scroll-toggle', text)
+        self.assertIn('readerToolbar.append(isokratisPanel)', text)
         self.assertNotIn('data-scroll-slower', text)
         self.assertNotIn('data-scroll-faster', text)
         self.assertNotIn("kihem-scroll-level", text)

@@ -230,6 +230,21 @@ button:hover { background: var(--wine-dark); }
   backdrop-filter: blur(10px);
 }
 
+/* The ison and recording controls are moved into this sticky reader toolbar
+   by the page script, so they remain visible while the service text passes
+   beneath them together with the service/navigation controls. */
+.service-nav > .isokratis-panel {
+  flex: 1 0 100%;
+  margin: 0;
+  padding: 20px;
+  box-shadow: none;
+}
+.service-nav > .isokratis-panel .isokratis-heading { margin-bottom: 16px; }
+.service-nav > .isokratis-panel .ison-player,
+.service-nav > .isokratis-panel .prosomia-player { padding: 16px; }
+.service-nav > .isokratis-panel .ison-adjustments { margin-top: 12px; }
+.service-nav > .isokratis-panel .ison-actions { margin-top: 12px; }
+
 .service-nav a {
   padding: 8px 12px;
   border: 1px solid var(--line);
@@ -433,6 +448,7 @@ button:hover { background: var(--wine-dark); }
   .brand-mark { flex-basis: 58px; width: 58px; height: 58px; font-size: 30px; }
   .selector { padding: 22px; }
   .isokratis-panel { padding: 22px; }
+  .service-nav > .isokratis-panel { padding: 14px; }
   .isokratis-heading { align-items: stretch; flex-direction: column; gap: 12px; }
   .ison-status { max-width: none; }
   .ison-note-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
