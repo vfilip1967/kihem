@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import os
+from urllib.parse import quote
 
-from flask import Flask, abort, render_template, request, send_file, url_for
+from flask import Flask, abort, render_template, request, send_file
 from markupsafe import Markup
 
 from src.anastasimatarion import (
@@ -115,13 +116,17 @@ def create_app(config: dict | None = None) -> Flask:
             melodos_url=MELODOS_HOME,
             ison_notes=ISON_NOTES,
             ison_numbers=sorted(media_library.ison_numbers),
+            # Kihem is reverse-proxied below /kihem/.  Keep media URLs
+            # relative so the browser requests /kihem/isokratis/... rather
+            # than the unrelated /isokratis/... at the domain root.
+            ison_url_template="isokratis/ison/__number__.mp3",
             prosomia_groups=tuple(
                 {
                     "label": MODE_LABELS[mode],
                     "tracks": tuple(
                         {
                             "label": track.label,
-                            "url": url_for("prosomia_audio", filename=track.filename),
+                            "url": f"isokratis/prosomia/{quote(track.filename, safe='')}",
                         }
                         for track in tracks
                     ),

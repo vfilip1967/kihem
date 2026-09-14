@@ -41,7 +41,7 @@
     </section>
 
     <section class="isokratis-panel" data-isokratis aria-labelledby="isokratis-heading"
-      data-ison-url-template="{{ url_for('ison_audio', number=999999)|replace('999999', '__number__') }}"
+      data-ison-url-template="{{ ison_url_template }}"
       data-available-ison='{{ ison_numbers|tojson }}'>
       <div class="isokratis-heading">
         <div>

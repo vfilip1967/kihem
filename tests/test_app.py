@@ -82,6 +82,8 @@ class AppTests(unittest.TestCase):
         self.assertIn('data-isokratis', text)
         self.assertIn("Ἴσον και προσόμοια", text)
         self.assertIn("1-example", text)
+        self.assertIn('data-ison-url-template="isokratis/ison/__number__.mp3"', text)
+        self.assertIn('value="isokratis/prosomia/1-example.mp3"', text)
         self.assertNotIn("not-for-web.pdf", text)
 
     def test_index_renders_litourgia_on_its_own_page(self):
