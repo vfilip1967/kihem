@@ -125,6 +125,68 @@ button:hover { background: var(--wine-dark); }
 
 .calendar-note { grid-column: 2; margin: -12px 0 0; color: var(--muted); font-size: 0.83rem; }
 
+.isokratis-panel {
+  margin-top: 28px;
+  padding: 28px 30px 30px;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--wine);
+  background: rgba(255, 253, 248, 0.86);
+  box-shadow: var(--shadow);
+}
+.isokratis-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.isokratis-heading h2 { margin: 0; color: var(--wine-dark); font-size: clamp(1.55rem, 3vw, 2.3rem); font-weight: 500; }
+.isokratis-heading p:not(.step) { margin: 8px 0 0; color: var(--muted); }
+.ison-status, .prosomia-status, .media-unavailable {
+  margin: 0;
+  color: var(--muted);
+  font: 0.78rem/1.45 Arial, sans-serif;
+}
+.ison-status { max-width: 300px; padding: 9px 11px; border-left: 2px solid var(--gold); background: var(--paper); }
+.isokratis-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(270px, 0.9fr); gap: 28px; }
+.ison-player, .prosomia-player { padding: 21px; border: 1px solid var(--paper-deep); background: var(--card); }
+.ison-player h3, .prosomia-player h3 { margin: 0 0 15px; color: var(--wine-dark); font-size: 1.15rem; font-weight: 500; }
+.ison-note-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 7px; }
+.ison-note {
+  min-height: 40px;
+  padding: 6px;
+  border-color: var(--line);
+  color: var(--wine-dark);
+  background: var(--paper);
+  font-weight: 700;
+}
+.ison-note:hover, .ison-note:focus-visible, .ison-note.selected { border-color: var(--wine); color: white; background: var(--wine); }
+.ison-adjustments { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-top: 18px; }
+.ison-adjustment, .ison-volume { display: grid; gap: 6px; color: var(--muted); font: 700 0.74rem Arial, sans-serif; }
+.ison-stepper { display: flex; min-height: 38px; }
+.ison-stepper button, .ison-stepper output {
+  display: grid;
+  place-items: center;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  font: 700 0.9rem Arial, sans-serif;
+}
+.ison-stepper button { color: var(--wine-dark); background: var(--paper); }
+.ison-stepper button:hover, .ison-stepper button:focus-visible { border-color: var(--wine); color: white; background: var(--wine); }
+.ison-stepper output { min-width: 42px; color: var(--ink); background: var(--card); }
+.ison-stepper .ison-natural { min-width: 34px; color: var(--gold); }
+.ison-volume { grid-column: 1 / -1; }
+.ison-volume input { min-height: auto; padding: 0; accent-color: var(--wine); }
+.ison-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.ison-actions button { min-height: 38px; padding: 0 12px; font-size: 0.78rem; }
+.quiet-button { border-color: var(--line); color: var(--wine-dark); background: var(--paper); }
+.quiet-button:hover, .quiet-button:focus-visible { border-color: var(--wine); color: white; background: var(--wine); }
+.prosomia-player > label { display: grid; gap: 6px; margin-top: 12px; color: var(--muted); font: 700 0.74rem Arial, sans-serif; }
+.prosomia-status, .media-unavailable { margin-top: 15px; }
+
 .notice { margin-top: 28px; padding: 20px 24px; border-left: 4px solid var(--wine); background: #fff4ef; }
 .notice p { margin: 4px 0 0; }
 
@@ -137,6 +199,7 @@ button:hover { background: var(--wine-dark); }
 }
 
 .tone { padding: 7px 13px; border: 1px solid var(--gold); border-radius: 999px; color: var(--wine-dark); background: var(--card); white-space: nowrap; }
+.day-title { max-width: 70ch; margin: 10px 0 0; color: var(--muted); font-size: 1.05rem; }
 
 .service-switcher { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
 .service-switcher a {
@@ -302,7 +365,6 @@ button:hover { background: var(--wine-dark); }
 .service-text .melodos-red { color: red; }
 .service-text hr { margin: 34px 0; border: 0; border-top: 1px solid #444; }
 
-.enrichment-status,
 .pilot-note {
   display: flex;
   justify-content: space-between;
@@ -314,11 +376,7 @@ button:hover { background: var(--wine-dark); }
   font: 0.84rem/1.5 Arial, sans-serif;
 }
 
-.enrichment-status div { display: flex; gap: 7px; flex-wrap: wrap; }
-.enrichment-status strong { color: var(--wine-dark); }
-.enrichment-status span, .pilot-note { color: var(--muted); }
-.enrichment-status .book-links { display: flex; gap: 6px 14px; flex-wrap: wrap; justify-content: flex-end; }
-.enrichment-status .book-links a { color: var(--wine-dark); }
+.pilot-note { color: var(--muted); }
 
 .music-attachment {
   display: block;
@@ -367,13 +425,17 @@ button:hover { background: var(--wine-dark); }
   .date-form { grid-template-columns: 1fr 1fr; }
   .date-form button { grid-column: 1 / -1; }
   .calendar-note { grid-column: 1; margin-top: -8px; }
-  .enrichment-status { flex-direction: column; gap: 4px; }
+  .isokratis-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
   .site-header { align-items: flex-start; padding-top: 28px; }
   .brand-mark { flex-basis: 58px; width: 58px; height: 58px; font-size: 30px; }
   .selector { padding: 22px; }
+  .isokratis-panel { padding: 22px; }
+  .isokratis-heading { align-items: stretch; flex-direction: column; gap: 12px; }
+  .ison-status { max-width: none; }
+  .ison-note-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .date-form { grid-template-columns: 1fr; }
   .date-form button { grid-column: auto; }
   .service-card > header, .service-text { padding: 22px; }

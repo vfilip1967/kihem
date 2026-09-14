@@ -694,6 +694,9 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "γιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.",
         "tone6-great-doxology",
         required_text=("Ἦχος πλ β΄",),
+        # The same Trisagion appears near the beginning of Orthros. The
+        # preceding verse belongs to the Great Doxology close to its end.
+        preceding_text="ἐν τῷ φωτί σου ὀψόμεθα φῶς.",
     ),
     AttachmentRule(
         "orthros",

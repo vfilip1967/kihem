@@ -41,19 +41,43 @@ will be uploaded separately.
 
 ### Web conversion decision
 
-Implement the replacement as a mobile-first Flask page at
-`/kihem/isokratis` (within the existing Kihem deployment), linked from the
-main Kihem page. Use a server-side media catalog and safe, explicit asset
-routes. Do not expose arbitrary server filesystem paths. Browser audio will
-replace the App Inventor players, and approved catalogued PDFs will replace
-the Android file-viewer intents.
+Implement the replacement **inside the main page** at `/kihem/`, not as a
+separate user-facing page. Use a server-side media catalog and safe, explicit
+MP3 asset routes. Do not expose arbitrary server filesystem paths. Browser
+audio replaces the App Inventor players; PDF functionality is intentionally
+out of scope.
 
 ### Conversion sequence
 
-1. Inventory the uploaded MP3 and PDF assets and map their filenames to the
-   legacy note/mode/document meanings.
+1. Inventory the uploaded MP3 assets and map their filenames to the legacy
+   note/mode meanings.
 2. Create the media catalog and safe file-serving routes.
 3. Implement the ison controls and browser audio behavior.
-4. Implement the recording menus and PDF library.
+4. Implement the recording menus.
 5. Verify every mapping and test the page on desktop and mobile before
-   deployment.
+deployment.
+
+### Current web implementation
+
+- `src/isokratis.py` reads only direct `.mp3` files from `isokratis/` and
+  `prosomia/`, rooted at `KIHEM_BYZ_DIR` (default `/var/lib/kihem/byz`).
+- The main Kihem page contains the controls. It plays numeric ison filenames
+  through `/isokratis/ison/<number>.mp3` and catalogued recording filenames
+  through `/isokratis/prosomia/<filename>`; neither route exposes PDFs.
+- The old pitch formula is retained: `number = note base + register +
+  semitone × 6`, with register range −12…+12 and semitone range −3…+3.
+- Uploaded workspace media is at `byz/isokratis` and `byz/prosomia`; do not
+  stage these binaries in Git.
+
+## Melodos heading parity
+
+Kihem shows the same daily heading text as Melodos: its source date line,
+weekly-tone line, and feast/saints title. The feast/saints title comes from
+Melodos' public month-calendar response and is cached by month; it is not
+guessed from the date. The former top-of-page music-insertion status and
+book-link list are intentionally not displayed.
+
+The reader uses fixed auto-scroll speed 1 only. Its sole control is a
+pause/resume button; speed selection and keyboard speed controls are not part
+of the interface. The Great Doxology excerpt is anchored after its late
+“ἐν τῷ φωτί σου ὀψόμεθα φῶς” context, not the opening Trisagion.

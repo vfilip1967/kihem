@@ -1,5 +1,6 @@
 import unittest
 from datetime import datetime, timezone
+from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from src.app import create_app
@@ -22,6 +23,13 @@ class FakeComposer:
                 tone=6,
                 tone_label="Ἦχος πλ. β΄",
                 fetched_at=datetime.now(timezone.utc),
+                source_day_label=(
+                    "Δευτέρα 14 Σεπτεμβρίου 2026"
+                    if selected_date.day == 14
+                    else "Κυριακή 13 Σεπτεμβρίου 2026"
+                ),
+                source_tone_label="Ήχος εβδομάδος πλ β΄.",
+                day_title=("Δοκιμαστικός τίτλος Μελωδού" if selected_date.day == 13 else None),
             )
             for service in services
         )
@@ -31,8 +39,19 @@ class FakeComposer:
 class AppTests(unittest.TestCase):
     def setUp(self):
         self.temporary = TemporaryDirectory()
+        byz = Path(self.temporary.name) / "byz"
+        (byz / "isokratis").mkdir(parents=True)
+        (byz / "prosomia").mkdir()
+        (byz / "isokratis" / "60.mp3").write_bytes(b"test-ison")
+        (byz / "prosomia" / "1-example.mp3").write_bytes(b"test-prosomia")
+        (byz / "prosomia" / "not-for-web.pdf").write_bytes(b"test-pdf")
         self.app = create_app(
-            {"TESTING": True, "CACHE_DIR": self.temporary.name, "COMPOSER": FakeComposer()}
+            {
+                "TESTING": True,
+                "CACHE_DIR": self.temporary.name,
+                "BYZ_DIR": str(byz),
+                "COMPOSER": FakeComposer(),
+            }
         )
         self.client = self.app.test_client()
 
@@ -45,17 +64,25 @@ class AppTests(unittest.TestCase):
         text = response.get_data(as_text=True)
         self.assertIn("Όρθρος", text)
         self.assertIn("Θεία Λειτουργία", text)  # separate-page navigation
-        self.assertIn("1 μουσική ένθεση", text)
+        self.assertIn("Δοκιμαστικός τίτλος Μελωδού", text)
+        self.assertIn("Ήχος εβδομάδος πλ β΄.", text)
+        self.assertNotIn("τοποθετήθηκαν κάτω από τα αντίστοιχα μέλη", text)
         self.assertIn("music/ioannis-protopsaltis-1905/tone6-apolytikion/1.png", text)
         self.assertIn('class="music-bookmarks-menu"', text)
         self.assertIn('href="#music-tone6-apolytikion-1"', text)
         self.assertNotIn('href="#music-tone6-apolytikion-2"', text)
         self.assertIn("link.closest('.music-bookmarks-menu').open = false", text)
         self.assertIn('data-scroll-controls', text)
-        self.assertIn('data-scroll-slower', text)
-        self.assertIn('data-scroll-faster', text)
-        self.assertIn("kihem-scroll-level", text)
+        self.assertIn('Κύλιση 1', text)
+        self.assertIn('data-scroll-toggle', text)
+        self.assertNotIn('data-scroll-slower', text)
+        self.assertNotIn('data-scroll-faster', text)
+        self.assertNotIn("kihem-scroll-level", text)
         self.assertNotIn("Μουσικό παράρτημα", text)
+        self.assertIn('data-isokratis', text)
+        self.assertIn("Ἴσον και προσόμοια", text)
+        self.assertIn("1-example", text)
+        self.assertNotIn("not-for-web.pdf", text)
 
     def test_index_renders_litourgia_on_its_own_page(self):
         response = self.client.get("/?date=2026-09-13&services=litourgia")
@@ -79,9 +106,25 @@ class AppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         text = response.get_data(as_text=True)
         self.assertIn("Δευτέρα 14 Σεπτεμβρίου 2026", text)
-        self.assertIn("1 μουσική ένθεση", text)
+        self.assertNotIn("τοποθετήθηκαν κάτω από τα αντίστοιχα μέλη", text)
         self.assertNotIn("Η επόμενη Κυριακή", text)
 
     def test_health(self):
         response = self.client.get("/health")
         self.assertEqual(response.json["calendar"], "gregorian")
+
+    def test_isokratis_audio_routes_only_serve_catalogued_mp3_files(self):
+        ison = self.client.get("/isokratis/ison/60.mp3")
+        self.assertEqual(ison.status_code, 200)
+        self.assertEqual(ison.mimetype, "audio/mpeg")
+        self.assertEqual(ison.data, b"test-ison")
+        ison.close()
+
+        prosomia = self.client.get("/isokratis/prosomia/1-example.mp3")
+        self.assertEqual(prosomia.status_code, 200)
+        self.assertEqual(prosomia.mimetype, "audio/mpeg")
+        self.assertEqual(prosomia.data, b"test-prosomia")
+        prosomia.close()
+
+        self.assertEqual(self.client.get("/isokratis/prosomia/not-for-web.pdf").status_code, 404)
+        self.assertEqual(self.client.get("/isokratis/prosomia/../isokratis/60.mp3").status_code, 404)

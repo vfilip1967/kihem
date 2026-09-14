@@ -39,6 +39,8 @@ class MelodosTests(unittest.TestCase):
             SAMPLE_ORTHROS, "orthros", fetched_at=datetime(2026, 9, 6, tzinfo=timezone.utc)
         )
         self.assertEqual(document.tone, 5)
+        self.assertEqual(document.source_day_label, "Κυριακή 6 Σεπτεμβρίου 2026")
+        self.assertEqual(document.source_tone_label, "Ήχος εβδομάδος πλ α΄.")
         self.assertIn("ΟΡΘΡΟΣ", document.service_html)
         self.assertIn('class="ar"', document.service_html)
         self.assertNotIn("script", document.service_html)
@@ -66,6 +68,31 @@ class MelodosTests(unittest.TestCase):
             self.assertEqual(orthros["odes_oles"], "0")
             self.assertEqual(liturgy["tipika"], "0")
             self.assertEqual(liturgy["tipos_akolouthias"], "litourgia")
+
+    def test_day_title_comes_from_the_matching_melodos_calendar_entry(self):
+        class Response:
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                return [[index + 1, "", 0, 0, ""] for index in range(14)] + [
+                    [15, "Τρίτη", 4, 1, "<b>Μεθέορτα τῆς Ὑψώσεως.</b> Νικήτα μεγαλομ"]
+                ]
+
+        class Session:
+            def post(self, url, *, params, timeout):
+                self.url = url
+                self.params = params
+                self.timeout = timeout
+                return Response()
+
+        with TemporaryDirectory() as temporary:
+            session = Session()
+            client = MelodosClient(cache_dir=temporary, session=session)
+            title = client._fetch_day_title(date(2026, 9, 15), refresh=False)
+
+        self.assertEqual(title, "Μεθέορτα τῆς Ὑψώσεως. Νικήτα μεγαλομ")
+        self.assertEqual(session.params, {"etos": "2026", "minas": "9", "palaio": "false"})
 
     def test_client_accepts_non_sunday(self):
         with TemporaryDirectory() as temporary:

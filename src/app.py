@@ -2,17 +2,17 @@ from __future__ import annotations
 
 import os
 
-from flask import Flask, abort, render_template, request, send_file
+from flask import Flask, abort, render_template, request, send_file, url_for
 from markupsafe import Markup
 
 from src.anastasimatarion import (
     AnastasimatarionRenderer,
-    catalog_books,
     enrich_service_html,
 )
 from src.composer import ServiceComposer
 from src.liturgical_calendar import LiturgicalCalendar
 from src.melodos import MELODOS_HOME, MelodosClient, MelodosError
+from src.isokratis import ISON_NOTES, MODE_LABELS, IsokratisLibrary
 
 
 def create_app(config: dict | None = None) -> Flask:
@@ -20,6 +20,7 @@ def create_app(config: dict | None = None) -> Flask:
     app.config.from_mapping(
         CACHE_DIR=os.environ.get("KIHEM_CACHE_DIR", "/tmp/kihem-cache"),
         BOOKS_DIR=os.environ.get("KIHEM_BOOKS_DIR", "/var/lib/kihem/books"),
+        BYZ_DIR=os.environ.get("KIHEM_BYZ_DIR", "/var/lib/kihem/byz"),
         DEFAULT_DATE="2026-09-09",
     )
     if config:
@@ -33,6 +34,10 @@ def create_app(config: dict | None = None) -> Flask:
     )
     app.extensions["kihem_composer"] = composer
     app.extensions["kihem_music_renderer"] = music_renderer
+    media_library = app.config.get("ISOKRATIS_LIBRARY") or IsokratisLibrary(
+        app.config["BYZ_DIR"]
+    )
+    app.extensions["kihem_isokratis_library"] = media_library
 
     @app.get("/")
     def index():
@@ -89,6 +94,9 @@ def create_app(config: dict | None = None) -> Flask:
                         "label": item.label,
                         "html": Markup(enriched.html),
                         "tone_label": item.tone_label,
+                        "source_day_label": item.source_day_label,
+                        "source_tone_label": item.source_tone_label,
+                        "day_title": item.day_title,
                         "fetched_at": item.fetched_at,
                         "attachment_count": enriched.attachment_count,
                     }
@@ -103,10 +111,38 @@ def create_app(config: dict | None = None) -> Flask:
             attachment_count=attachment_count,
             music_bookmarks=music_bookmarks,
             unmatched_count=len(unmatched_piece_ids),
-            music_books=catalog_books(),
             error=error,
             melodos_url=MELODOS_HOME,
+            ison_notes=ISON_NOTES,
+            ison_numbers=sorted(media_library.ison_numbers),
+            prosomia_groups=tuple(
+                {
+                    "label": MODE_LABELS[mode],
+                    "tracks": tuple(
+                        {
+                            "label": track.label,
+                            "url": url_for("prosomia_audio", filename=track.filename),
+                        }
+                        for track in tracks
+                    ),
+                }
+                for mode, tracks in media_library.prosomia_by_mode()
+            ),
         )
+
+    @app.get("/isokratis/ison/<int:number>.mp3")
+    def ison_audio(number: int):
+        path = media_library.ison_path(number)
+        if path is None:
+            abort(404)
+        return send_file(path, mimetype="audio/mpeg", max_age=86400)
+
+    @app.get("/isokratis/prosomia/<path:filename>")
+    def prosomia_audio(filename: str):
+        path = media_library.prosomia_path(filename)
+        if path is None:
+            abort(404)
+        return send_file(path, mimetype="audio/mpeg", max_age=86400)
 
     @app.get("/music/<book_id>/<piece_id>/<int:part>.png")
     def music_excerpt(book_id: str, piece_id: str, part: int):

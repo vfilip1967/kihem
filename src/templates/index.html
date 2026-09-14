@@ -40,6 +40,87 @@
       <p class="calendar-note">Κυριακή, μεγάλη εορτή ή καθημερινή · κάθε ακολουθία ανοίγει σε ξεχωριστή σελίδα για ταχύτερη φόρτωση.</p>
     </section>
 
+    <section class="isokratis-panel" data-isokratis aria-labelledby="isokratis-heading"
+      data-ison-url-template="{{ url_for('ison_audio', number=999999)|replace('999999', '__number__') }}"
+      data-available-ison='{{ ison_numbers|tojson }}'>
+      <div class="isokratis-heading">
+        <div>
+          <p class="step">Ισοκράτης</p>
+          <h2 id="isokratis-heading">Ἴσον και προσόμοια</h2>
+          <p>Συνοδεία ισοκρατήματος και ακρόαση των τοπικών ηχογραφήσεων.</p>
+        </div>
+        <span class="ison-status" data-ison-status role="status">Επίλεξε φθόγγο για να αρχίσει το ἴσον.</span>
+      </div>
+
+      <div class="isokratis-grid">
+        <section class="ison-player" aria-labelledby="ison-heading">
+          <h3 id="ison-heading">Ἴσον</h3>
+          <div class="ison-note-grid" role="group" aria-label="Επιλογή φθόγγου">
+            {% for note in ison_notes %}
+              <button type="button" class="ison-note" data-ison-note="{{ note.base }}" data-note-label="{{ note.label }}">{{ note.label }}</button>
+            {% endfor %}
+          </div>
+
+          <div class="ison-adjustments">
+            <div class="ison-adjustment">
+              <span>Διάστημα / οκτάβα</span>
+              <div class="ison-stepper" role="group" aria-label="Διάστημα ή οκτάβα">
+                <button type="button" data-register-down aria-label="Μείωση διαστήματος">−</button>
+                <output data-register-value>0</output>
+                <button type="button" data-register-up aria-label="Αύξηση διαστήματος">+</button>
+              </div>
+            </div>
+            <div class="ison-adjustment">
+              <span>Ημιτόνιο</span>
+              <div class="ison-stepper" role="group" aria-label="Μεταβολή ημιτονίου">
+                <button type="button" data-semitone-down aria-label="Μείωση ημιτονίου">−</button>
+                <button type="button" class="ison-natural" data-semitone-natural aria-label="Φυσικό ημιτόνιο">♮</button>
+                <output data-semitone-value>0</output>
+                <button type="button" data-semitone-up aria-label="Αύξηση ημιτονίου">+</button>
+              </div>
+            </div>
+            <label class="ison-volume">Ένταση
+              <input type="range" data-ison-volume min="0" max="100" value="80">
+            </label>
+          </div>
+
+          <div class="ison-actions">
+            <button type="button" data-ison-play>▶ Έναρξη</button>
+            <button type="button" class="quiet-button" data-ison-stop>■ Διακοπή</button>
+            <button type="button" class="quiet-button" data-ison-reset>Επαναφορά</button>
+          </div>
+        </section>
+
+        <section class="prosomia-player" aria-labelledby="prosomia-heading">
+          <h3 id="prosomia-heading">Προσόμοια και ηχογραφήσεις</h3>
+          {% if prosomia_groups %}
+            <label>Κατηγορία
+              <select data-prosomia-group>
+                {% for group in prosomia_groups %}
+                  <option value="{{ loop.index0 }}">{{ group.label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Ηχογράφηση
+              <select data-prosomia-track>
+                {% for track in prosomia_groups[0].tracks %}
+                  <option value="{{ track.url }}">{{ track.label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <div class="ison-actions">
+              <button type="button" data-prosomia-play>▶ Ακρόαση</button>
+              <button type="button" class="quiet-button" data-prosomia-pause>⏸ Παύση</button>
+              <button type="button" class="quiet-button" data-prosomia-stop>■ Διακοπή</button>
+            </div>
+            <p class="prosomia-status" data-prosomia-status role="status">Επίλεξε ηχογράφηση και πάτησε Ακρόαση.</p>
+          {% else %}
+            <p class="media-unavailable">Δεν βρέθηκαν ακόμη αρχεία προσόμοιων.</p>
+          {% endif %}
+        </section>
+      </div>
+    </section>
+
     {% if error %}
       <section class="notice" role="alert">
         <strong>Δεν ολοκληρώθηκε η σύνθεση.</strong>
@@ -51,9 +132,10 @@
       <section class="result-heading">
         <div>
           <p class="step">02 · Ανασύνθεση</p>
-          <h2>{{ calendar.format_long() }}</h2>
+          <h2>{{ documents[0].source_day_label or calendar.format_long() }}</h2>
+          {% if documents[0].day_title %}<p class="day-title">{{ documents[0].day_title }}</p>{% endif %}
         </div>
-        {% if tone %}<span class="tone">{{ documents[0].tone_label }}</span>{% endif %}
+        {% if tone %}<span class="tone">{{ documents[0].source_tone_label or documents[0].tone_label }}</span>{% endif %}
       </section>
 
       <nav class="service-switcher" aria-label="Εναλλαγή ακολουθίας">
@@ -75,28 +157,13 @@
             </div>
           </details>
         {% endif %}
-        <div class="scroll-controls" data-scroll-controls aria-label="Κύλιση όπως στον Μελωδό">
-          <span class="scroll-controls-label">Κύλιση</span>
-          <button type="button" data-scroll-slower aria-label="Μείωση ταχύτητας κύλισης" title="Μείωση ταχύτητας">−</button>
-          <button type="button" data-scroll-speed aria-label="Διακοπή αυτόματης κύλισης" title="0 = διακοπή">0</button>
-          <button type="button" data-scroll-faster aria-label="Αύξηση ταχύτητας κύλισης" title="Αύξηση ταχύτητας">+</button>
-          <button type="button" data-scroll-toggle aria-label="Έναρξη αυτόματης κύλισης" title="Παύση/συνέχιση κύλισης">▶</button>
+        <div class="scroll-controls" data-scroll-controls aria-label="Αυτόματη κύλιση">
+          <span class="scroll-controls-label">Κύλιση 1</span>
+          <button type="button" data-scroll-toggle aria-label="Παύση αυτόματης κύλισης" title="Παύση/συνέχιση κύλισης">⏸</button>
         </div>
       </nav>
 
-      {% if attachment_count %}
-        <section class="enrichment-status" aria-label="Κατάσταση μουσικής αντιστοίχισης">
-          <div>
-            <strong>{% if attachment_count == 1 %}1 μουσική ένθεση{% else %}{{ attachment_count }} μουσικές ενθέσεις{% endif %}</strong>
-            <span>τοποθετήθηκαν κάτω από τα αντίστοιχα μέλη</span>
-          </div>
-          <span class="book-links">
-            {% for book in music_books %}
-              <a href="{{ book.source_page }}" target="_blank" rel="noreferrer">{{ book.title }}</a>
-            {% endfor %}
-          </span>
-        </section>
-      {% else %}
+      {% if not attachment_count %}
         <section class="pilot-note">
           Το πλήρες κείμενο βάσης ανακτήθηκε από τον Μελωδό. Δεν βρέθηκε ακόμη επαληθευμένο μουσικό απόσπασμα στα διαθέσιμα σαρωμένα βιβλία για τα μέλη αυτής της ακολουθίας.
         </section>
@@ -105,7 +172,7 @@
       {% for document in documents %}
         <article class="service-card" id="{{ document.service }}">
           <header>
-            <p class="source-label">Κείμενο βάσης{% if document.attachment_count == 1 %} · 1 μουσική ένθεση{% elif document.attachment_count %} · {{ document.attachment_count }} μουσικές ενθέσεις{% endif %}</p>
+            <p class="source-label">Κείμενο βάσης</p>
             <h2>{{ document.label }}</h2>
           </header>
           <div class="service-text">{{ document.html }}</div>
@@ -150,33 +217,16 @@
       });
     });
 
-    // Melodos-style reading scroll: the same nine speeds, one pixel per tick,
-    // with space/arrow-key controls and a persistent selected speed. Speed 0
-    // is the normal manual-scroll mode; a previously selected speed resumes
-    // automatically, just as it does on Melodos.
+    // Fixed-speed reading scroll: one pixel per tick at speed 1. The single
+    // control pauses or resumes it; no other speed or keyboard shortcut can
+    // alter the reader's pace.
     (() => {
       const controls = document.querySelector('[data-scroll-controls]');
       if (!controls) return;
 
-      const delays = [500, 105, 80, 63, 50, 39, 30, 23, 18, 15];
-      const speedButton = controls.querySelector('[data-scroll-speed]');
       const toggleButton = controls.querySelector('[data-scroll-toggle]');
-      const slowerButton = controls.querySelector('[data-scroll-slower]');
-      const fasterButton = controls.querySelector('[data-scroll-faster]');
-      let level = 0;
       let paused = false;
       let scrollTimer = null;
-
-      try {
-        const stored = Number(window.localStorage.getItem('kihem-scroll-level'));
-        if (Number.isInteger(stored) && stored >= 0 && stored <= 9) level = stored;
-      } catch (error) {
-        // Private browsing may deny localStorage; scrolling still works.
-      }
-
-      const saveLevel = () => {
-        try { window.localStorage.setItem('kihem-scroll-level', String(level)); } catch (error) {}
-      };
 
       const stopTimer = () => {
         if (scrollTimer !== null) window.clearInterval(scrollTimer);
@@ -188,17 +238,13 @@
         window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
 
       const renderControls = () => {
-        speedButton.textContent = String(level);
-        speedButton.setAttribute('aria-label', level === 0 ? 'Διακοπή αυτόματης κύλισης' : `Ταχύτητα κύλισης ${level}`);
-        toggleButton.textContent = level > 0 && !paused ? '⏸' : '▶';
-        toggleButton.setAttribute('aria-label', level > 0 && !paused ? 'Παύση αυτόματης κύλισης' : 'Έναρξη αυτόματης κύλισης');
-        slowerButton.disabled = level === 0;
-        fasterButton.disabled = level === 9;
+        toggleButton.textContent = paused ? '▶' : '⏸';
+        toggleButton.setAttribute('aria-label', paused ? 'Έναρξη αυτόματης κύλισης' : 'Παύση αυτόματης κύλισης');
       };
 
       const startTimer = () => {
         stopTimer();
-        if (level === 0 || paused) return;
+        if (paused) return;
         document.documentElement.classList.add('is-auto-scrolling');
         scrollTimer = window.setInterval(() => {
           if (atBottom()) {
@@ -208,55 +254,143 @@
             return;
           }
           window.scrollBy(0, 1);
-        }, delays[level]);
-      };
-
-      const setLevel = (nextLevel) => {
-        level = Math.max(0, Math.min(9, nextLevel));
-        paused = false;
-        saveLevel();
-        if (level === 0) stopTimer();
-        else startTimer();
-        renderControls();
+        }, 105);
       };
 
       toggleButton.addEventListener('click', () => {
-        if (level === 0) {
-          setLevel(1);
-          return;
-        }
         paused = !paused;
         if (paused) stopTimer();
         else startTimer();
         renderControls();
       });
-      speedButton.addEventListener('click', () => setLevel(0));
-      slowerButton.addEventListener('click', () => setLevel(level - 1));
-      fasterButton.addEventListener('click', () => setLevel(level + 1));
-
-      window.addEventListener('keydown', (event) => {
-        if (['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON'].includes(document.activeElement?.tagName)) return;
-        if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
-          event.preventDefault();
-          setLevel(level - 1);
-        } else if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
-          event.preventDefault();
-          setLevel(level + 1);
-        } else if (event.code === 'Space' && level > 0) {
-          event.preventDefault();
-          paused = !paused;
-          if (paused) stopTimer();
-          else startTimer();
-          renderControls();
-        } else if (level > 0 && event.key !== ' ') {
-          paused = true;
-          stopTimer();
-          renderControls();
-        }
-      });
 
       renderControls();
-      if (level > 0) startTimer();
+      startTimer();
+    })();
+
+    // Browser replacement for the two App Inventor players. Player one loops
+    // a numbered ison MP3; player two plays the selected prosomia recording.
+    (() => {
+      const panel = document.querySelector('[data-isokratis]');
+      if (!panel) return;
+
+      const isonAudio = new Audio();
+      isonAudio.loop = true;
+      isonAudio.volume = 0.8;
+      const available = new Set(JSON.parse(panel.dataset.availableIson || '[]'));
+      const noteButtons = [...panel.querySelectorAll('[data-ison-note]')];
+      const status = panel.querySelector('[data-ison-status]');
+      const registerOutput = panel.querySelector('[data-register-value]');
+      const semitoneOutput = panel.querySelector('[data-semitone-value]');
+      const volumeInput = panel.querySelector('[data-ison-volume]');
+      let base = null;
+      let label = '';
+      let register = 0;
+      let semitone = 0;
+
+      const number = () => base === null ? null : base + register + (semitone * 6);
+      const filename = () => number() === null ? null : `${number()}.mp3`;
+      const isPlaying = () => !isonAudio.paused;
+      const showStatus = (message) => { status.textContent = message; };
+      const update = () => {
+        registerOutput.textContent = register > 0 ? `+${register}` : register;
+        semitoneOutput.textContent = semitone > 0 ? `+${semitone}` : semitone;
+        noteButtons.forEach((button) => button.classList.toggle(
+          'selected', Number(button.dataset.isonNote) === base
+        ));
+      };
+      const sourceForCurrentNote = () => {
+        const current = number();
+        if (current === null) {
+          showStatus('Επίλεξε φθόγγο για να αρχίσει το ἴσον.');
+          return null;
+        }
+        if (!available.has(current)) {
+          showStatus(`Δεν υπάρχει διαθέσιμο αρχείο ${filename()} για ${label}.`);
+          return null;
+        }
+        return panel.dataset.isonUrlTemplate.replace('__number__', current);
+      };
+      const playIson = () => {
+        const source = sourceForCurrentNote();
+        if (!source) return;
+        if (isonAudio.src !== new URL(source, window.location.href).href) {
+          isonAudio.src = source;
+        }
+        isonAudio.play().then(() => {
+          showStatus(`${label} · ${filename()} · διάστημα ${register} · ημιτόνιο ${semitone}`);
+        }).catch(() => showStatus('Ο browser χρειάζεται πάτημα στο κουμπί Έναρξη για τον ήχο.'));
+      };
+      const refreshPlayingIson = () => {
+        update();
+        if (isPlaying()) playIson();
+        else sourceForCurrentNote();
+      };
+      const stopIson = () => {
+        isonAudio.pause();
+        isonAudio.currentTime = 0;
+        showStatus('Το ἴσον σταμάτησε.');
+      };
+
+      noteButtons.forEach((button) => button.addEventListener('click', () => {
+        base = Number(button.dataset.isonNote);
+        label = button.dataset.noteLabel;
+        update();
+        playIson();
+      }));
+      panel.querySelector('[data-register-down]').addEventListener('click', () => {
+        register = Math.max(-12, register - 1); refreshPlayingIson();
+      });
+      panel.querySelector('[data-register-up]').addEventListener('click', () => {
+        register = Math.min(12, register + 1); refreshPlayingIson();
+      });
+      panel.querySelector('[data-semitone-down]').addEventListener('click', () => {
+        semitone = Math.max(-3, semitone - 1); refreshPlayingIson();
+      });
+      panel.querySelector('[data-semitone-up]').addEventListener('click', () => {
+        semitone = Math.min(3, semitone + 1); refreshPlayingIson();
+      });
+      panel.querySelector('[data-semitone-natural]').addEventListener('click', () => {
+        semitone = 0; refreshPlayingIson();
+      });
+      volumeInput.addEventListener('input', () => { isonAudio.volume = Number(volumeInput.value) / 100; });
+      panel.querySelector('[data-ison-play]').addEventListener('click', playIson);
+      panel.querySelector('[data-ison-stop]').addEventListener('click', stopIson);
+      panel.querySelector('[data-ison-reset]').addEventListener('click', () => {
+        stopIson(); base = null; label = ''; register = 0; semitone = 0; update();
+        showStatus('Έγινε επαναφορά του ἴσου.');
+      });
+      update();
+
+      const prosomiaGroup = panel.querySelector('[data-prosomia-group]');
+      if (!prosomiaGroup) return;
+      const prosomiaAudio = new Audio();
+      const trackSelect = panel.querySelector('[data-prosomia-track]');
+      const prosomiaStatus = panel.querySelector('[data-prosomia-status]');
+      const trackGroups = {{ prosomia_groups|tojson }};
+      const setTracks = () => {
+        const tracks = trackGroups[Number(prosomiaGroup.value)].tracks;
+        trackSelect.replaceChildren(...tracks.map((track) => {
+          const option = document.createElement('option');
+          option.value = track.url; option.textContent = track.label; return option;
+        }));
+        prosomiaAudio.pause(); prosomiaAudio.currentTime = 0;
+        prosomiaStatus.textContent = 'Επίλεξε ηχογράφηση και πάτησε Ακρόαση.';
+      };
+      const playProsomia = () => {
+        if (prosomiaAudio.src !== new URL(trackSelect.value, window.location.href).href) prosomiaAudio.src = trackSelect.value;
+        prosomiaAudio.play().then(() => { prosomiaStatus.textContent = `Παίζει: ${trackSelect.selectedOptions[0].textContent}`; })
+          .catch(() => { prosomiaStatus.textContent = 'Ο browser χρειάζεται πάτημα στο κουμπί Ακρόαση.'; });
+      };
+      prosomiaGroup.addEventListener('change', setTracks);
+      panel.querySelector('[data-prosomia-play]').addEventListener('click', playProsomia);
+      panel.querySelector('[data-prosomia-pause]').addEventListener('click', () => {
+        if (prosomiaAudio.paused) playProsomia();
+        else { prosomiaAudio.pause(); prosomiaStatus.textContent = 'Η ηχογράφηση είναι σε παύση.'; }
+      });
+      panel.querySelector('[data-prosomia-stop]').addEventListener('click', () => {
+        prosomiaAudio.pause(); prosomiaAudio.currentTime = 0; prosomiaStatus.textContent = 'Η ηχογράφηση σταμάτησε.';
+      });
     })();
   </script>
 </body>

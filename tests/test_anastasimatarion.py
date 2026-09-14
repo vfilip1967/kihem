@@ -136,10 +136,24 @@ class AnastasimatarionTests(unittest.TestCase):
         doxology_end = "γιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
         without_tone = enrich_service_html(date(2026, 9, 8), "orthros", doxology_end)
         with_tone = enrich_service_html(
-            date(2026, 9, 8), "orthros", "<span>Ἦχος πλ β΄</span><br>" + doxology_end
+            date(2026, 9, 8),
+            "orthros",
+            "<span>Ἦχος πλ β΄</span><br>ἐν τῷ φωτί σου ὀψόμεθα φῶς.<br>" + doxology_end,
         )
         self.assertEqual(without_tone.attachment_count, 0)
         self.assertEqual(with_tone.attachment_count, 1)
+
+    def test_great_doxology_does_not_attach_to_the_opening_trisagion(self):
+        trisagion = "γιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
+        late_marker = "ἐν τῷ φωτί σου ὀψόμεθα φῶς.<br>"
+        result = enrich_service_html(
+            date(2026, 9, 8),
+            "orthros",
+            "<span>Ἦχος πλ β΄</span><br>" + trisagion + "Μεσότητα του Όρθρου<br>" + late_marker + trisagion,
+        )
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertLess(result.html.index(late_marker[:-4]), result.html.index('data-music-piece="tone6-great-doxology"'))
 
     def test_plagal_fourth_timiotera_is_attached_after_sixth_refrain(self):
         refrain = (
