@@ -72,9 +72,9 @@ deployment.
 - The first eight numeric setup recordings (`1-1` through `1-4-1`) and the
   user-selected Β΄-ήχου exclusions are not listed in the public recording
   menus; this includes the numbered setup tracks, `gynaikes`, `mathites`,
-  `mathitwn`, `oikos`, `poiois`, `sarki`, `stauros`, and the selected
-  `ta-anw` variants. Selecting an item in the recording list starts it
-  immediately.
+  `mathitwn`, `oikos`, `poiois`, `sarki`, `stauros`, the selected `ta-anw`
+  variants, and the requested Greek `γυναίκες`/`μαθητές` variants. Selecting
+  an item in the recording list starts it immediately.
 - Uploaded workspace media is at `byz/isokratis` and `byz/prosomia`; do not
   stage these binaries in Git.
 
