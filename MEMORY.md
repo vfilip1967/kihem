@@ -75,6 +75,8 @@ deployment.
   `mathitwn`, `oikos`, `poiois`, `sarki`, `stauros`, the selected `ta-anw`
   variants, and the requested Greek `γυναίκες`/`μαθητές` variants. Selecting
   an item in the recording list starts it immediately.
+- The numbered Γ΄-ήχου setup recordings (`3-0` through `3-3-1`) are likewise
+  not listed in the public menu.
 - Uploaded workspace media is at `byz/isokratis` and `byz/prosomia`; do not
   stage these binaries in Git.
 
