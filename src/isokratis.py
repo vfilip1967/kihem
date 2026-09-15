@@ -77,6 +77,7 @@ _HIDDEN_PROSOMIA_FILENAMES = frozenset(
         "2-poiois.mp3",
         "2-ta-anw.mp3",
         "2-ta-anw (1).mp3",
+        "2-ta-anw(2)-1.mp3",
         "2-ta-anw-1.mp3",
         "2-γυναίκες-ακουτίσθητε.mp3",
         "2-γυναίκες-ακουτίσθητε-s.mp3",
