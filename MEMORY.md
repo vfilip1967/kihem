@@ -1,101 +1,39 @@
 # Kihem working memory
 
-## Required reading
+Read [`README.md`](README.md) first; it is the full project documentation.
+This file records only durable implementation decisions.
 
-Read [`README.md`](README.md) first. It is the authoritative documentation for
-the existing Kihem Flask application: its setup, architecture, sources, and
-current functionality. Then read this file for durable working context.
+## Current application
 
-## Isokratis legacy app
+- Kihem is a Flask app served at `/kihem/`. A request without `date` opens the
+  current day's Orthros; `KIHEM_DEFAULT_DATE` is only an explicit override.
+- Orthros and Divine Liturgy are separate page loads. Their sticky toolbar
+  keeps the date in both links, has fixed auto-scroll speed 1 with an
+  icon-only pause/resume control, and keeps the compact Isokratis controls.
+- The heading copies Melodos' date, weekly tone and feast/saints text. The
+  monthly calendar response is cached; it is never guessed.
+- The Great Doxology scan is anchored after “ἐν τῷ φωτί σου ὀψόμεθα φῶς”.
 
-The legacy App Inventor project is at
-`oldapp/isokratis_new.aia`. It is a Byzantine chant companion named
-`isokratis_2021`.
+## Melodos music
 
-### Verified functionality
+- Treat Melodos as untrusted HTML: never retain its scripts or event handlers.
+- `src/melodos.py` rebuilds only its own `mousika/` selectors/buttons as safe
+  local controls with the same labels and direct MP3 URLs. This includes the
+  `___Επίλεξε ή PAUSE` selectors and one-click MP3 buttons.
 
-- It plays a continuous **ison** (drone) using selectable Byzantine-note
-  buttons: Δη, Κε, Ζω, Ζω β, Νη, Πα, Βου, Γα, Γα#, Δι and Και.
-- It supports changing the drone by semitone, selecting the natural setting,
-  changing the interval/register, changing volume, looping, stopping,
-  restarting, and resetting the selected note state.
-- `Player1` is the looping ison player. Its source is built from the selected
-  note and interval/semitone state, then played from an MP3 file.
-- It offers chant recording lists for the eight modes, plagal modes, Varys,
-  and Divine Liturgy. `Player2` plays the selected recording.
-- It opens a local liturgical PDF library: Leitourgika, Typiko, Pandektis
-  Zois, Minaia, Anastasimatarion, Eirmologion, Triodion, Pentikostarion,
-  Apostolos, Paraklitiki, Orologion, Euchologion, and related items.
+## Isokratis
 
-### Legacy storage assumptions
-
-The Android app expects content on the device, primarily:
-
-```text
-/sdcard/isokratis/  # drone MP3 files
-/sdcard/prosomia/   # chant-recording MP3 files
-```
-
-The `.aia` archive contains the logic and icon only; its MP3 and PDF content
-will be uploaded separately.
-
-### Web conversion decision
-
-Implement the replacement **inside the main page** at `/kihem/`, not as a
-separate user-facing page. Use a server-side media catalog and safe, explicit
-MP3 asset routes. Do not expose arbitrary server filesystem paths. Browser
-audio replaces the App Inventor players; PDF functionality is intentionally
-out of scope.
-
-### Conversion sequence
-
-1. Inventory the uploaded MP3 assets and map their filenames to the legacy
-   note/mode meanings.
-2. Create the media catalog and safe file-serving routes.
-3. Implement the ison controls and browser audio behavior.
-4. Implement the recording menus.
-5. Verify every mapping and test the page on desktop and mobile before
-deployment.
-
-### Current web implementation
-
-- `src/isokratis.py` reads only direct `.mp3` files from `isokratis/` and
-  `prosomia/`, rooted at `KIHEM_BYZ_DIR` (default `/var/lib/kihem/byz`).
-- The main Kihem page contains the controls. It plays numeric ison filenames
-  through `/isokratis/ison/<number>.mp3` and catalogued recording filenames
-  through `/isokratis/prosomia/<filename>`; neither route exposes PDFs.
-- The old pitch formula is retained: `number = note base + register +
-  semitone × 6`, with register range −12…+12 and semitone range −3…+3.
-- In the web UI, selecting a note is the only way to start ison playback. It
-  loops continuously until «Διακοπή»; there are intentionally no separate
-  start or reset buttons.
-- The first eight numeric setup recordings (`1-1` through `1-4-1`) and the
-  user-selected Β΄-ήχου exclusions are not listed in the public recording
-  menus; this includes the numbered setup tracks, `gynaikes`, `mathites`,
-  `mathitwn`, `oikos`, `poiois`, `sarki`, `stauros`, the selected `ta-anw`
-  variants, and the requested Greek `γυναίκες`/`μαθητές` variants. Selecting
-  an item in the recording list starts it immediately.
-- The numbered Γ΄-ήχου setup recordings (`3-0` through `3-3-1`) are likewise
-  not listed in the public menu.
-- Uploaded workspace media is at `byz/isokratis` and `byz/prosomia`; do not
-  stage these binaries in Git.
-
-## Melodos heading parity
-
-Kihem shows the same daily heading text as Melodos: its source date line,
-weekly-tone line, and feast/saints title. The feast/saints title comes from
-Melodos' public month-calendar response and is cached by month; it is not
-guessed from the date. The former top-of-page music-insertion status and
-book-link list are intentionally not displayed.
-
-The reader uses fixed auto-scroll speed 1 only. Its sole control is a
-pause/resume button; speed selection and keyboard speed controls are not part
-of the interface. The Great Doxology excerpt is anchored after its late
-“ἐν τῷ φωτί σου ὀψόμεθα φῶς” context, not the opening Trisagion.
-
-The default page request is the current date's Orthros. `KIHEM_DEFAULT_DATE`
-is an optional explicit override, not the normal production default.
-
-Melodos inline music selectors and buttons are not discarded: `melodos.py`
-rebuilds controls only for its own `mousika/` MP3 paths, keeping their labels
-and using a local browser player. Never allow its raw JavaScript into Kihem.
+- The legacy project is `oldapp/isokratis_new.aia`; the web version is inside
+  the main page, not a separate route. PDFs are intentionally out of scope.
+- `src/isokratis.py` catalogs only direct MP3 files in
+  `KIHEM_BYZ_DIR` (default `/var/lib/kihem/byz`) under `isokratis/` and
+  `prosomia/`. Asset routes are explicit; arbitrary paths and PDFs are never
+  served.
+- Ison filename formula: `note base + register + semitone × 6`. Note buttons
+  start looping playback; only «Διακοπή» stops it. The visible adjustment
+  steps are −1/+1 and −6/+6.
+- Selecting a prosomia MP3 starts it immediately; only «Διακοπή» remains.
+  The source-maintained hidden-recording set in `isokratis.py` controls which
+  uploaded tracks appear—do not delete source MP3s to change a menu.
+- Workspace media is in `byz/isokratis` and `byz/prosomia`; never stage those
+  binaries or `oldapp/` in Git.
