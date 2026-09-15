@@ -81,6 +81,8 @@ class AppTests(unittest.TestCase):
         self.assertNotIn("Μουσικό παράρτημα", text)
         self.assertIn('data-isokratis', text)
         self.assertIn("Ἴσον και προσόμοια", text)
+        self.assertNotIn('data-ison-play', text)
+        self.assertNotIn('data-ison-reset', text)
         self.assertIn("1-example", text)
         self.assertIn('data-ison-url-template="isokratis/ison/__number__.mp3"', text)
         self.assertIn('value="isokratis/prosomia/1-example.mp3"', text)

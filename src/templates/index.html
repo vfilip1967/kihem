@@ -83,9 +83,7 @@
           </div>
 
           <div class="ison-actions">
-            <button type="button" data-ison-play>▶ Έναρξη</button>
             <button type="button" class="quiet-button" data-ison-stop>■ Διακοπή</button>
-            <button type="button" class="quiet-button" data-ison-reset>Επαναφορά</button>
           </div>
         </section>
 
@@ -360,12 +358,7 @@
         semitone = 0; refreshPlayingIson();
       });
       volumeInput.addEventListener('input', () => { isonAudio.volume = Number(volumeInput.value) / 100; });
-      panel.querySelector('[data-ison-play]').addEventListener('click', playIson);
       panel.querySelector('[data-ison-stop]').addEventListener('click', stopIson);
-      panel.querySelector('[data-ison-reset]').addEventListener('click', () => {
-        stopIson(); base = null; label = ''; register = 0; semitone = 0; update();
-        showStatus('Έγινε επαναφορά του ἴσου.');
-      });
       update();
 
       const prosomiaGroup = panel.querySelector('[data-prosomia-group]');

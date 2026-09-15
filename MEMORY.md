@@ -66,6 +66,9 @@ deployment.
   through `/isokratis/prosomia/<filename>`; neither route exposes PDFs.
 - The old pitch formula is retained: `number = note base + register +
   semitone × 6`, with register range −12…+12 and semitone range −3…+3.
+- In the web UI, selecting a note is the only way to start ison playback. It
+  loops continuously until «Διακοπή»; there are intentionally no separate
+  start or reset buttons.
 - Uploaded workspace media is at `byz/isokratis` and `byz/prosomia`; do not
   stage these binaries in Git.
 
