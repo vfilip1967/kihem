@@ -93,6 +93,10 @@ _HIDDEN_PROSOMIA_FILENAMES = frozenset(
         "3-2-1.mp3",
         "3-3.mp3",
         "3-3-1.mp3",
+        "3-apostoloi.mp3",
+        "3-apostoloi (1).mp3",
+        "3-efrenes8w.mp3",
+        "3-efrenes8w-1.mp3",
     }
 )
 
