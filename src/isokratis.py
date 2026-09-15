@@ -70,6 +70,14 @@ _HIDDEN_PROSOMIA_FILENAMES = frozenset(
         "2-sarki.mp3",
         "2-stauros (1).mp3",
         "2-stauros.mp3",
+        "2-gynaikes-1.mp3",
+        "2-mathites-1.mp3",
+        "2-mathitwn-1.mp3",
+        "2-oikos-1.mp3",
+        "2-poiois.mp3",
+        "2-ta-anw.mp3",
+        "2-ta-anw (1).mp3",
+        "2-ta-anw-1.mp3",
     }
 )
 
