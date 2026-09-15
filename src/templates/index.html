@@ -105,8 +105,6 @@
               </select>
             </label>
             <div class="ison-actions">
-              <button type="button" data-prosomia-play>▶ Ακρόαση</button>
-              <button type="button" class="quiet-button" data-prosomia-pause>⏸ Παύση</button>
               <button type="button" class="quiet-button" data-prosomia-stop>■ Διακοπή</button>
             </div>
             <p class="prosomia-status" data-prosomia-status role="status">Επίλεξε ηχογράφηση και πάτησε Ακρόαση.</p>
@@ -377,11 +375,6 @@
       };
       prosomiaGroup.addEventListener('change', setTracks);
       trackSelect.addEventListener('change', playProsomia);
-      panel.querySelector('[data-prosomia-play]').addEventListener('click', playProsomia);
-      panel.querySelector('[data-prosomia-pause]').addEventListener('click', () => {
-        if (prosomiaAudio.paused) playProsomia();
-        else { prosomiaAudio.pause(); prosomiaStatus.textContent = 'Η ηχογράφηση είναι σε παύση.'; }
-      });
       panel.querySelector('[data-prosomia-stop]').addEventListener('click', () => {
         prosomiaAudio.pause(); prosomiaAudio.currentTime = 0; prosomiaStatus.textContent = 'Η ηχογράφηση σταμάτησε.';
       });
