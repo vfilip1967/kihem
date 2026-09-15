@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from datetime import date
 from urllib.parse import quote
 
 from flask import Flask, abort, render_template, request, send_file
@@ -22,7 +23,9 @@ def create_app(config: dict | None = None) -> Flask:
         CACHE_DIR=os.environ.get("KIHEM_CACHE_DIR", "/tmp/kihem-cache"),
         BOOKS_DIR=os.environ.get("KIHEM_BOOKS_DIR", "/var/lib/kihem/books"),
         BYZ_DIR=os.environ.get("KIHEM_BYZ_DIR", "/var/lib/kihem/byz"),
-        DEFAULT_DATE="2026-09-09",
+        # An explicit environment value is useful for a controlled demo, but
+        # regular visits must always open the current day's Orthros.
+        DEFAULT_DATE=os.environ.get("KIHEM_DEFAULT_DATE"),
     )
     if config:
         app.config.update(config)
@@ -42,7 +45,8 @@ def create_app(config: dict | None = None) -> Flask:
 
     @app.get("/")
     def index():
-        selected_raw = request.args.get("date", app.config["DEFAULT_DATE"])
+        default_date = app.config["DEFAULT_DATE"] or date.today().isoformat()
+        selected_raw = request.args.get("date", default_date)
         # The web view deliberately renders one service per request.  This keeps
         # the heavy scanned music excerpts from being downloaded twice on one
         # very long page.  Treat the old ``services=both`` links as the Orthros
@@ -59,7 +63,7 @@ def create_app(config: dict | None = None) -> Flask:
         try:
             calendar = LiturgicalCalendar(selected_raw)
         except (ValueError, TypeError):
-            calendar = LiturgicalCalendar(app.config["DEFAULT_DATE"])
+            calendar = LiturgicalCalendar(default_date)
             error = "Η ημερομηνία δεν είναι έγκυρη. Χρησιμοποίησε τη μορφή ΕΕΕΕ-ΜΜ-ΗΗ."
 
         if not error:

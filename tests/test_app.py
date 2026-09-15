@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -51,6 +51,7 @@ class AppTests(unittest.TestCase):
                 "CACHE_DIR": self.temporary.name,
                 "BYZ_DIR": str(byz),
                 "COMPOSER": FakeComposer(),
+                "DEFAULT_DATE": "2026-09-09",
             }
         )
         self.client = self.app.test_client()
@@ -101,9 +102,17 @@ class AppTests(unittest.TestCase):
         self.assertIn('id="orthros"', text)
         self.assertNotIn('id="litourgia"', text)
 
-    def test_default_date_is_requested_feast_date(self):
+    def test_configured_default_date_is_used_for_deterministic_testing(self):
         response = self.client.get("/")
         self.assertIn('value="2026-09-09"', response.get_data(as_text=True))
+
+    def test_unconfigured_default_date_is_today_and_orthros(self):
+        self.app.config["DEFAULT_DATE"] = None
+        response = self.client.get("/")
+        text = response.get_data(as_text=True)
+        self.assertIn(f'value="{date.today().isoformat()}"', text)
+        self.assertIn('id="orthros"', text)
+        self.assertNotIn('id="litourgia"', text)
 
     def test_index_composes_non_sunday_instead_of_rejecting_it(self):
         response = self.client.get("/?date=2026-09-14")

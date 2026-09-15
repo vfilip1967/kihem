@@ -87,3 +87,6 @@ The reader uses fixed auto-scroll speed 1 only. Its sole control is a
 pause/resume button; speed selection and keyboard speed controls are not part
 of the interface. The Great Doxology excerpt is anchored after its late
 “ἐν τῷ φωτί σου ὀψόμεθα φῶς” context, not the opening Trisagion.
+
+The default page request is the current date's Orthros. `KIHEM_DEFAULT_DATE`
+is an optional explicit override, not the normal production default.
