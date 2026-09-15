@@ -69,6 +69,9 @@ deployment.
 - In the web UI, selecting a note is the only way to start ison playback. It
   loops continuously until «Διακοπή»; there are intentionally no separate
   start or reset buttons.
+- The first eight numeric setup recordings (`1-1` through `1-4-1`) are not
+  listed in the public Α΄-ήχου menu. Selecting an item in the recording list
+  starts it immediately.
 - Uploaded workspace media is at `byz/isokratis` and `byz/prosomia`; do not
   stage these binaries in Git.
 

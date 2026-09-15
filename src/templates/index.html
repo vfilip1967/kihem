@@ -382,6 +382,7 @@
           .catch(() => { prosomiaStatus.textContent = 'Ο browser χρειάζεται πάτημα στο κουμπί Ακρόαση.'; });
       };
       prosomiaGroup.addEventListener('change', setTracks);
+      trackSelect.addEventListener('change', playProsomia);
       panel.querySelector('[data-prosomia-play]').addEventListener('click', playProsomia);
       panel.querySelector('[data-prosomia-pause]').addEventListener('click', () => {
         if (prosomiaAudio.paused) playProsomia();

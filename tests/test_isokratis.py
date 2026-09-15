@@ -14,6 +14,7 @@ class IsokratisLibraryTests(unittest.TestCase):
         (self.root / "isokratis" / "60.mp3").write_bytes(b"ison")
         (self.root / "isokratis" / "chant.mp3").write_bytes(b"not a numbered ison")
         (self.root / "prosomia" / "6-chant.mp3").write_bytes(b"mode six")
+        (self.root / "prosomia" / "1-1.mp3").write_bytes(b"hidden setup recording")
         (self.root / "prosomia" / "liturgy.mp3").write_bytes(b"other")
         (self.root / "prosomia" / "book.pdf").write_bytes(b"excluded")
         self.library = IsokratisLibrary(self.root)
@@ -27,6 +28,7 @@ class IsokratisLibraryTests(unittest.TestCase):
             [(mode, len(tracks)) for mode, tracks in self.library.prosomia_by_mode()],
             [("6", 1), ("other", 1)],
         )
+        self.assertIsNone(self.library.prosomia_path("1-1.mp3"))
 
     def test_catalog_membership_prevents_arbitrary_paths(self):
         self.assertEqual(self.library.ison_path(60), self.root / "isokratis" / "60.mp3")

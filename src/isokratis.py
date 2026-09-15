@@ -40,6 +40,19 @@ MODE_LABELS = {
 MODE_ORDER = tuple(MODE_LABELS)
 _NUMBERED_FILE = re.compile(r"^(\d+)\.mp3$", re.IGNORECASE)
 _MODE_PREFIX = re.compile(r"^([1-8])-")
+# These are setup/test recordings, not entries for the public Α΄-ήχου menu.
+_HIDDEN_PROSOMIA_FILENAMES = frozenset(
+    {
+        "1-1.mp3",
+        "1-1-1.mp3",
+        "1-2.mp3",
+        "1-2-1.mp3",
+        "1-3.mp3",
+        "1-3-1.mp3",
+        "1-4.mp3",
+        "1-4-1.mp3",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -77,6 +90,8 @@ class IsokratisLibrary:
     def _read_prosomia_tracks(self) -> tuple[ProsomiaTrack, ...]:
         tracks = []
         for path in self._files("prosomia"):
+            if path.name in _HIDDEN_PROSOMIA_FILENAMES:
+                continue
             prefix = _MODE_PREFIX.match(path.stem)
             mode = prefix.group(1) if prefix else "other"
             tracks.append(ProsomiaTrack(path.name, path.stem, mode))
