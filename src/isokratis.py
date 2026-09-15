@@ -43,6 +43,7 @@ _MODE_PREFIX = re.compile(r"^([1-8])-")
 # These are setup/test recordings, not entries for the public Α΄-ήχου menu.
 _HIDDEN_PROSOMIA_FILENAMES = frozenset(
     {
+        # Α΄ ήχος: setup/test recordings.
         "1-1.mp3",
         "1-1-1.mp3",
         "1-2.mp3",
@@ -51,6 +52,24 @@ _HIDDEN_PROSOMIA_FILENAMES = frozenset(
         "1-3-1.mp3",
         "1-4.mp3",
         "1-4-1.mp3",
+        # Β΄ ήχος: the user-selected exclusions below are kept on disk but
+        # intentionally omitted from the public recording menu.
+        "2-0.mp3",
+        "2-0-1.mp3",
+        "2-1.mp3",
+        "2-1-1.mp3",
+        "2-2.mp3",
+        "2-2-1.mp3",
+        "2-3-1.mp3",
+        "2-mathites.mp3",
+        "2-mathitwn.mp3",
+        "2-oikos.mp3",
+        "2-ote-katil8es (1).mp3",
+        "2-ote-katil8es-1.mp3",
+        "2-poiois (1).mp3",
+        "2-sarki.mp3",
+        "2-stauros (1).mp3",
+        "2-stauros.mp3",
     }
 )
 
