@@ -412,6 +412,22 @@ button:hover { background: var(--wine-dark); }
 .service-text .bl { color: #3399ff; }
 .service-text .melodos-green { color: green; }
 .service-text .melodos-red { color: red; }
+.service-text .melodos-audio-picker,
+.service-text .melodos-audio-button {
+  display: inline-block;
+  width: auto;
+  min-height: 34px;
+  margin: 5px 4px;
+  padding: 0 9px;
+  border-color: #b38600;
+  color: #ffff00;
+  background: #161616;
+  font: 0.8rem Arial, sans-serif;
+  vertical-align: middle;
+}
+.service-text .melodos-audio-button { cursor: pointer; }
+.service-text .melodos-audio-button:hover,
+.service-text .melodos-audio-button:focus-visible { color: #050505; background: #ffff00; }
 .service-text hr { margin: 34px 0; border: 0; border-top: 1px solid #444; }
 
 .pilot-note {

@@ -15,6 +15,10 @@ SAMPLE_ORTHROS = """
   <span class="ep" onclick="bad()">ΟΡΘΡΟΣ</span><br>
   <span class="ar">ΧΟΡΟΣ:</span> Ἀμήν.<br>
   <select><option>audio</option></select>
+  <select class="epilogeas_hxitikon" onChange="paixe_hxitiko('mousika/orthros/theos/' + this.options[this.selectedIndex].value)">
+    <option label="___Επίλεξε ή PAUSE"></option><option value="chant.mp3" label="___Χορός"></option>
+  </select>
+  <button onclick="paixe_hxitiko('mousika/orthros/button.mp3')">___Στανίτσας</button>
   <script>alert('inside')</script>
 </div></body></html>
 """
@@ -34,7 +38,7 @@ class MelodosTests(unittest.TestCase):
         self.assertEqual(parse_tone("Ήχος εβδομάδος βαρύς."), 7)
         self.assertIsNone(parse_tone("χωρίς επικεφαλίδα"))
 
-    def test_parser_keeps_roles_but_removes_remote_interactivity(self):
+    def test_parser_keeps_roles_and_rebuilds_melodos_audio_controls_safely(self):
         document = MelodosClient.parse_document(
             SAMPLE_ORTHROS, "orthros", fetched_at=datetime(2026, 9, 6, tzinfo=timezone.utc)
         )
@@ -44,7 +48,12 @@ class MelodosTests(unittest.TestCase):
         self.assertIn("ΟΡΘΡΟΣ", document.service_html)
         self.assertIn('class="ar"', document.service_html)
         self.assertNotIn("script", document.service_html)
-        self.assertNotIn("select", document.service_html)
+        self.assertIn('class="melodos-audio-picker"', document.service_html)
+        self.assertIn("___Επίλεξε ή PAUSE", document.service_html)
+        self.assertIn("___Χορός", document.service_html)
+        self.assertIn("https://melodos.com/akolouthies/mousika/orthros/theos/chant.mp3", document.service_html)
+        self.assertIn('class="melodos-audio-button"', document.service_html)
+        self.assertIn("https://melodos.com/akolouthies/mousika/orthros/button.mp3", document.service_html)
         self.assertNotIn("onclick", document.service_html)
         self.assertNotIn("example.invalid", document.service_html)
 

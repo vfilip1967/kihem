@@ -95,3 +95,7 @@ of the interface. The Great Doxology excerpt is anchored after its late
 
 The default page request is the current date's Orthros. `KIHEM_DEFAULT_DATE`
 is an optional explicit override, not the normal production default.
+
+Melodos inline music selectors and buttons are not discarded: `melodos.py`
+rebuilds controls only for its own `mousika/` MP3 paths, keeping their labels
+and using a local browser player. Never allow its raw JavaScript into Kihem.

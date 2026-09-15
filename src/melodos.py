@@ -9,6 +9,7 @@ from dataclasses import dataclass, replace
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Final
+from urllib.parse import quote, urljoin
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -19,6 +20,7 @@ from urllib3.util.retry import Retry
 MELODOS_ENDPOINT: Final = "https://melodos.com/akolouthies/action_page.php"
 MELODOS_CALENDAR_ENDPOINT: Final = "https://melodos.com/akolouthies/kane_imerologio_akolouthion.php"
 MELODOS_HOME: Final = "https://melodos.com/akolouthies/"
+MELODOS_AUDIO_ROOT: Final = "https://melodos.com/akolouthies/"
 SUPPORTED_YEARS: Final = range(2015, 2030)
 SERVICE_LABELS: Final = {
     "orthros": "Όρθρος",
@@ -282,16 +284,24 @@ class MelodosClient:
 
     @staticmethod
     def _sanitize(container: Tag) -> str:
-        # The remote page is data, never trusted markup. Keep only its semantic
-        # typography and line breaks; remove all executable/interactive content.
-        for node in container.find_all(("script", "style", "select", "button", "audio", "canvas", "iframe", "object")):
+        # The remote page is data, never trusted markup. Audio controls are
+        # rebuilt below from the exact, whitelisted ``mousika/`` paths that
+        # Melodos supplies; its JavaScript never enters Kihem.
+        generated_audio_controls = MelodosClient._replace_audio_controls(container)
+        for node in container.find_all(("script", "style", "audio", "canvas", "iframe", "object")):
             node.decompose()
+        for node in list(container.find_all(("select", "button"))):
+            if id(node) not in generated_audio_controls:
+                node.decompose()
         for link in container.find_all("a"):
             # Keep the visible source text in its exact position, but remove
             # the remote navigation target.
             link.unwrap()
 
-        allowed_tags = {"br", "span", "strong", "em", "b", "i", "p", "h2", "h3", "h4", "ul", "ol", "li", "hr"}
+        allowed_tags = {
+            "br", "span", "strong", "em", "b", "i", "p", "h2", "h3", "h4", "ul", "ol", "li", "hr",
+            "select", "option", "button",
+        }
         allowed_classes = {
             "ie", "ia", "ar", "ep", "ep2", "ei",
             "xx", "xi", "ti", "si", "bl",
@@ -299,6 +309,22 @@ class MelodosClient:
         for node in list(container.find_all(True)):
             if node.name not in allowed_tags:
                 node.unwrap()
+                continue
+            if node.name == "select" and id(node) in generated_audio_controls:
+                node.attrs = {
+                    "class": ["melodos-audio-picker"],
+                    "aria-label": "Μουσικό απόσπασμα Μελωδού",
+                }
+                continue
+            if node.name == "option" and isinstance(node.parent, Tag) and id(node.parent) in generated_audio_controls:
+                node.attrs = {"value": str(node.get("value", ""))}
+                continue
+            if node.name == "button" and id(node) in generated_audio_controls:
+                node.attrs = {
+                    "type": "button",
+                    "class": ["melodos-audio-button"],
+                    "data-melodos-audio": str(node.get("data-melodos-audio", "")),
+                }
                 continue
             classes = [value for value in node.get("class", []) if value in allowed_classes]
             inline_style = str(node.get("style", "")).lower().replace(" ", "")
@@ -313,3 +339,57 @@ class MelodosClient:
         # Polytonic code points and even source separators must remain exactly
         # as Melodos returned them.
         return rendered.strip() or html.escape(container.get_text("\n", strip=True))
+
+    @staticmethod
+    def _replace_audio_controls(container: Tag) -> set[int]:
+        """Rebuild Melodos' inline MP3 controls without accepting its JS.
+
+        The source only points to its own ``mousika/`` directory. Selectors
+        retain the same displayed recording labels; standalone source buttons
+        become ordinary, safe buttons with a resolved MP3 URL.
+        """
+        generated: set[int] = set()
+        fragment = BeautifulSoup("", "html.parser")
+
+        for source_select in list(container.find_all("select")):
+            prefix = MelodosClient._audio_prefix(str(source_select.get("onchange", "")))
+            if prefix is None:
+                continue
+            picker = fragment.new_tag("select")
+            picker["class"] = "melodos-audio-picker"
+            picker["aria-label"] = "Μουσικό απόσπασμα Μελωδού"
+            for source_option in source_select.find_all("option", recursive=False):
+                filename = str(source_option.get("value", ""))
+                option = fragment.new_tag("option")
+                option["value"] = MelodosClient._audio_url(prefix + filename) if filename else ""
+                option.string = str(source_option.get("label") or source_option.get_text(" ", strip=True))
+                picker.append(option)
+            source_select.replace_with(picker)
+            generated.add(id(picker))
+
+        for source_button in list(container.find_all("button")):
+            audio_path = MelodosClient._audio_prefix(str(source_button.get("onclick", "")))
+            if audio_path is None:
+                continue
+            button = fragment.new_tag("button")
+            button["type"] = "button"
+            button["class"] = "melodos-audio-button"
+            button["data-melodos-audio"] = MelodosClient._audio_url(audio_path)
+            button.string = source_button.get_text(" ", strip=True)
+            source_button.replace_with(button)
+            generated.add(id(button))
+
+        return generated
+
+    @staticmethod
+    def _audio_prefix(handler: str) -> str | None:
+        match = re.search(r"paixe_hxitiko\(\s*'([^']+)'", handler, flags=re.IGNORECASE)
+        if not match:
+            return None
+        path = html.unescape(match.group(1)).strip()
+        return path if path.startswith("mousika/") else None
+
+    @staticmethod
+    def _audio_url(path: str) -> str:
+        # Quote Unicode and spaces while preserving this fixed source origin.
+        return quote(urljoin(MELODOS_AUDIO_ROOT, path), safe=":/%")

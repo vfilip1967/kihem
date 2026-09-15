@@ -264,6 +264,27 @@
       startTimer();
     })();
 
+    // Melodos supplies musical choices through inline JavaScript. The server
+    // retains only its catalogued MP3 URLs; this local player supplies the
+    // same play/select and pause-on-default-option behavior without running
+    // remote code.
+    (() => {
+      const audio = new Audio();
+      const play = (source) => {
+        if (!source) {
+          audio.pause(); audio.currentTime = 0; return;
+        }
+        if (audio.src !== new URL(source, window.location.href).href) audio.src = source;
+        audio.play().catch(() => {});
+      };
+      document.querySelectorAll('.melodos-audio-picker').forEach((picker) => {
+        picker.addEventListener('change', () => play(picker.value));
+      });
+      document.querySelectorAll('[data-melodos-audio]').forEach((button) => {
+        button.addEventListener('click', () => play(button.dataset.melodosAudio));
+      });
+    })();
+
     // Browser replacement for the two App Inventor players. Player one loops
     // a numbered ison MP3; player two plays the selected prosomia recording.
     (() => {
