@@ -201,22 +201,6 @@ button:hover { background: var(--wine-dark); }
 .tone { padding: 7px 13px; border: 1px solid var(--gold); border-radius: 999px; color: var(--wine-dark); background: var(--card); white-space: nowrap; }
 .day-title { max-width: 70ch; margin: 10px 0 0; color: var(--muted); font-size: 1.05rem; }
 
-.service-switcher { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
-.service-switcher a {
-  padding: 9px 14px;
-  border: 1px solid var(--line);
-  color: var(--wine-dark);
-  background: var(--card);
-  font-family: Arial, sans-serif;
-  font-size: 0.82rem;
-  text-decoration: none;
-}
-.service-switcher a:hover, .service-switcher a:focus-visible, .service-switcher a.active {
-  border-color: var(--gold);
-  color: white;
-  background: var(--wine);
-}
-
 .service-nav {
   position: sticky;
   z-index: 2;
@@ -295,6 +279,14 @@ button:hover { background: var(--wine-dark); }
   font-family: Arial, sans-serif;
   font-size: 0.82rem;
   text-decoration: none;
+}
+.service-nav a.service-switch-link { color: var(--wine-dark); }
+.service-nav a.service-switch-link:hover,
+.service-nav a.service-switch-link:focus-visible,
+.service-nav a.service-switch-link.active {
+  border-color: var(--gold);
+  color: white;
+  background: var(--wine);
 }
 
 .music-bookmarks-menu { position: relative; }
@@ -512,7 +504,7 @@ button:hover { background: var(--wine-dark); }
 }
 
 @media print {
-  .selector, .service-switcher, .service-nav, .site-footer { display: none; }
+  .selector, .service-nav, .site-footer { display: none; }
   body { background: white; }
   .site-header, main { width: 100%; }
   .service-card, .music-attachment { box-shadow: none; }

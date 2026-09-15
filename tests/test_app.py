@@ -65,6 +65,8 @@ class AppTests(unittest.TestCase):
         text = response.get_data(as_text=True)
         self.assertIn("Όρθρος", text)
         self.assertIn("Θεία Λειτουργία", text)  # separate-page navigation
+        self.assertIn('class="service-switch-link active" href="?date=2026-09-13&amp;services=orthros"', text)
+        self.assertIn('class="service-switch-link " href="?date=2026-09-13&amp;services=litourgia"', text)
         self.assertIn("Δοκιμαστικός τίτλος Μελωδού", text)
         self.assertIn("Ήχος εβδομάδος πλ β΄.", text)
         self.assertNotIn("τοποθετήθηκαν κάτω από τα αντίστοιχα μέλη", text)

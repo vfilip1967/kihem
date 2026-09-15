@@ -134,15 +134,9 @@
         {% if tone %}<span class="tone">{{ documents[0].source_tone_label or documents[0].tone_label }}</span>{% endif %}
       </section>
 
-      <nav class="service-switcher" aria-label="Εναλλαγή ακολουθίας">
-        <a class="{{ 'active' if selected_services == 'orthros' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=orthros">Όρθρος</a>
-        <a class="{{ 'active' if selected_services == 'litourgia' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=litourgia">Θεία Λειτουργία</a>
-      </nav>
-
       <nav class="service-nav" aria-label="Περιεχόμενα ακολουθίας">
-        {% for document in documents %}
-          <a href="#{{ document.service }}">{{ document.label }}</a>
-        {% endfor %}
+        <a class="service-switch-link {{ 'active' if selected_services == 'orthros' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=orthros">Όρθρος</a>
+        <a class="service-switch-link {{ 'active' if selected_services == 'litourgia' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=litourgia">Θεία Λειτουργία</a>
         {% if music_bookmarks %}
           <details class="music-bookmarks-menu">
             <summary>🔖 Μουσικά κείμενα <span>{{ music_bookmarks|length }}</span></summary>
