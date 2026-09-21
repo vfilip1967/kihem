@@ -17,7 +17,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 83)
+        self.assertEqual(len(pieces), 112)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -49,7 +49,7 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(get_piece(BOOK_ID, "tone6-apolytikion").incipit, "Ἀγγελικαὶ Δυνάμεις")
         self.assertEqual(get_piece(PANDEKTI_BOOK_ID, "psalm-50-tone2").book_id, PANDEKTI_BOOK_ID)
         self.assertEqual(get_piece(IRMOLOGION_BOOK_ID, "cross-katavasies").book_id, IRMOLOGION_BOOK_ID)
-        self.assertEqual(len(catalog_books()), 15)
+        self.assertEqual(len(catalog_books()), 16)
         self.assertEqual(
             get_piece(PANDEKTI_LITOURGIA_BOOK_ID, "litourgia-eisodikon-pandekti").book_id,
             PANDEKTI_LITOURGIA_BOOK_ID,
@@ -84,13 +84,16 @@ class AnastasimatarionTests(unittest.TestCase):
         )
 
     def test_matching_is_driven_by_content_not_weekday_or_date(self):
-        source = "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"
+        source = (
+            "Ήχος εβδομάδος πλ β΄.<br>"
+            "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"
+        )
         result = enrich_service_html(date(2026, 9, 14), "orthros", source)
         self.assertEqual(result.attachment_count, 1)
 
     def test_music_is_inserted_after_matching_hymn_not_as_an_appendix(self):
         source = (
-            "<span>Ἀπολυτίκιον</span><br>"
+            "Ήχος εβδομάδος πλ β΄.<br><span>Ἀπολυτίκιον</span><br>"
             "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"
             '<span class="ep">Ἀπολυτίκιον τῶν Ἐγκαινίων.</span>'
         )
@@ -148,7 +151,8 @@ class AnastasimatarionTests(unittest.TestCase):
         with_tone = enrich_service_html(
             date(2026, 9, 8),
             "orthros",
-            "<span>Ἦχος πλ β΄</span><br>ἐν τῷ φωτί σου ὀψόμεθα φῶς.<br>" + doxology_end,
+            "Ήχος εβδομάδος πλ β΄.<br><span>Ἦχος πλ β΄</span><br>"
+            "ἐν τῷ φωτί σου ὀψόμεθα φῶς.<br>" + doxology_end,
         )
         self.assertEqual(without_tone.attachment_count, 0)
         self.assertEqual(with_tone.attachment_count, 1)
@@ -159,7 +163,8 @@ class AnastasimatarionTests(unittest.TestCase):
         result = enrich_service_html(
             date(2026, 9, 8),
             "orthros",
-            "<span>Ἦχος πλ β΄</span><br>" + trisagion + "Μεσότητα του Όρθρου<br>" + late_marker + trisagion,
+            "Ήχος εβδομάδος πλ β΄.<br><span>Ἦχος πλ β΄</span><br>"
+            + trisagion + "Μεσότητα του Όρθρου<br>" + late_marker + trisagion,
         )
 
         self.assertEqual(result.attachment_count, 1)
@@ -199,6 +204,30 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertLess(result.html.rindex("Δόξα σοὶ ὁ Θεός"), result.html.index("resurrectional-evlogitaria"))
         self.assertLess(result.html.index("resurrectional-evlogitaria"), result.html.index("Ἡ Ὑπακοή"))
 
+    def test_sunday_core_members_follow_the_weekly_tone_without_feast_tone_leakage(self):
+        source = (
+            "Ήχος εβδομάδος Βαρύς.<br>"
+            "Οἱ Ἀναβαθμοὶ Ἦχος βαρύς<br>"
+            "Προκείμενον Ἦχος βαρύς<br>"
+            "ΚΑΝΟΝΕΣ<br>ΩΔΗ Α΄ ΚΑΝΟΝΩΝ<br>Κανὼν Ἀναστάσιμος<br>"
+            "ΩΔΗ Γ΄ ΚΑΝΟΝΩΝ<br>"
+            "Ἐν συνεχεία ψάλλονται τά Ἀναστάσιμα εὐλογητάρια.<br>"
+        )
+        result = enrich_service_html(date(2026, 9, 20), "orthros", source)
+
+        self.assertIn('data-music-piece="tone7-kathismata"', result.html)
+        self.assertIn('data-music-piece="tone7-anavathmoi"', result.html)
+        self.assertIn('data-music-piece="tone7-canon-ode-1"', result.html)
+        self.assertIn('data-music-piece="tone7-canon-ode-3"', result.html)
+        self.assertNotIn('data-music-piece="tone8-kathismata"', result.html)
+        self.assertLess(result.html.index("tone7-kathismata"), result.html.index("Ἀναστάσιμα εὐλογητάρια"))
+
+    def test_weekday_prokeimenon_does_not_receive_sunday_anavathmoi(self):
+        source = "Ήχος εβδομάδος Βαρύς.<br>Προκείμενον Ἦχος βαρύς<br>Καθημερινός Όρθρος"
+        result = enrich_service_html(date(2026, 9, 22), "orthros", source)
+
+        self.assertNotIn('data-music-piece="tone7-anavathmoi"', result.html)
+
     def test_tone_fourth_first_antiphon_is_attached_for_the_feast_day_orthros(self):
         source = (
             "Ἀναβαθμοί τὸ α΄ Ἀντίφωνον τοῦ δ΄ Ἤχου<br>"
@@ -232,6 +261,19 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn("Μουσικὴ Πανδέκτη · Τόμος Β΄", result.html)
         self.assertLess(result.html.index("μόσχους"), result.html.index("psalm-50-tone2"))
         self.assertLess(result.html.index("psalm-50-tone2"), result.html.index("Δόξα Πατρί"))
+
+    def test_ypereulogimeni_uses_its_fixed_second_tone_setting(self):
+        source = (
+            "Υπερευλογημένη ψάλλεται πάντοτε σε ήχο β΄.<br>"
+            "Υπερευλογημένη υπάρχεις, Θεοτόκε Παρθένε.<br>"
+            "Εὐλογητὸς Χριστὸς ὁ Θεὸς ἡμῶν, ὁ οὕτως εὐδοκήσας, δόξα σοι.<br>"
+            "Δόξα σοι τῷ δείξαντι τὸ φῶς."
+        )
+        result = enrich_service_html(date(2026, 9, 16), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn('data-music-piece="ypereulogimeni-tone2"', result.html)
+        self.assertIn("music/ypereulogimeni-tone2-pemptousia/ypereulogimeni-tone2/1.png", result.html)
 
     def test_cross_katavasies_are_inserted_before_timiotera_and_ninth_ode(self):
         source = (

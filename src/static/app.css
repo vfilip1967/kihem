@@ -445,6 +445,24 @@ button:hover { background: var(--wine-dark); }
 .service-text .melodos-audio-button:hover,
 .service-text .melodos-audio-button:focus-visible { color: #050505; background: #ffff00; }
 .service-text hr { margin: 34px 0; border: 0; border-top: 1px solid #444; }
+.scripture-interpretation {
+  max-width: 860px;
+  margin: 26px auto 34px;
+  padding: 18px 20px;
+  border: 1px solid #8d6f13;
+  border-radius: 6px;
+  color: #f6e7a7;
+  background: #111;
+  font-family: Arial, "Noto Sans", sans-serif;
+  font-size: 0.78em;
+  line-height: 1.55;
+  text-align: left;
+}
+.scripture-interpretation h3 { margin: 0 0 12px; color: #ffff00; font-family: "Times New Roman", serif; font-size: 1.25em; }
+.scripture-interpretation h4 { margin: 18px 0 7px; color: #aaff00; font-size: 1em; }
+.scripture-interpretation p { margin: 0 0 10px; }
+.scripture-interpretation ul { margin: 0 0 10px; padding-inline-start: 22px; }
+.scripture-interpretation li { margin-bottom: 5px; }
 
 .pilot-note {
   display: flex;

@@ -16,6 +16,7 @@ from src.composer import ServiceComposer
 from src.liturgical_calendar import LiturgicalCalendar
 from src.melodos import MELODOS_HOME, MelodosClient, MelodosError
 from src.isokratis import ISON_NOTES, MODE_LABELS, IsokratisLibrary
+from src.scripture_interpretations import ScriptureInterpretationService
 
 
 def create_app(config: dict | None = None) -> Flask:
@@ -27,6 +28,7 @@ def create_app(config: dict | None = None) -> Flask:
         # An explicit environment value is useful for a controlled demo, but
         # regular visits open tomorrow's Orthros by default.
         DEFAULT_DATE=os.environ.get("KIHEM_DEFAULT_DATE"),
+        INTERPRETATION_MODEL=os.environ.get("KIHEM_INTERPRETATION_MODEL", "gpt-5.6-luna"),
     )
     if config:
         app.config.update(config)
@@ -47,6 +49,10 @@ def create_app(config: dict | None = None) -> Flask:
         app.config["BYZ_DIR"]
     )
     app.extensions["kihem_isokratis_library"] = media_library
+    interpretation_service = app.config.get("SCRIPTURE_INTERPRETATION_SERVICE") or ScriptureInterpretationService(
+        app.config["CACHE_DIR"], model=app.config["INTERPRETATION_MODEL"]
+    )
+    app.extensions["kihem_scripture_interpretation_service"] = interpretation_service
 
     @app.get("/")
     def index():
@@ -89,6 +95,9 @@ def create_app(config: dict | None = None) -> Flask:
                     item.service_html,
                     instance_offset=attachment_count,
                 )
+                service_html = enriched.html
+                if item.service == "orthros":
+                    service_html = interpretation_service.enrich_orthros_html(service_html)
                 attachment_count += enriched.attachment_count
                 unmatched_piece_ids.extend(enriched.unmatched_piece_ids)
                 music_bookmarks.extend(
@@ -102,7 +111,7 @@ def create_app(config: dict | None = None) -> Flask:
                     {
                         "service": item.service,
                         "label": item.label,
-                        "html": Markup(enriched.html),
+                        "html": Markup(service_html),
                         "tone_label": item.tone_label,
                         "source_day_label": item.source_day_label,
                         "source_tone_label": item.source_tone_label,

@@ -29,6 +29,7 @@ PANDEKTI_LITOURGIA_BOOK_ID: Final = "pandekti-litourgia-1851"
 KYPSELI_BOOK_ID: Final = "kypseli-stefanou-lampadariou-minaia"
 KOINONIKA_ALL_TONES_BOOK_ID: Final = "eis-mnimosynon-all-tones"
 PLIROTHITO_BOOK_ID: Final = "melodos-plirothito-2023"
+YPEREULOGIMENI_BOOK_ID: Final = "ypereulogimeni-tone2-pemptousia"
 # The Menaia are date-indexed source material. A page from a neighbouring
 # feast must never be used as a fallback for the selected date.
 DATE_SCOPED_BOOK_IDS: Final[frozenset[str]] = frozenset({KYPSELI_BOOK_ID})
@@ -116,6 +117,16 @@ BOOKS: Final[dict[str, MusicBook]] = {
         "Μελωδός · ψηφιοποιημένο μουσικό τεκμήριο",
         "https://melodos.com/bibliothiki/wp-content/uploads/2018/01/06-01-2023-%CE%8C%CF%81%CE%B8%CF%81%CE%BF%CF%82-%CE%9C%CE%AD%CE%B3%CE%B1%CF%82-%CE%91%CE%B3%CE%B9%CE%B1%CF%83%CE%BC%CF%8C%CF%82.pdf",
     ),
+    YPEREULOGIMENI_BOOK_ID: MusicBook(
+        YPEREULOGIMENI_BOOK_ID,
+        "Ὑπερευλογημένη · ἦχος β΄ · Πέτρου Λαμπαδαρίου",
+        "Κυριακὴ β΄ Ματθαίου · μουσικὸ τεκμήριο τοῦ Ὑπερευλογημένη",
+        "https://www.pemptousia.gr/",
+        "ypereulogimeni-tone2-pemptousia.pdf",
+        524,
+        "Πεμπτουσία · μουσικὸ τεκμήριο ἤχου β΄",
+        "https://www.pemptousia.gr/wp-content/uploads/2022/06/26062022-%CE%9A%CF%85%CF%81%CE%B9%CE%B1%CE%BA%CE%AE-%CE%B2-%CE%9C%CE%B1%CF%84%CE%B8%CE%B1%CE%AF%CE%BF%CF%85-%CE%AE%CF%87.%CE%B1-%CE%B5%CF%89%CE%B8.%CE%B2.pdf",
+    ),
 }
 
 
@@ -147,6 +158,9 @@ class AttachmentRule:
     required_text_any: tuple[str, ...] = ()
     excluded_text_any: tuple[str, ...] = ()
     weekdays: tuple[int, ...] = ()
+    # The weekly tone is read from the returned Melodos document. It is never
+    # derived from the calendar date.
+    weekly_tone: int | None = None
     month_days: tuple[tuple[int, int], ...] = ()
     match_number: int = 1
     preceding_text: str | None = None
@@ -284,6 +298,13 @@ PIECES: Final[dict[str, MusicPiece]] = {
             ScanRegion(5, 494, (0.02, 0.02, 0.98, 0.55)),
         ),
         book_id=PANDEKTI_BOOK_ID,
+    ),
+    "ypereulogimeni-tone2": MusicPiece(
+        "ypereulogimeni-tone2",
+        "Ὑπερευλογημένη · ἦχος β΄ · Πέτρου Λαμπαδαρίου",
+        "Ὑπερευλογημένη ὑπάρχεις, Θεοτόκε Παρθένε",
+        (ScanRegion(288, 288, (0.02, 0.02, 0.98, 0.72)),),
+        book_id=YPEREULOGIMENI_BOOK_ID,
     ),
     "cross-katavasies": MusicPiece(
         "cross-katavasies",
@@ -673,16 +694,19 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "orthros",
         "ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.",
         "tone6-apolytikion",
+        weekly_tone=6,
     ),
     AttachmentRule(
         "orthros",
         "ὁ ἐν νεκροῖς καὶ τοὺς νεκροὺς ἀναστήσας δόξα σοί.",
         "tone6-kathismata-a",
+        weekly_tone=6,
     ),
     AttachmentRule(
         "orthros",
         "Χριστὲ ὁ Θεὸς ἡμῶν, φωτίσας τοὺς ἐν σκότει.",
         "tone6-kathismata-b",
+        weekly_tone=6,
     ),
     AttachmentRule(
         "orthros",
@@ -695,6 +719,7 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "orthros",
         "σὺν πάση πνοὴ τῶν κάτω.",
         "tone6-anavathmoi",
+        weekly_tone=6,
     ),
     AttachmentRule(
         "orthros",
@@ -706,25 +731,25 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "orthros",
         "τῶν κτισμάτων ἀληθῶς, ἐδείχθης Δέσποινα.",
         "tone6-canon-ode-1",
+        weekly_tone=6,
     ),
     AttachmentRule(
         "orthros",
         "καὶ τεκοῦσα, μένεις ἀειπάρθενος.",
         "tone6-canon-ode-3",
+        weekly_tone=6,
     ),
     AttachmentRule(
         "orthros",
         "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
         "plagal4-timiotera",
-        required_text=(
-            "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών. "
-            "Ἦχος πλ δ΄ Ωδή της θεοτόκου",
-        ),
+        required_text=("Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.",),
+        required_text_any=("Ἦχος πλ δ΄", "Ηχος πλ δ΄"),
         match_number=6,
     ),
     AttachmentRule(
         "orthros",
-        "ἡ Τιμιωτέρα",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
         "cross-katavasies",
         required_text=(
             "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
@@ -732,19 +757,43 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
             "ταυρὸν χαράξας Μωσῆς",
         ),
         # The scan contains the complete set of katavasies.  Keep it before
-        # the Timiotera boundary, which also places it before the ninth ode of
-        # the canons when the Timiotera is not chanted on a feast day.
+        # the hymn which introduces the Timiotera.  This is the liturgical
+        # boundary used by Melodos, not merely the first later occurrence of
+        # the word «Τιμιωτέρα».
+        insert_before=True,
+    ),
+    # A few feast-day documents explicitly say that the Timiotera is omitted.
+    # Keep the Katavasies before that replacement boundary without weakening
+    # the normal, more precise anchor above.
+    AttachmentRule(
+        "orthros",
+        "ἡ Τιμιωτέρα",
+        "cross-katavasies",
+        required_text=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "ταυρὸν χαράξας Μωσῆς",
+        ),
+        excluded_text_any=("Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός",),
         insert_before=True,
     ),
     AttachmentRule(
         "orthros",
         "καὶ ἀνυμνεῖ σου τὴν Ἀνάστασιν.",
         "tone6-ainoi-first-four",
+        weekly_tone=6,
     ),
     AttachmentRule(
         "orthros",
         "πρὸς ἑαυτὸν τὰ θαυμάσια.",
         "eothinon-4",
+    ),
+    AttachmentRule(
+        "orthros",
+        "ὁ οὕτως εὐδοκήσας, δόξα σοι.",
+        "ypereulogimeni-tone2",
+        # Melodos splits the decorated initial «Ὑ» into its own span, but its
+        # preceding rubrical note remains a stable, unbroken identifier.
+        required_text_any=("Υπερευλογημένη ψάλλεται πάντοτε", "Ὑπερευλογημένη ψάλλεται πάντοτε"),
     ),
     AttachmentRule(
         "orthros",
@@ -754,11 +803,23 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "orthros",
+        "Σήμερον σωτηρία τῷ κόσμῳ γέγονεν.",
+        "tone6-great-doxology",
+        required_text=("Ἦχος πλ β΄",),
+        weekly_tone=6,
+        # The Great Doxology belongs immediately before the resurrectional
+        # dismissal hymn, never at the opening Trisagion.
+        insert_before=True,
+    ),
+    # Compatibility for a shortened source extract which contains the
+    # Doxology but not its following resurrectional dismissal hymn.
+    AttachmentRule(
+        "orthros",
         "γιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.",
         "tone6-great-doxology",
         required_text=("Ἦχος πλ β΄",),
-        # The same Trisagion appears near the beginning of Orthros. The
-        # preceding verse belongs to the Great Doxology close to its end.
+        weekly_tone=6,
+        excluded_text_any=("Σήμερον σωτηρία τῷ κόσμῳ γέγονεν.",),
         preceding_text="ἐν τῷ φωτί σου ὀψόμεθα φῶς.",
     ),
     AttachmentRule(
@@ -909,6 +970,98 @@ _TONE_REQUIREMENTS: Final[dict[int, tuple[str, ...]]] = {
     ),
     8: ("ψάλλονται σε ήχο πλ δ΄",),
 }
+
+# Sunday Orthros is not an appendix: the resurrectional Kathismata,
+# Anavathmoi and the first and third odes belong at their actual places in
+# the order of service.  The following clips were checked in the 1905 scan.
+# They deliberately stop before the next heading, so a neighbouring hymn is
+# never presented as part of the selected one.
+_ORTHROS_TONE_LABELS: Final[dict[int, str]] = {
+    1: "α΄", 2: "β΄", 3: "γ΄", 4: "δ΄", 5: "πλ. α΄", 6: "πλ. β΄", 7: "βαρύς", 8: "πλ. δ΄",
+}
+_ORTHROS_TONE_CONTEXT: Final[dict[int, tuple[str, ...]]] = {
+    1: ("Ήχος εβδομάδος α΄",),
+    2: ("Ήχος εβδομάδος β΄",),
+    3: ("Ήχος εβδομάδος γ΄",),
+    4: ("Ήχος εβδομάδος δ΄",),
+    5: ("Ήχος εβδομάδος πλ α΄",),
+    6: ("Ήχος εβδομάδος πλ β΄",),
+    7: ("Ήχος εβδομάδος βαρύς",),
+    8: ("Ήχος εβδομάδος πλ δ΄",),
+}
+_ORTHROS_ANAVATHMOI_CONTEXT: Final[dict[int, tuple[str, ...]]] = {
+    1: ("Οἱ Ἀναβαθμοὶ Ἦχος α΄",),
+    2: ("Οἱ Ἀναβαθμοὶ Ἦχος β΄",),
+    3: ("Οἱ Ἀναβαθμοὶ Ἦχος γ΄",),
+    4: ("Οἱ Ἀναβαθμοὶ Ἦχος δ΄",),
+    5: ("Οἱ Ἀναβαθμοὶ Ἦχος πλ α΄",),
+    6: ("Οἱ Ἀναβαθμοὶ Ἦχος πλ β΄",),
+    7: ("Οἱ Ἀναβαθμοὶ Ἦχος βαρύς",),
+    8: ("Οἱ Ἀναβαθμοὶ Ἦχος πλ δ΄",),
+}
+
+# (Kathismata, Anavathmoi, Ode 1, Ode 3).  The sixth tone retains the tighter
+# hand-checked clips above, which also give the two Kathismata separate titles.
+_ORTHROS_TONE_REGIONS: Final[dict[int, tuple[tuple[ScanRegion, ...], ...]]] = {
+    1: (
+        (_region(16, .48), _region(17), _region(18, .02, .58)),
+        (_region(22, .78), _region(23), _region(24, .02, .42)),
+        (_region(25, .18), _region(26, .02, .76)),
+        (_region(27, .64), _region(28, .02, .76)),
+    ),
+    2: (
+        (_region(68, .42), _region(69), _region(70, .02, .72)),
+        (_region(73, .20), _region(74), _region(75, .02, .38)),
+        (_region(78, .22), _region(79), _region(80, .02, .34)),
+        (_region(82, .78), _region(83, .02, .82)),
+    ),
+    3: (
+        (_region(115, .36), _region(116), _region(117, .02, .72)),
+        (_region(120, .18), _region(121), _region(122, .02, .42)),
+        (_region(124, .14), _region(125, .02, .34)),
+        (_region(125, .72), _region(126, .02, .76)),
+    ),
+    4: (
+        (_region(175, .34), _region(176), _region(177, .02, .70)),
+        (_region(178, .46), _region(179), _region(180, .02, .34)),
+        (_region(180, .74), _region(181, .02, .76)),
+        (_region(182, .34), _region(183, .02, .76)),
+    ),
+    5: (
+        (_region(227, .30), _region(228), _region(229, .02, .70)),
+        (_region(230, .22), _region(231), _region(232, .02, .30)),
+        (_region(232, .28), _region(233, .02, .76)),
+        (_region(235, .16), _region(236, .02, .76)),
+    ),
+    7: (
+        (_region(335, .30), _region(336), _region(337, .02, .66)),
+        (_region(337, .60), _region(338), _region(339, .02, .40)),
+        (_region(340, .30), _region(341, .02, .76)),
+        (_region(345, .64), _region(346, .02, .76)),
+    ),
+    8: (
+        (_region(400, .30), _region(401), _region(402, .02, .66)),
+        (_region(402, .60), _region(403), _region(404, .02, .40)),
+        (_region(405, .26), _region(406, .02, .76)),
+        (_region(407, .62), _region(408, .02, .76)),
+    ),
+}
+
+for _tone, _groups in _ORTHROS_TONE_REGIONS.items():
+    for _kind, _title, _incipit, _regions in zip(
+        ("kathismata", "anavathmoi", "canon-ode-1", "canon-ode-3"),
+        (
+            f"Καθίσματα Κυριακῆς · ἦχος {_ORTHROS_TONE_LABELS[_tone]}",
+            f"Οἱ Ἀναβαθμοί · ἦχος {_ORTHROS_TONE_LABELS[_tone]}",
+            f"Ἀναστάσιμος Κανών · ᾨδὴ α΄ · ἦχος {_ORTHROS_TONE_LABELS[_tone]}",
+            f"Ἀναστάσιμος Κανών · ᾨδὴ γ΄ · ἦχος {_ORTHROS_TONE_LABELS[_tone]}",
+        ),
+        ("Καθίσματα", "Οἱ Ἀναβαθμοί", "Ὠδὴ α΄", "Ὠδὴ γ΄"),
+        _groups,
+    ):
+        PIECES[f"tone{_tone}-{_kind}"] = MusicPiece(
+            f"tone{_tone}-{_kind}", _title, _incipit, _regions
+        )
 
 _LITOURGIA_SANCTUS: Final[str] = (
     "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ "
@@ -1063,7 +1216,57 @@ _TONE_ATTACHMENT_RULES.extend(
         ),
     )
 )
-PILOT_RULES += tuple(_TONE_ATTACHMENT_RULES)
+
+# These rules are intentionally tied to headings supplied by Melodos.  Thus a
+# weekday set of Anavathmoi uses its own declared tone, while the Sunday-only
+# material additionally requires the resurrectional markers in that day's
+# Orthros.
+_ORTHROS_TONE_ATTACHMENT_RULES: list[AttachmentRule] = []
+for _tone, _context in _ORTHROS_TONE_CONTEXT.items():
+    if _tone == 6:
+        # The pilot clips above use their precise closing incipits and retain
+        # the two sixth-tone Kathismata as separate excerpts.
+        continue
+    _ORTHROS_TONE_ATTACHMENT_RULES.extend(
+        (
+            AttachmentRule(
+                "orthros",
+                "Ἐν συνεχεία ψάλλονται τά Ἀναστάσιμα εὐλογητάρια.",
+                f"tone{_tone}-kathismata",
+                weekly_tone=_tone,
+                insert_before=True,
+            ),
+            AttachmentRule(
+                "orthros",
+                "Προκείμενον",
+                f"tone{_tone}-anavathmoi",
+                weekly_tone=_tone,
+                # A weekday may have the same weekly tone and a Prokeimenon,
+                # but no resurrectional Anavathmoi.  The Sunday marker from
+                # Melodos is therefore required before adding this scan.
+                required_text=("Ἐν συνεχεία ψάλλονται τά Ἀναστάσιμα εὐλογητάρια.",),
+                insert_before=True,
+            ),
+            AttachmentRule(
+                "orthros",
+                "ΩΔΗ Α΄ ΚΑΝΟΝΩΝ",
+                f"tone{_tone}-canon-ode-1",
+                weekly_tone=_tone,
+                required_text=("Κανὼν Ἀναστάσιμος",),
+                insert_before=True,
+            ),
+            AttachmentRule(
+                "orthros",
+                "ΩΔΗ Γ΄ ΚΑΝΟΝΩΝ",
+                f"tone{_tone}-canon-ode-3",
+                weekly_tone=_tone,
+                required_text=("Κανὼν Ἀναστάσιμος",),
+                insert_before=True,
+            ),
+        )
+    )
+
+PILOT_RULES += tuple(_TONE_ATTACHMENT_RULES + _ORTHROS_TONE_ATTACHMENT_RULES)
 
 
 def catalog_pieces() -> tuple[MusicPiece, ...]:
@@ -1094,6 +1297,28 @@ def _normalized(value: str) -> str:
         if unicodedata.category(ch) not in {"Mn", "Pc", "Pd", "Pe", "Pf", "Pi", "Po", "Ps"}
     )
     return " ".join(cleaned.split())
+
+
+def _weekly_tone_from_document(normalized_document: str) -> int | None:
+    """Read the current weekly tone from Melodos' own heading."""
+    # `casefold()` normalizes final sigmas to σ.
+    marker = "ηχοσ εβδομαδοσ"
+    start = normalized_document.find(marker)
+    if start < 0:
+        return None
+    value = normalized_document[start + len(marker) : start + len(marker) + 48]
+    if "πλ α" in value:
+        return 5
+    if "πλ β" in value:
+        return 6
+    if "βαρυ" in value:
+        return 7
+    if "πλ δ" in value:
+        return 8
+    for letter, tone in (("α", 1), ("β", 2), ("γ", 3), ("δ", 4)):
+        if value.lstrip().startswith(letter):
+            return tone
+    return None
 
 
 def _bookmark_id(piece: MusicPiece, instance: int) -> str:
@@ -1174,6 +1399,8 @@ def enrich_service_html(
     attachment_count = 0
     unmatched: list[str] = []
     bookmarks: list[MusicBookmark] = []
+    normalized_document = _normalized(soup.get_text(" ", strip=True))
+    weekly_tone = _weekly_tone_from_document(normalized_document)
 
     for rule in rules:
         piece = PIECES[rule.piece_id]
@@ -1187,8 +1414,9 @@ def enrich_service_html(
             continue
         if rule.weekdays and selected_date.weekday() not in rule.weekdays:
             continue
+        if rule.weekly_tone is not None and weekly_tone != rule.weekly_tone:
+            continue
         needle = _normalized(rule.after_text)
-        normalized_document = _normalized(soup.get_text(" ", strip=True))
         if any(_normalized(required) not in normalized_document for required in rule.required_text):
             continue
         if rule.excluded_text_any and any(

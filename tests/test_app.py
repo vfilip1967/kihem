@@ -15,7 +15,7 @@ class FakeComposer:
                 service=service,
                 label="Όρθρος" if service == "orthros" else "Θεία Λειτουργία Ιωάννου Χρυσοστόμου",
                 service_html=(
-                    '<span class="ep">Δοκιμαστικό κείμενο</span><br>'
+                    'Ήχος εβδομάδος πλ β΄.<br><span class="ep">Δοκιμαστικό κείμενο</span><br>'
                     "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"
                     '<span class="ep">Επόμενο μέρος</span>'
                 ),
@@ -63,7 +63,7 @@ class AppTests(unittest.TestCase):
         response = self.client.get("/?date=2026-09-13&services=orthros")
         self.assertEqual(response.status_code, 200)
         text = response.get_data(as_text=True)
-        self.assertIn('href="static/app.css?v=20260920-mobile-compact"', text)
+        self.assertIn('href="static/app.css?v=20260921-scripture-interpretations"', text)
         self.assertIn("Όρθρος", text)
         self.assertIn("Θεία Λειτουργία", text)  # separate-page navigation
         self.assertIn('class="service-switch-link active" href="?date=2026-09-13&amp;services=orthros"', text)
