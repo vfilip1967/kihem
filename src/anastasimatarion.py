@@ -27,6 +27,8 @@ PANDEKTI_BOOK_ID: Final = "pandekti-orthrou-1851"
 IRMOLOGION_BOOK_ID: Final = "ioannis-protopsaltis-eirmologion-1903"
 PANDEKTI_LITOURGIA_BOOK_ID: Final = "pandekti-litourgia-1851"
 KYPSELI_BOOK_ID: Final = "kypseli-stefanou-lampadariou-minaia"
+KOINONIKA_ALL_TONES_BOOK_ID: Final = "eis-mnimosynon-all-tones"
+PLIROTHITO_BOOK_ID: Final = "melodos-plirothito-2023"
 # The Menaia are date-indexed source material. A page from a neighbouring
 # feast must never be used as a fallback for the selected date.
 DATE_SCOPED_BOOK_IDS: Final[frozenset[str]] = frozenset({KYPSELI_BOOK_ID})
@@ -94,6 +96,26 @@ BOOKS: Final[dict[str, MusicBook]] = {
         "Μελωδός · ψηφιοποιημένη Μουσικὴ Κυψέλη",
         "https://melodos.com/bibliothiki/wp-content/uploads/1622/02/Κυψέλη-Στεφάνου-Λαμπαδαρίου.-Μηναία.pdf",
     ),
+    KOINONIKA_ALL_TONES_BOOK_ID: MusicBook(
+        KOINONIKA_ALL_TONES_BOOK_ID,
+        "Εἰς μνημόσυνον αἰώνιον · ἀνθολογία ὀκτὼ ἤχων",
+        "Κοινωνικὸν «Εἰς μνημόσυνον αἰώνιον» · μουσικὰ κείμενα κατὰ ἦχον",
+        "https://psaltiri.gr/index2.php?fid=2661&no_html=1&option=com_sobi2&sobi2Task=dd_download",
+        "eis-mnimosynon-all-tones.pdf",
+        104,
+        "Ψαλτήρι · ψηφιοποίηση 10uk15",
+        "https://psaltiri.gr/index2.php?fid=2661&no_html=1&option=com_sobi2&sobi2Task=dd_download",
+    ),
+    PLIROTHITO_BOOK_ID: MusicBook(
+        PLIROTHITO_BOOK_ID,
+        "Πληρωθήτω τὸ στόμα ἡμῶν · ἦχος δ΄",
+        "Θεοφάνεια 2023 · μουσικὸ παράρτημα Θείας Λειτουργίας",
+        "https://melodos.com/bibliothiki/?cat=157",
+        "melodos-theophany-2023-plirothito.pdf",
+        121,
+        "Μελωδός · ψηφιοποιημένο μουσικό τεκμήριο",
+        "https://melodos.com/bibliothiki/wp-content/uploads/2018/01/06-01-2023-%CE%8C%CF%81%CE%B8%CF%81%CE%BF%CF%82-%CE%9C%CE%AD%CE%B3%CE%B1%CF%82-%CE%91%CE%B3%CE%B9%CE%B1%CF%83%CE%BC%CF%8C%CF%82.pdf",
+    ),
 }
 
 
@@ -129,6 +151,7 @@ class AttachmentRule:
     match_number: int = 1
     preceding_text: str | None = None
     following_text: str | None = None
+    insert_before: bool = False
 
 
 @dataclass(frozen=True)
@@ -329,7 +352,9 @@ PIECES: Final[dict[str, MusicPiece]] = {
         "litourgia-trisagion-pandekti",
         "Τρισάγιος ὕμνος · σύντομον · Μουσικὴ Πανδέκτη",
         "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος",
-        (ScanRegion(29, 29),),
+        # The former page 29 was an unrelated troparion.  Page 45 contains
+        # the complete first short Trisagion, immediately before the Dynamis.
+        (ScanRegion(45, 45, (0.02, 0.30, 0.98, 0.67)),),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
     "litourgia-cherouvikon-pandekti": MusicPiece(
@@ -422,6 +447,20 @@ PIECES: Final[dict[str, MusicPiece]] = {
         "Ἀγαπήσω σε, Κύριε, ἡ ἰσχύς μου",
         (ScanRegion(251, 251), ScanRegion(252, 252)),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-eie-to-onoma-pandekti": MusicPiece(
+        "litourgia-eie-to-onoma-pandekti",
+        "Εἴη τὸ ὄνομα Κυρίου · ὕμνος ἀπολύσεως",
+        "Εἴη τὸ ὄνομα Κυρίου εὐλογημένον",
+        (ScanRegion(501, 501, (0.02, 0.12, 0.98, 0.58)),),
+        book_id=PANDEKTI_LITOURGIA_BOOK_ID,
+    ),
+    "litourgia-plirothito-melodos": MusicPiece(
+        "litourgia-plirothito-melodos",
+        "Εἰς ἄφεσιν ἁμαρτιῶν · Πληρωθήτω τὸ στόμα ἡμῶν",
+        "Πληρωθήτω τὸ στόμα ἡμῶν αἰνέσεως Κύριε",
+        (ScanRegion(93, 93),),
+        book_id=PLIROTHITO_BOOK_ID,
     ),
 }
 
@@ -546,6 +585,19 @@ _TONE_AMIN_PAGES: Final[dict[int, tuple[int, ...]]] = {
     8: (11, 12),
 }
 
+_TONE_KYRIE_PARASCHOU_REGIONS: Final[dict[int, tuple[ScanRegion, ...]]] = {
+    tone: (
+        ScanRegion(5, 5, (0.02, 0.68, 0.98, 0.98)),
+        ScanRegion(6, 6),
+    )
+    for tone in range(1, 8)
+}
+_TONE_KYRIE_PARASCHOU_REGIONS[8] = (
+    ScanRegion(5, 5, (0.02, 0.68, 0.98, 0.98)),
+    ScanRegion(6, 6),
+    ScanRegion(7, 7, (0.02, 0.02, 0.98, 0.34)),
+)
+
 
 def _tone_scan_regions(pages: tuple[int, ...]) -> tuple[ScanRegion, ...]:
     return tuple(ScanRegion(page, page) for page in pages)
@@ -577,6 +629,13 @@ for _tone, (
         f"Χερουβικὸν · σύντομον · ἦχος {_TONE_LABEL_TEXT[_tone]} · Μελωδός",
         "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
         _tone_scan_regions(_cherouvikon_pages),
+        book_id=_book_id,
+    )
+    PIECES[f"litourgia-tone-{_tone}-kyrie-paraschou"] = MusicPiece(
+        f"litourgia-tone-{_tone}-kyrie-paraschou",
+        f"Κύριε ἐλέησον καὶ Παράσχου Κύριε · ἦχος {_TONE_LABEL_TEXT[_tone]} · Μελωδός",
+        "Κύριε ἐλέησον · Παράσχου Κύριε",
+        _TONE_KYRIE_PARASCHOU_REGIONS[_tone],
         book_id=_book_id,
     )
     PIECES[f"litourgia-tone-{_tone}-leitourgika"] = MusicPiece(
@@ -665,13 +724,17 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "orthros",
-        "ἣν πᾶσαι αἱ Δυνάμεις, τῶν οὐρανῶν μεγαλύνουσι.",
+        "ἡ Τιμιωτέρα",
         "cross-katavasies",
         required_text=(
             "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
             # The decorated initial sigma is a separate span in Melodos.
             "ταυρὸν χαράξας Μωσῆς",
         ),
+        # The scan contains the complete set of katavasies.  Keep it before
+        # the Timiotera boundary, which also places it before the ninth ode of
+        # the canons when the Timiotera is not chanted on a feast day.
+        insert_before=True,
     ),
     AttachmentRule(
         "orthros",
@@ -738,9 +801,8 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Κύριε, ἐλέησον.",
         "litourgia-kyrie-eleison-pandekti",
-        # The opening petitions are independent of the weekly tone.  Keep
-        # this rule distinct from the later post-Cheroubikon Kyrie below.
-        following_text="Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+        # The first Kyrie is the opening response and is independent of the
+        # weekly tone.  The post-Cheroubikon responses have their own rule.
     ),
     AttachmentRule(
         "litourgia",
@@ -751,19 +813,13 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.",
         "litourgia-trisagion-pandekti",
+        match_number=3,
+        following_text="Δύναμις",
     ),
     AttachmentRule(
         "litourgia",
         "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
         "litourgia-cherouvikon-pandekti",
-        required_text_any=(
-            "ψάλλονται σε ήχο δ΄ άγια",
-        ),
-    ),
-    AttachmentRule(
-        "litourgia",
-        "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.",
-        "litourgia-epinikios-pandekti",
         required_text_any=(
             "ψάλλονται σε ήχο δ΄ άγια",
         ),
@@ -786,12 +842,6 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "litourgia",
-        "Κύριε, ἐλέησον.",
-        "litourgia-kyrie-eleison-pandekti",
-        preceding_text="Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
-    ),
-    AttachmentRule(
-        "litourgia",
         "Ταῖς πρεσβείαις τῆς Θεοτόκου, Σῶτερ, σῶσον ἡμᾶς.",
         "litourgia-tais-presveiais-pandekti",
     ),
@@ -807,12 +857,6 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "litourgia",
-        "Παράσχου Κύριε.",
-        "litourgia-paraschou-pandekti",
-        preceding_text="Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν",
-    ),
-    AttachmentRule(
-        "litourgia",
         "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.",
         "litourgia-patera-pandekti",
     ),
@@ -824,6 +868,23 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         # not display it on a day whose Melodos note selects another tone;
         # those days use the matching setting from the tone-specific scan.
         required_text_any=("ψάλλονται σε ήχο δ΄ άγια",),
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Παράσχου Κύριε.",
+        "litourgia-tone-4-kyrie-paraschou",
+        required_text_any=("ψάλλονται σε ήχο δ΄ άγια",),
+        preceding_text="Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Πληρωθήτω τὸ στόμα ἡμῶν αἰνέσεως Κύριε",
+        "litourgia-plirothito-melodos",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Εἴη τὸ ὄνομα Κυρίου εὐλογημένον ἀπὸ τοῦ νῦν καὶ ἕως τοῦ αἰῶνος",
+        "litourgia-eie-to-onoma-pandekti",
     ),
 )
 
@@ -842,7 +903,10 @@ _TONE_REQUIREMENTS: Final[dict[int, tuple[str, ...]]] = {
         "ήχο της εβδομάδος  πλ α΄",
     ),
     6: ("ψάλλονται σε ήχο πλ β΄", "ήχο πλ β΄"),
-    7: ("ψάλλονται σε ήχο βαρύ",),
+    7: (
+        "ψάλλονται σε ήχο βαρύ",
+        "κύριο ήχο της ημέρας, ήχο βαρύ",
+    ),
     8: ("ψάλλονται σε ήχο πλ δ΄",),
 }
 
@@ -865,10 +929,11 @@ for _tone, _requirements in _TONE_REQUIREMENTS.items():
             ),
             AttachmentRule(
                 "litourgia",
-                _LITOURGIA_SANCTUS,
-                f"litourgia-tone-{_tone}-leitourgika",
+                "Παράσχου Κύριε.",
+                f"litourgia-tone-{_tone}-kyrie-paraschou",
                 required_text_any=_requirements,
                 excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
+                preceding_text="Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν",
             ),
             AttachmentRule(
                 "litourgia",
@@ -879,7 +944,7 @@ for _tone, _requirements in _TONE_REQUIREMENTS.items():
             ),
             AttachmentRule(
                 "litourgia",
-                "Ἄξιον καὶ δίκαιον",
+                _LITOURGIA_SANCTUS,
                 f"litourgia-tone-{_tone}-axion-kai-dikaion",
                 required_text_any=_requirements,
                 excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
@@ -895,6 +960,7 @@ for _tone, _requirements in _TONE_REQUIREMENTS.items():
                 # weekday gate prevents a Sunday setting from leaking into a
                 # Monday–Saturday service.
                 weekdays=(6,),
+                preceding_text="Τῇ Κυριακῇ ψάλλεται το Κοινωνικόν",
             ),
         )
     )
@@ -936,6 +1002,37 @@ PIECES.update(
         ),
     }
 )
+
+# This verified anthology supplies the Tuesday/saints Koinonikon in every
+# tone.  Select the setting from Melodos' own recommendation for that day.
+_MNIMOSYNON_PAGES: Final[dict[int, tuple[int, ...]]] = {
+    1: (4, 5, 6, 7),
+    2: (13, 14, 15, 16),
+    3: (28, 29, 30, 31, 32),
+    4: (47, 48, 49, 50),
+    5: (62, 63, 64, 65),
+    6: (72, 73, 74, 75),
+    7: (84, 85, 86),
+    8: (97, 98, 99),
+}
+for _tone, _pages in _MNIMOSYNON_PAGES.items():
+    PIECES[f"litourgia-tone-{_tone}-eis-mnimosynon"] = MusicPiece(
+        f"litourgia-tone-{_tone}-eis-mnimosynon",
+        f"Κοινωνικὸν · Εἰς μνημόσυνον αἰώνιον · ἦχος {_TONE_LABEL_TEXT[_tone]}",
+        "Εἰς μνημόσυνον αἰώνιον ἔσται δίκαιος",
+        _tone_scan_regions(_pages),
+        book_id=KOINONIKA_ALL_TONES_BOOK_ID,
+    )
+    _TONE_ATTACHMENT_RULES.append(
+        AttachmentRule(
+            "litourgia",
+            "Εἰς μνημόσυνον αἰώνιον ἔσται Δίκαιος",
+            f"litourgia-tone-{_tone}-eis-mnimosynon",
+            required_text_any=_TONE_REQUIREMENTS[_tone],
+            excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
+            preceding_text="Το κοινωνικὸν συνήθως ψάλλεται",
+        )
+    )
 _TONE_ATTACHMENT_RULES.extend(
     (
         AttachmentRule(
@@ -943,12 +1040,14 @@ _TONE_ATTACHMENT_RULES.extend(
             "Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν ὁ φθόγγος αὐτῶν",
             "litourgia-koinonikon-thursday-pandekti",
             required_text_any=("ψάλλονται σε ήχο πλ δ΄",),
+            preceding_text="Το κοινωνικὸν συνήθως ψάλλεται",
         ),
         AttachmentRule(
             "litourgia",
             "Σωτηρίαν εἰργάσω ἐν μέσῳ τῆς γῆς",
             "litourgia-koinonikon-friday-pandekti",
             required_text_any=("ψάλλονται σε ήχο πλ α΄",),
+            preceding_text="Το κοινωνικὸν συνήθως ψάλλεται",
         ),
         AttachmentRule(
             "litourgia",
@@ -958,7 +1057,7 @@ _TONE_ATTACHMENT_RULES.extend(
         ),
         AttachmentRule(
             "litourgia",
-            "Ἄξιον καὶ δίκαιον",
+            _LITOURGIA_SANCTUS,
             "litourgia-axion-tone4-pandekti",
             required_text_any=("ψάλλονται σε ήχο δ΄ άγια",),
         ),
@@ -1055,6 +1154,13 @@ def _insertion_point(text_node: NavigableString) -> NavigableString | Tag:
     return point
 
 
+def _insertion_point_before(text_node: NavigableString) -> NavigableString | Tag:
+    point: NavigableString | Tag = text_node
+    if isinstance(text_node.parent, Tag) and text_node.parent.name not in {"[document]", "body"}:
+        point = text_node.parent
+    return point
+
+
 def enrich_service_html(
     selected_date: date,
     service: str,
@@ -1122,7 +1228,10 @@ def enrich_service_html(
             fragment = BeautifulSoup(_music_markup(piece, instance), "html.parser").aside
             if fragment is None:
                 continue
-            _insertion_point(text_node).insert_after(fragment)
+            if rule.insert_before:
+                _insertion_point_before(text_node).insert_before(fragment)
+            else:
+                _insertion_point(text_node).insert_after(fragment)
             bookmarks.append(MusicBookmark(_bookmark_id(piece, instance), piece.title))
 
     # Rules are maintained by source/matching concerns, not by the order in

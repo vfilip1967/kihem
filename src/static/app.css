@@ -205,14 +205,21 @@ button:hover { background: var(--wine-dark); }
   position: sticky;
   z-index: 2;
   top: 0;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
   padding: 12px 0;
   background: rgba(247, 242, 232, 0.94);
   backdrop-filter: blur(10px);
 }
+.reader-nav-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  min-width: 0;
+  white-space: nowrap;
+}
+.reader-nav-row > a,
+.reader-nav-row > .music-bookmarks-menu,
+.reader-nav-row > .scroll-controls { flex: 0 0 auto; }
 
 /* The ison and recording controls are moved into this sticky reader toolbar
    by the page script, so they remain visible while the service text passes
@@ -258,11 +265,19 @@ button:hover { background: var(--wine-dark); }
 .service-nav > .isokratis-panel .ison-stepper .ison-natural { min-width: 26px; }
 .service-nav > .isokratis-panel .ison-actions { grid-column: 2; grid-row: 2; gap: 5px; margin: 0; }
 .service-nav > .isokratis-panel .ison-actions button { min-height: 25px; padding: 0 8px; font-size: 0.68rem; }
+.service-nav > .isokratis-panel .audio-stop-button {
+  width: 29px;
+  min-width: 29px;
+  padding: 0;
+  font-size: 0.82rem;
+  line-height: 1;
+}
 .service-nav > .isokratis-panel .prosomia-player {
   display: grid;
-  grid-template-columns: minmax(100px, 0.75fr) minmax(140px, 1.35fr) auto;
+  grid-template-columns: 82px minmax(110px, 160px) 29px;
   gap: 7px;
   align-items: end;
+  justify-content: start;
   padding: 0;
   border: 0;
   background: transparent;
@@ -348,6 +363,7 @@ button:hover { background: var(--wine-dark); }
   background: var(--card);
   font-family: Arial, sans-serif;
 }
+.reader-nav-row > .scroll-controls { margin-left: auto; }
 .scroll-controls-label {
   padding: 0 6px;
   color: var(--muted);
@@ -495,11 +511,33 @@ button:hover { background: var(--wine-dark); }
 }
 
 @media (max-width: 680px) {
-  .service-nav > .isokratis-panel .ison-player { display: block; }
-  .service-nav > .isokratis-panel .ison-adjustments { grid-template-columns: 1fr 1fr minmax(80px, 1fr); margin-top: 5px; }
-  .service-nav > .isokratis-panel .ison-actions { margin-top: 5px; }
-  .service-nav > .isokratis-panel .prosomia-player { grid-template-columns: 1fr 1.3fr; }
-  .service-nav > .isokratis-panel .prosomia-player .ison-actions { grid-column: 1 / -1; }
+  .service-nav { padding: 5px 0; }
+  .service-nav > .isokratis-panel .ison-player {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 27px;
+    gap: 4px;
+  }
+  .service-nav > .isokratis-panel .ison-note-grid { grid-column: 1; grid-row: 1; gap: 2px; }
+  .service-nav > .isokratis-panel .ison-note { min-height: 27px; padding: 1px; font-size: 0.63rem; }
+  .service-nav > .isokratis-panel .ison-adjustments {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: auto auto minmax(65px, 1fr);
+    gap: 4px;
+    margin: 0;
+  }
+  .service-nav > .isokratis-panel .ison-actions {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: stretch;
+    margin: 0;
+  }
+  .service-nav > .isokratis-panel .audio-stop-button { width: 27px; min-width: 27px; height: 27px; }
+  .service-nav > .isokratis-panel .prosomia-player {
+    grid-template-columns: 76px minmax(100px, 150px) 27px;
+    gap: 4px;
+  }
+  .service-nav > .isokratis-panel .prosomia-player .ison-actions { grid-column: 3; grid-row: 1; }
 }
 
 @media (max-width: 560px) {
@@ -508,6 +546,18 @@ button:hover { background: var(--wine-dark); }
   .selector { padding: 22px; }
   .isokratis-panel { padding: 22px; }
   .service-nav > .isokratis-panel { padding: 6px; }
+  .reader-nav-row { gap: 3px; }
+  .reader-nav-row > a,
+  .reader-nav-row > .music-bookmarks-menu summary { padding: 6px 7px; font-size: 0.72rem; }
+  .reader-nav-row > .music-bookmarks-menu summary::after { display: none; }
+  .reader-nav-row > .music-bookmarks-menu summary span {
+    min-width: 1.1rem;
+    height: 1.1rem;
+    margin-left: 2px;
+    font-size: 0.62rem;
+  }
+  .reader-nav-row > .scroll-controls { margin-left: auto; padding: 1px; }
+  .reader-nav-row > .scroll-controls button { min-width: 28px; min-height: 28px; padding: 0 5px; }
   .isokratis-heading { align-items: stretch; flex-direction: column; gap: 12px; }
   .ison-status { max-width: none; }
   .ison-note-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -516,7 +566,6 @@ button:hover { background: var(--wine-dark); }
   .service-card > header, .service-text { padding: 22px; }
   .result-heading, .site-footer { align-items: flex-start; flex-direction: column; }
   .music-bookmarks-list { right: auto; left: 0; }
-  .scroll-controls { margin-left: 0; }
 }
 
 @media print {

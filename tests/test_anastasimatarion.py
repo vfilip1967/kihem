@@ -17,7 +17,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 75)
+        self.assertEqual(len(pieces), 83)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -49,7 +49,7 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(get_piece(BOOK_ID, "tone6-apolytikion").incipit, "Ἀγγελικαὶ Δυνάμεις")
         self.assertEqual(get_piece(PANDEKTI_BOOK_ID, "psalm-50-tone2").book_id, PANDEKTI_BOOK_ID)
         self.assertEqual(get_piece(IRMOLOGION_BOOK_ID, "cross-katavasies").book_id, IRMOLOGION_BOOK_ID)
-        self.assertEqual(len(catalog_books()), 13)
+        self.assertEqual(len(catalog_books()), 15)
         self.assertEqual(
             get_piece(PANDEKTI_LITOURGIA_BOOK_ID, "litourgia-eisodikon-pandekti").book_id,
             PANDEKTI_LITOURGIA_BOOK_ID,
@@ -65,6 +65,14 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(
             [region.printed_page for region in pieces["litourgia-agapiso-pandekti"].regions],
             [251, 252],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["litourgia-trisagion-pandekti"].regions],
+            [45],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["litourgia-tone-6-eis-mnimosynon"].regions],
+            [72, 73, 74, 75],
         )
         self.assertEqual(
             [region.printed_page for region in pieces["kypseli-09-doxastikon"].regions],
@@ -114,6 +122,7 @@ class AnastasimatarionTests(unittest.TestCase):
         # The matching rules are intentionally not the display order.  The
         # menu must follow the inserted excerpts in the returned document.
         source = (
+            "ψάλλονται σε ήχο πλ β΄.<br>"
             "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
             "Κύριε, ἐλέησον.<br>"
             "Μονογενὴς Υἱὸς καὶ Λόγος.<br>"
@@ -126,9 +135,10 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(
             [bookmark.title for bookmark in result.bookmarks],
             [
+                "Χερουβικὸν · σύντομον · ἦχος πλ. β΄ · Μελωδός",
                 "Κύριε ἐλέησον · σύντομα · Μουσικὴ Πανδέκτη",
                 "Ὁ Μονογενὴς Υἱὸς καὶ Λόγος · Μουσικὴ Πανδέκτη",
-                "Παράσχου Κύριε · σύντομα · Μουσικὴ Πανδέκτη",
+                "Κύριε ἐλέησον καὶ Παράσχου Κύριε · ἦχος πλ. β΄ · Μελωδός",
             ],
         )
 
@@ -223,11 +233,15 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertLess(result.html.index("μόσχους"), result.html.index("psalm-50-tone2"))
         self.assertLess(result.html.index("psalm-50-tone2"), result.html.index("Δόξα Πατρί"))
 
-    def test_cross_katavasies_use_the_eirmologion_after_the_ninth_ode(self):
+    def test_cross_katavasies_are_inserted_before_timiotera_and_ninth_ode(self):
         source = (
             "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ<br>"
             "Σταυρὸν χαράξας Μωσῆς.<br>"
             "ἣν πᾶσαι αἱ Δυνάμεις, τῶν οὐρανῶν μεγαλύνουσι.<br>"
+            "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.<br>"
+            "Τὴν Τιμιωτέραν τῶν Χερουβείμ.<br>"
+            "Κατόπιν ψάλλεται ἡ θ΄ Ωδή των καταβασιών<br>"
+            "Ὠδὴ θ΄. Ἦχος πλ. δ΄<br>"
             "Μετὰ τὴν καταβασίαν τῆς θ΄ ᾠδῆς"
         )
         result = enrich_service_html(date(2026, 9, 13), "orthros", source)
@@ -240,14 +254,30 @@ class AnastasimatarionTests(unittest.TestCase):
         )
         self.assertIn("Σύντομες Καταβασίαι", result.html)
         self.assertIn("Εἱρμολόγιον Καταβασιῶν Ἰωάννου Πρωτοψάλτου", result.html)
-        self.assertLess(result.html.index("μεγαλύνουσι"), result.html.index("cross-katavasies"))
-        self.assertLess(result.html.index("cross-katavasies"), result.html.index("Μετὰ τὴν"))
+        self.assertLess(result.html.index("cross-katavasies"), result.html.index("Καὶ ψάλλεται"))
+        self.assertLess(result.html.index("cross-katavasies"), result.html.index("Ὠδὴ θ΄"))
+
+    def test_cross_katavasies_precede_the_feast_ninth_ode_when_timiotera_is_omitted(self):
+        source = (
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ<br>"
+            "Σταυρὸν χαράξας Μωσῆς.<br>"
+            "Ἡ Τιμιωτέρα δεν στιχολογεῖται αλλά ψάλλομε την θ΄ Ωδή "
+            "των κανόνων της εορτής στον ήχο τους.<br>"
+            "Ὠδὴ θ΄. Ἦχος πλ. δ΄"
+        )
+        result = enrich_service_html(date(2026, 9, 8), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertLess(result.html.index("cross-katavasies"), result.html.index("Ἡ Τιμιωτέρα"))
+        self.assertLess(result.html.index("cross-katavasies"), result.html.index("Ὠδὴ θ΄"))
 
     def test_litourgia_gets_pandekti_eisodikon_and_trisagion(self):
         source = (
             "Δεῦτε προσκυνήσωμεν καὶ προσπέσωμεν Χριστῷ.<br>"
-            "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
-            "Πρόσχωμεν."
+            + ("Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.<br>" * 3)
+            + "Δύναμις.<br>"
+            + "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
+            + "Πρόσχωμεν."
         )
         result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
 
@@ -256,6 +286,7 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn('data-music-piece="litourgia-trisagion-pandekti"', result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-eisodikon-pandekti/1.png", result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-trisagion-pandekti/1.png", result.html)
+        self.assertLess(result.html.index("litourgia-trisagion-pandekti"), result.html.index("Δύναμις"))
 
     def test_theotokos_feast_adds_fourth_tone_liturgy_music(self):
         note = (
@@ -267,7 +298,9 @@ class AnastasimatarionTests(unittest.TestCase):
             note
             + "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες, καὶ τῇ ζωοποιῷ "
             "Τριάδι τὸν τρισάγιον ὕμνον προσᾴδοντες.<br>"
-            + "Ἄξιον καὶ δίκαιον.<br>"
+            + "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ "
+            + "τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος "
+            + "ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.<br>"
             + "Ποτήριον σωτηρίου λήψομαι, καὶ τὸ ὄνομα Κυρίου ἐπικαλέσομαι.<br>"
         )
         result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
@@ -319,7 +352,7 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn('data-music-piece="kypseli-08-kontakion"', result.html)
         self.assertIn('data-music-piece="litourgia-cherouvikon-pandekti"', result.html)
 
-    def test_litourgia_epinikios_is_one_excerpt_after_the_full_sanctus(self):
+    def test_litourgia_axion_is_one_excerpt_after_the_full_sanctus(self):
         note = (
             "Σύμφωνα με το άγραφο Τυπικό της Μεγάλης του Χριστου Εκκλησίας, "
             "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
@@ -338,10 +371,10 @@ class AnastasimatarionTests(unittest.TestCase):
 
         self.assertEqual(result.attachment_count, 1)
         self.assertEqual(len(result.bookmarks), 1)
-        self.assertIn('data-music-piece="litourgia-epinikios-pandekti"', result.html)
-        self.assertIn("σελ. 255, 256", result.html)
-        self.assertLess(result.html.index(sanctus), result.html.index("litourgia-epinikios-pandekti"))
-        self.assertLess(result.html.index("litourgia-epinikios-pandekti"), result.html.index("Σὲ ὑμνοῦμεν"))
+        self.assertIn('data-music-piece="litourgia-axion-tone4-pandekti"', result.html)
+        self.assertIn("σελ. 7", result.html)
+        self.assertLess(result.html.index(sanctus), result.html.index("litourgia-axion-tone4-pandekti"))
+        self.assertLess(result.html.index("litourgia-axion-tone4-pandekti"), result.html.index("Σὲ ὑμνοῦμεν"))
 
     def test_litourgia_two_amens_and_se_ymnoumen_follow_the_full_response(self):
         note = (
@@ -403,12 +436,10 @@ class AnastasimatarionTests(unittest.TestCase):
         )
         result = enrich_service_html(date(2026, 9, 8), "litourgia", opening)
 
-        self.assertEqual(result.attachment_count, 3)
+        self.assertEqual(result.attachment_count, 2)
         self.assertEqual(result.bookmarks[0].anchor_id, "music-litourgia-kyrie-eleison-pandekti-1")
         self.assertEqual(result.bookmarks[1].anchor_id, "music-litourgia-cherouvikon-pandekti-2")
-        self.assertEqual(result.bookmarks[2].anchor_id, "music-litourgia-kyrie-eleison-pandekti-3")
-        # The later Kyrie is intentionally kept separate from the opening one.
-        self.assertEqual(result.html.count('data-music-piece="litourgia-kyrie-eleison-pandekti"'), 2)
+        self.assertEqual(result.html.count('data-music-piece="litourgia-kyrie-eleison-pandekti"'), 1)
         self.assertLess(
             result.html.index("music-litourgia-kyrie-eleison-pandekti-1"),
             result.html.index("music-litourgia-cherouvikon-pandekti-2"),
@@ -421,7 +452,8 @@ class AnastasimatarionTests(unittest.TestCase):
             "Θεομητορική εορτή, ψάλλονται σε ήχο δ΄ άγια.<br>"
         )
         source = (
-            note
+            "Κύριε, ἐλέησον.<br>"
+            + note
             + "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
             + "Κύριε, ἐλέησον.<br>"
             + "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>"
@@ -432,9 +464,9 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(
             [bookmark.anchor_id for bookmark in result.bookmarks],
             [
-                "music-litourgia-cherouvikon-pandekti-1",
-                "music-litourgia-kyrie-eleison-pandekti-2",
-                "music-litourgia-paraschou-pandekti-3",
+                "music-litourgia-kyrie-eleison-pandekti-1",
+                "music-litourgia-cherouvikon-pandekti-2",
+                "music-litourgia-tone-4-kyrie-paraschou-3",
             ],
         )
 
@@ -450,7 +482,7 @@ class AnastasimatarionTests(unittest.TestCase):
         result = enrich_service_html(date(2026, 9, 8), "litourgia", source)
 
         self.assertEqual(result.attachment_count, 3)
-        self.assertIn('data-music-piece="litourgia-paraschou-pandekti"', result.html)
+        self.assertIn('data-music-piece="litourgia-tone-4-kyrie-paraschou"', result.html)
         self.assertIn('data-music-piece="litourgia-patera-pandekti"', result.html)
         self.assertIn('data-music-piece="litourgia-agapiso-pandekti"', result.html)
 
@@ -473,12 +505,13 @@ class AnastasimatarionTests(unittest.TestCase):
         for tone, note in notes.items():
             source = (
                 f"{note}<br>Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+                "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>Παράσχου Κύριε.<br>"
                 f"{sanctus}<br>Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, "
                 "Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν."
             )
             result = enrich_service_html(date(2026, 9, 10), "litourgia", source)
-            self.assertEqual(result.attachment_count, 3, tone)
-            for member in ("cherouvikon", "leitourgika", "amin-se-ymnoumen"):
+            self.assertEqual(result.attachment_count, 4, tone)
+            for member in ("cherouvikon", "kyrie-paraschou", "axion-kai-dikaion", "amin-se-ymnoumen"):
                 self.assertIn(f'data-music-piece="litourgia-tone-{tone}-{member}"', result.html)
 
     def test_tenth_september_adds_plagal_fourth_thursday_social(self):
@@ -488,12 +521,13 @@ class AnastasimatarionTests(unittest.TestCase):
             "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ "
             "τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος "
             "ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.<br>"
+            "Το κοινωνικὸν συνήθως ψάλλεται εἰς τὸν ἦχον τοῦ Χερουβικοῦ.<br>"
             "Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν ὁ φθόγγος αὐτῶν."
         )
         result = enrich_service_html(date(2026, 9, 10), "litourgia", source)
         self.assertEqual(result.attachment_count, 3)
         self.assertIn('data-music-piece="litourgia-tone-8-cherouvikon"', result.html)
-        self.assertIn('data-music-piece="litourgia-tone-8-leitourgika"', result.html)
+        self.assertIn('data-music-piece="litourgia-tone-8-axion-kai-dikaion"', result.html)
         self.assertIn('data-music-piece="litourgia-koinonikon-thursday-pandekti"', result.html)
 
     def test_sunday_koinonikon_does_not_leak_from_alleluia_instructions(self):
@@ -506,6 +540,32 @@ class AnastasimatarionTests(unittest.TestCase):
         result = enrich_service_html(date(2026, 9, 10), "litourgia", source)
         self.assertEqual(result.attachment_count, 0)
         self.assertNotIn("litourgia-tone-5-koinonikon", result.html)
+
+    def test_tuesday_koinonikon_uses_melodos_recommended_tone(self):
+        source = (
+            "Το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα "
+            "ψάλλονται στον κύριο ήχο της ημέρας, ήχο πλ β΄.<br>"
+            "Το κοινωνικὸν συνήθως ψάλλεται εἰς τὸν ἦχον εἰς ὃν "
+            "ἐψάλη καὶ τὸ Χερουβικόν.<br>"
+            "Εἰς μνημόσυνον αἰώνιον ἔσται Δίκαιος. Ἀλληλούια."
+        )
+        result = enrich_service_html(date(2026, 9, 16), "litourgia", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn('data-music-piece="litourgia-tone-6-eis-mnimosynon"', result.html)
+        self.assertNotIn("litourgia-tone-7-eis-mnimosynon", result.html)
+
+    def test_post_communion_and_dismissal_hymns_get_music(self):
+        source = (
+            "Εἰς ἄφεσιν ἁμαρτιῶν καὶ εἰς ζωὴν αἰώνιον.<br>"
+            "Πληρωθήτω τὸ στόμα ἡμῶν αἰνέσεως Κύριε, ὅπως ἀνυμνήσωμεν.<br>"
+            "Εἴη τὸ ὄνομα Κυρίου εὐλογημένον ἀπὸ τοῦ νῦν καὶ ἕως τοῦ αἰῶνος."
+        )
+        result = enrich_service_html(date(2026, 9, 16), "litourgia", source)
+
+        self.assertEqual(result.attachment_count, 2)
+        self.assertIn('data-music-piece="litourgia-plirothito-melodos"', result.html)
+        self.assertIn('data-music-piece="litourgia-eie-to-onoma-pandekti"', result.html)
 
     def test_fourth_tone_agia_uses_the_feast_setting_without_regular_tone_duplicates(self):
         note = "ψάλλονται σε ήχο δ΄ άγια.<br>"

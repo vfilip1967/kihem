@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>Κιβωτός Ακολουθιών</title>
-  <link rel="stylesheet" href="static/app.css">
+  <link rel="stylesheet" href="static/app.css?v=20260920-mobile-compact">
 </head>
 <body>
   <header class="site-header">
@@ -83,7 +83,8 @@
           </div>
 
           <div class="ison-actions">
-            <button type="button" class="quiet-button" data-ison-stop>■ Διακοπή</button>
+            <button type="button" class="quiet-button audio-stop-button" data-ison-stop
+              aria-label="Διακοπή ισοκρατήματος" title="Διακοπή ισοκρατήματος">Ⅱ</button>
           </div>
         </section>
 
@@ -105,9 +106,10 @@
               </select>
             </label>
             <div class="ison-actions">
-              <button type="button" class="quiet-button" data-prosomia-stop>■ Διακοπή</button>
+              <button type="button" class="quiet-button audio-stop-button" data-prosomia-stop
+                aria-label="Διακοπή ηχογράφησης" title="Διακοπή ηχογράφησης">Ⅱ</button>
             </div>
-            <p class="prosomia-status" data-prosomia-status role="status">Επίλεξε ηχογράφηση και πάτησε Ακρόαση.</p>
+            <p class="prosomia-status" data-prosomia-status role="status">Επίλεξε ηχογράφηση για αυτόματη ακρόαση.</p>
           {% else %}
             <p class="media-unavailable">Δεν βρέθηκαν ακόμη αρχεία προσόμοιων.</p>
           {% endif %}
@@ -133,20 +135,22 @@
       </section>
 
       <nav class="service-nav" aria-label="Περιεχόμενα ακολουθίας">
-        <a class="service-switch-link {{ 'active' if selected_services == 'orthros' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=orthros">Όρθρος</a>
-        <a class="service-switch-link {{ 'active' if selected_services == 'litourgia' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=litourgia">Θεία Λειτουργία</a>
-        {% if music_bookmarks %}
-          <details class="music-bookmarks-menu">
-            <summary>🔖 Μουσικά κείμενα <span>{{ music_bookmarks|length }}</span></summary>
-            <div class="music-bookmarks-list" aria-label="Σελιδοδείκτες μουσικών κειμένων">
-              {% for bookmark in music_bookmarks %}
-                <a href="#{{ bookmark.anchor_id }}">{{ bookmark.label }}</a>
-              {% endfor %}
-            </div>
-          </details>
-        {% endif %}
-        <div class="scroll-controls" data-scroll-controls aria-label="Αυτόματη κύλιση">
-          <button type="button" data-scroll-toggle aria-label="Παύση αυτόματης κύλισης" title="Παύση/συνέχιση κύλισης">⏸</button>
+        <div class="reader-nav-row">
+          <a class="service-switch-link {{ 'active' if selected_services == 'orthros' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=orthros">Όρθρος</a>
+          <a class="service-switch-link {{ 'active' if selected_services == 'litourgia' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=litourgia">Θεία Λειτουργία</a>
+          {% if music_bookmarks %}
+            <details class="music-bookmarks-menu">
+              <summary>Μουσικά <span>{{ music_bookmarks|length }}</span></summary>
+              <div class="music-bookmarks-list" aria-label="Σελιδοδείκτες μουσικών κειμένων">
+                {% for bookmark in music_bookmarks %}
+                  <a href="#{{ bookmark.anchor_id }}">{{ bookmark.label }}</a>
+                {% endfor %}
+              </div>
+            </details>
+          {% endif %}
+          <div class="scroll-controls" data-scroll-controls aria-label="Αυτόματη κύλιση">
+            <button type="button" data-scroll-toggle aria-label="Παύση αυτόματης κύλισης" title="Παύση/συνέχιση κύλισης">⏸</button>
+          </div>
         </div>
       </nav>
 
@@ -270,11 +274,20 @@
     // remote code.
     (() => {
       const audio = new Audio();
+      const cachedSource = (source) => {
+        const remote = new URL(source, window.location.href);
+        if (remote.protocol === 'https:' && remote.hostname === 'melodos.com'
+            && remote.pathname.startsWith('/akolouthies/mousika/')) {
+          return `melodos-audio?url=${encodeURIComponent(remote.href)}`;
+        }
+        return source;
+      };
       const play = (source) => {
         if (!source) {
           audio.pause(); audio.currentTime = 0; return;
         }
-        if (audio.src !== new URL(source, window.location.href).href) audio.src = source;
+        const desired = new URL(cachedSource(source), window.location.href).href;
+        if (audio.src !== desired) audio.src = desired;
         audio.play().catch(() => {});
       };
       document.querySelectorAll('.melodos-audio-picker').forEach((picker) => {
@@ -387,7 +400,7 @@
           option.value = track.url; option.textContent = track.label; return option;
         }));
         prosomiaAudio.pause(); prosomiaAudio.currentTime = 0;
-        prosomiaStatus.textContent = 'Επίλεξε ηχογράφηση και πάτησε Ακρόαση.';
+        prosomiaStatus.textContent = 'Επίλεξε ηχογράφηση για αυτόματη ακρόαση.';
       };
       const playProsomia = () => {
         if (prosomiaAudio.src !== new URL(trackSelect.value, window.location.href).href) prosomiaAudio.src = trackSelect.value;

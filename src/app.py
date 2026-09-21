@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import os
-from datetime import date
+from datetime import date, timedelta
 from urllib.parse import quote
 
 from flask import Flask, abort, render_template, request, send_file
 from markupsafe import Markup
 
+from src.audio_cache import InvalidMelodosAudioUrl, MelodosAudioCache
 from src.anastasimatarion import (
     AnastasimatarionRenderer,
     enrich_service_html,
@@ -24,7 +25,7 @@ def create_app(config: dict | None = None) -> Flask:
         BOOKS_DIR=os.environ.get("KIHEM_BOOKS_DIR", "/var/lib/kihem/books"),
         BYZ_DIR=os.environ.get("KIHEM_BYZ_DIR", "/var/lib/kihem/byz"),
         # An explicit environment value is useful for a controlled demo, but
-        # regular visits must always open the current day's Orthros.
+        # regular visits open tomorrow's Orthros by default.
         DEFAULT_DATE=os.environ.get("KIHEM_DEFAULT_DATE"),
     )
     if config:
@@ -38,6 +39,10 @@ def create_app(config: dict | None = None) -> Flask:
     )
     app.extensions["kihem_composer"] = composer
     app.extensions["kihem_music_renderer"] = music_renderer
+    melodos_audio_cache = app.config.get("MELODOS_AUDIO_CACHE") or MelodosAudioCache(
+        app.config["CACHE_DIR"]
+    )
+    app.extensions["kihem_melodos_audio_cache"] = melodos_audio_cache
     media_library = app.config.get("ISOKRATIS_LIBRARY") or IsokratisLibrary(
         app.config["BYZ_DIR"]
     )
@@ -45,7 +50,7 @@ def create_app(config: dict | None = None) -> Flask:
 
     @app.get("/")
     def index():
-        default_date = app.config["DEFAULT_DATE"] or date.today().isoformat()
+        default_date = app.config["DEFAULT_DATE"] or (date.today() + timedelta(days=1)).isoformat()
         selected_raw = request.args.get("date", default_date)
         # The web view deliberately renders one service per request.  This keeps
         # the heavy scanned music excerpts from being downloaded twice on one
@@ -89,7 +94,7 @@ def create_app(config: dict | None = None) -> Flask:
                 music_bookmarks.extend(
                     {
                         "anchor_id": bookmark.anchor_id,
-                        "label": f"{item.label} · {bookmark.title}",
+                        "label": bookmark.title,
                     }
                     for bookmark in enriched.bookmarks
                 )
@@ -152,6 +157,18 @@ def create_app(config: dict | None = None) -> Flask:
         if path is None:
             abort(404)
         return send_file(path, mimetype="audio/mpeg", max_age=86400)
+
+    @app.get("/melodos-audio")
+    def melodos_audio():
+        source_url = request.args.get("url", "")
+        try:
+            path = melodos_audio_cache.get(source_url)
+        except InvalidMelodosAudioUrl:
+            abort(400, description="Μη έγκυρη διεύθυνση ηχητικού Μελωδού.")
+        except Exception as exc:
+            app.logger.exception("Could not cache Melodos audio: %s", exc)
+            abort(503, description="Το ηχητικό του Μελωδού δεν είναι προσωρινά διαθέσιμο.")
+        return send_file(path, mimetype="audio/mpeg", max_age=31536000, conditional=True)
 
     @app.get("/music/<book_id>/<piece_id>/<int:part>.png")
     def music_excerpt(book_id: str, piece_id: str, part: int):

@@ -1,5 +1,5 @@
 import unittest
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -63,6 +63,7 @@ class AppTests(unittest.TestCase):
         response = self.client.get("/?date=2026-09-13&services=orthros")
         self.assertEqual(response.status_code, 200)
         text = response.get_data(as_text=True)
+        self.assertIn('href="static/app.css?v=20260920-mobile-compact"', text)
         self.assertIn("Όρθρος", text)
         self.assertIn("Θεία Λειτουργία", text)  # separate-page navigation
         self.assertIn('class="service-switch-link active" href="?date=2026-09-13&amp;services=orthros"', text)
@@ -72,6 +73,9 @@ class AppTests(unittest.TestCase):
         self.assertNotIn("τοποθετήθηκαν κάτω από τα αντίστοιχα μέλη", text)
         self.assertIn("music/ioannis-protopsaltis-1905/tone6-apolytikion/1.png", text)
         self.assertIn('class="music-bookmarks-menu"', text)
+        self.assertIn('class="reader-nav-row"', text)
+        self.assertIn('<summary>Μουσικά <span>1</span></summary>', text)
+        self.assertNotIn('Μουσικά κείμενα', text)
         self.assertIn('href="#music-tone6-apolytikion-1"', text)
         self.assertNotIn('href="#music-tone6-apolytikion-2"', text)
         self.assertIn("link.closest('.music-bookmarks-menu').open = false", text)
@@ -89,6 +93,9 @@ class AppTests(unittest.TestCase):
         self.assertNotIn('data-prosomia-play', text)
         self.assertNotIn('data-prosomia-pause', text)
         self.assertIn('data-prosomia-stop', text)
+        self.assertIn('title="Διακοπή ισοκρατήματος">Ⅱ</button>', text)
+        self.assertIn('title="Διακοπή ηχογράφησης">Ⅱ</button>', text)
+        self.assertNotIn('>■ Διακοπή</button>', text)
         self.assertIn('data-register-down aria-label="Μείωση διαστήματος">−1', text)
         self.assertIn('data-register-up aria-label="Αύξηση διαστήματος">+1', text)
         self.assertIn('data-semitone-down aria-label="Μείωση ημιτονίου">−6', text)
@@ -97,6 +104,7 @@ class AppTests(unittest.TestCase):
         self.assertIn('data-ison-url-template="isokratis/ison/__number__.mp3"', text)
         self.assertIn('value="isokratis/prosomia/1-example.mp3"', text)
         self.assertNotIn("not-for-web.pdf", text)
+        self.assertIn("melodos-audio?url=", text)
 
     def test_index_renders_litourgia_on_its_own_page(self):
         response = self.client.get("/?date=2026-09-13&services=litourgia")
@@ -115,11 +123,12 @@ class AppTests(unittest.TestCase):
         response = self.client.get("/")
         self.assertIn('value="2026-09-09"', response.get_data(as_text=True))
 
-    def test_unconfigured_default_date_is_today_and_orthros(self):
+    def test_unconfigured_default_date_is_tomorrow_and_orthros(self):
         self.app.config["DEFAULT_DATE"] = None
         response = self.client.get("/")
         text = response.get_data(as_text=True)
-        self.assertIn(f'value="{date.today().isoformat()}"', text)
+        tomorrow = date.today() + timedelta(days=1)
+        self.assertIn(f'value="{tomorrow.isoformat()}"', text)
         self.assertIn('id="orthros"', text)
         self.assertNotIn('id="litourgia"', text)
 
@@ -150,3 +159,20 @@ class AppTests(unittest.TestCase):
 
         self.assertEqual(self.client.get("/isokratis/prosomia/not-for-web.pdf").status_code, 404)
         self.assertEqual(self.client.get("/isokratis/prosomia/../isokratis/60.mp3").status_code, 404)
+
+    def test_melodos_audio_route_serves_cache_and_rejects_other_origins(self):
+        source = "https://melodos.com/akolouthies/mousika/litourgia/example.mp3"
+        cache = self.app.extensions["kihem_melodos_audio_cache"]
+        cache._cache_path(source).write_bytes(b"cached-melodos-audio")
+
+        response = self.client.get("/melodos-audio", query_string={"url": source})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "audio/mpeg")
+        self.assertEqual(response.data, b"cached-melodos-audio")
+        response.close()
+
+        rejected = self.client.get(
+            "/melodos-audio",
+            query_string={"url": "https://example.invalid/akolouthies/mousika/a.mp3"},
+        )
+        self.assertEqual(rejected.status_code, 400)
