@@ -17,7 +17,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 112)
+        self.assertEqual(len(pieces), 113)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -29,6 +29,10 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(
             [region.printed_page for region in pieces["plagal4-timiotera"].regions],
             [418, 419],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone4-timiotera"].regions],
+            [191, 192],
         )
         self.assertEqual(
             [region.printed_page for region in pieces["tone4-anavathmoi-first-antiphon"].regions],
@@ -189,6 +193,21 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(result.html.count('data-music-piece="plagal4-timiotera"'), 1)
         self.assertLess(result.html.rindex("σὲ μεγαλύνομεν"), result.html.index("plagal4-timiotera"))
         self.assertLess(result.html.index("plagal4-timiotera"), result.html.index("Θ΄ ᾠδή"))
+
+    def test_fourth_tone_timiotera_is_attached_after_sixth_refrain(self):
+        refrain = (
+            "Τὴν Τιμιωτέραν τῶν Χερουβείμ, καὶ ἐνδοξοτέραν ἀσυγκρίτως "
+            "τῶν Σεραφείμ, τὴν ἀδιαφθόρως Θεὸν Λόγον τεκοῦσαν, "
+            "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.<br>"
+        )
+        heading = "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο του Ειρμού. Ἦχος δ΄<br>"
+        result = enrich_service_html(
+            date(2026, 9, 22), "orthros", heading + refrain * 6 + "Εἰρμός θ΄ ᾠδής"
+        )
+
+        self.assertEqual(result.html.count('data-music-piece="tone4-timiotera"'), 1)
+        self.assertLess(result.html.rindex("σὲ μεγαλύνομεν"), result.html.index("tone4-timiotera"))
+        self.assertLess(result.html.index("tone4-timiotera"), result.html.index("Εἰρμός θ΄"))
 
     def test_evlogitaria_are_attached_after_the_third_final_alleluia(self):
         ending = "λληλούϊα, Ἀλληλούϊα, Ἀλληλούϊα. Δόξα σοὶ ὁ Θεός.<br>"

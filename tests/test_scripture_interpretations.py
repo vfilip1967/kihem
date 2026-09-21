@@ -18,6 +18,15 @@ SOURCE = """
 <br><span class='ep'>ΕΚΤΕΝΗΣ ΔΕΗΣΗ</span>
 """
 
+SOURCE_WITH_SECOND_APOSTOLOS = """
+<br><span class='ep'>ΑΠΟΣΤΟΛΟΣ</span><br>Πρὸς Ἐφεσίους 2:19-22
+<br>Ἀδελφοί, ἄρα οὖν οὐκέτι ἐστὲ ξένοι καὶ πάροικοι.
+<br><span class='ep'>ΑΠΟΣΤΟΛΟΣ 2ος</span><br>Πρὸς Ἑβραίους 11:33-40
+<br>Ἀδελφοί, οἳ διὰ πίστεως κατηγωνίσαντο βασιλείας.
+<br><span class='ep'>ΕΥΑΓΓΕΛΙΟΝ</span><br>Ἐκ τοῦ κατὰ Λουκᾶν 10:16-21
+<br>Εἶπεν ὁ Κύριος τοῖς μαθηταῖς αὐτοῦ.
+"""
+
 
 class FakeResponse:
     def raise_for_status(self):
@@ -56,6 +65,13 @@ class ScriptureInterpretationTests(unittest.TestCase):
     def test_extracts_from_a_full_html_document_too(self):
         passages = extract_orthros_passages(f"<html><body>{SOURCE}</body></html>")
         self.assertEqual([passage.kind for passage in passages], ["eothinon", "apostolos", "evangelion"])
+
+    def test_first_apostolos_ends_before_second_apostolos_heading(self):
+        passages = extract_orthros_passages(SOURCE_WITH_SECOND_APOSTOLOS)
+        apostolos = next(passage for passage in passages if passage.kind == "apostolos")
+        self.assertIn("Ἐφεσίους", apostolos.text)
+        self.assertNotIn("Ἑβραίους", apostolos.text)
+        self.assertNotIn("ΑΠΟΣΤΟΛΟΣ 2ος", apostolos.text)
 
     def test_generates_once_and_uses_disk_cache_afterwards(self):
         with TemporaryDirectory() as directory:

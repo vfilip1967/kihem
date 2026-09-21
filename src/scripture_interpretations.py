@@ -24,7 +24,9 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
 DEFAULT_MODEL = "gpt-5.6-luna"
-CACHE_VERSION = 1
+# Include the requested output structure in cache identity. A bumped version
+# regenerates old entries whose theological messages used short references.
+CACHE_VERSION = 2
 logger = logging.getLogger(__name__)
 
 
@@ -64,10 +66,19 @@ def _is_evangelion(value: str) -> bool:
     return _normal(value).replace("΄", "") == "ευαγγελιον"
 
 
+def _is_second_apostolos(value: str) -> bool:
+    """Recognise Melodos' heading for a second Apostle reading.
+
+    It is a boundary for the first Apostle, not a further reading to explain.
+    """
+    return bool(re.match(r"^αποστολοσ\s*(?:2|δευτερ)", _normal(value)))
+
+
 def _is_boundary(value: str) -> bool:
     text = _normal(value)
     return (
         _is_apostolos(value)
+        or _is_second_apostolos(value)
         or _is_evangelion(value)
         or "εκτενησ δεηση" in text
         or "πληρωσωμεν την εωθινην δεησιν" in text
@@ -221,7 +232,7 @@ class ScriptureInterpretationService:
 
     @staticmethod
     def _prompt(passage: ScripturePassage) -> str:
-        return f"""When given NT verse references, go sentence by sentence giving the νεοελληνική μετάφραση, then an ερμηνεία according to ελληνορθόδοξη πατερική θεολογία (in understandable modern Greek) for each verse (ancient text + translation + patristic interpretation), and end with a list of the passage's theological messages and which verses contain them.
+        return f"""When given NT verse references, go sentence by sentence giving the νεοελληνική μετάφραση, then an ερμηνεία according to ελληνορθόδοξη πατερική θεολογία (in understandable modern Greek) for each verse (ancient text + translation + patristic interpretation), and end with a list of the passage's theological messages and which verses contain them. For every theological message, quote in full the complete ancient-Greek verse or sentence that supports it and then give its reference; never give only an isolated reference such as «στίχος 20».
 
 Write only in modern, understandable Greek. Use the supplied ancient Greek text exactly as the source: do not invent verses or citations. Do not claim a precise patristic quotation unless you are certain of it; when appropriate, say simply «κατά την πατερική ερμηνευτική παράδοση». Keep the explanation reverent, educational, and concise enough to read on a phone. Use Markdown headings and bullet points.
 

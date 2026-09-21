@@ -29,6 +29,8 @@ This file records only durable implementation decisions.
 - The complete Cross katavasies scan is inserted before «Τὴν Θεοτόκον καὶ
   Μητέρα τοῦ Φωτός…»; the Timiotera follows its sixth refrain. A strict
   fallback supports feast-day documents that say the Timiotera is omitted.
+  The fourth-tone Timiotera is attached at the same point and uses verified
+  score regions on printed pages 191–192.
 - «Ὑπερευλογημένη» always uses the fixed second-tone Petros Lampadarios
   setting from the separate Pemptousia source, because the 1905 local
   Anastasimatario does not contain a usable engraved setting for it.

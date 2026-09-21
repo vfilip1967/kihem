@@ -256,6 +256,15 @@ PIECES: Final[dict[str, MusicPiece]] = {
         "Τὴν Τιμιωτέραν τῶν Χερουβείμ",
         (_region(420, 0.50), _region(421, 0.02, 0.42)),
     ),
+    "tone4-timiotera": MusicPiece(
+        "tone4-timiotera",
+        "Ἡ Τιμιωτέρα, δ΄ ἦχος",
+        "Τὴν Τιμιωτέραν τῶν Χερουβείμ",
+        # The title and opening are at the foot of printed p. 191; the
+        # refrains end immediately before the ninth-ode Heirmos on p. 192.
+        # The PDF has two unnumbered preliminary pages.
+        (_region(193, 0.72), _region(194, 0.02, 0.47)),
+    ),
     "tone6-ainoi-first-four": MusicPiece(
         "tone6-ainoi-first-four",
         "Αἶνοι · τὰ τέσσερα ἀναστάσιμα στιχηρά",
@@ -745,6 +754,14 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "plagal4-timiotera",
         required_text=("Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.",),
         required_text_any=("Ἦχος πλ δ΄", "Ηχος πλ δ΄"),
+        match_number=6,
+    ),
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "tone4-timiotera",
+        required_text=("Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο του Ειρμού.",),
+        required_text_any=("Ἦχος δ΄", "Ηχος δ΄"),
         match_number=6,
     ),
     AttachmentRule(
