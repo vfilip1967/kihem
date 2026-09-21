@@ -1,5 +1,7 @@
 # Kihem — Συνθέτης λειτουργικών ακολουθιών
 
+**Δημόσιο demo:** [book.milatos.com/kihem](https://book.milatos.com/kihem/)
+
 Το Kihem διαβάζει τις ακολουθίες μιας επιλεγμένης ημερομηνίας από τον
 [Μελωδό](https://melodos.com/akolouthies/) και παρουσιάζει ενιαία:
 
