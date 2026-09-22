@@ -73,15 +73,18 @@ This file records only durable implementation decisions.
 
 - The legacy project is `oldapp/isokratis_new.aia`; the web version is inside
   the main page, not a separate route. PDFs are intentionally out of scope.
-- `src/isokratis.py` catalogs only direct MP3 files in
-  `KIHEM_BYZ_DIR` (default `/var/lib/kihem/byz`) under `isokratis/` and
-  `prosomia/`. Asset routes are explicit; arbitrary paths and PDFs are never
-  served.
+- `src/isokratis.py` catalogs numbered MP3 only for the Isokratis in
+  `KIHEM_BYZ_DIR` (default `/var/lib/kihem/byz`). Its curated prosomia list
+  can additionally use explicit M4A/AAC recordings; asset routes are explicit,
+  and arbitrary paths and PDFs are never served.
 - Ison filename formula: `note base + register + semitone × 6`. Note buttons
   start looping playback; only the icon-only `Ⅱ` control stops it. The visible
   adjustment steps are −1/+1 and −6/+6.
-- Selecting a prosomia MP3 starts it immediately; only the icon-only `Ⅱ` stop
-  control remains. On mobile, the fixed audio controls use no more than three
+- Selecting a prosomia mode starts its first curated recording immediately;
+  selecting a different MP3 also starts it immediately. Only the icon-only
+  `Ⅱ` stop control remains. The fixed `isokratis.py` catalog follows the VLC
+  playlist order and excludes historical numbered trials and duplicates without
+  deleting source media. On mobile, the fixed audio controls use no more than three
   compact rows, and the mode/MP3 selectors have constrained widths.
   The source-maintained hidden-recording set in `isokratis.py` controls which
   uploaded tracks appear—do not delete source MP3s to change a menu.

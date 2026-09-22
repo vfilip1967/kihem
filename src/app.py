@@ -165,7 +165,8 @@ def create_app(config: dict | None = None) -> Flask:
         path = media_library.prosomia_path(filename)
         if path is None:
             abort(404)
-        return send_file(path, mimetype="audio/mpeg", max_age=86400)
+        mimetype = "audio/mp4" if path.suffix.lower() == ".m4a" else "audio/mpeg"
+        return send_file(path, mimetype=mimetype, max_age=86400)
 
     @app.get("/melodos-audio")
     def melodos_audio():

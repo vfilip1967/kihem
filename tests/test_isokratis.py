@@ -13,15 +13,10 @@ class IsokratisLibraryTests(unittest.TestCase):
         (self.root / "prosomia").mkdir()
         (self.root / "isokratis" / "60.mp3").write_bytes(b"ison")
         (self.root / "isokratis" / "chant.mp3").write_bytes(b"not a numbered ison")
-        (self.root / "prosomia" / "6-chant.mp3").write_bytes(b"mode six")
+        (self.root / "prosomia" / "6-αγγελικαί δυνάμεις .mp3").write_bytes(b"mode six")
+        (self.root / "prosomia" / "ηχος_πλ.β_θεος_κυριος.m4a").write_bytes(b"mode six m4a")
         (self.root / "prosomia" / "1-1.mp3").write_bytes(b"hidden setup recording")
-        (self.root / "prosomia" / "2-stauros.mp3").write_bytes(b"hidden second tone recording")
-        (self.root / "prosomia" / "2-poiois.mp3").write_bytes(b"another hidden second tone recording")
-        (self.root / "prosomia" / "2-γυναίκες-ακουτίσθητε.mp3").write_bytes(b"hidden Greek second tone recording")
-        (self.root / "prosomia" / "2-ta-anw(2)-1.mp3").write_bytes(b"hidden second tone recording")
-        (self.root / "prosomia" / "2-sarki (1).mp3").write_bytes(b"hidden second tone recording")
-        (self.root / "prosomia" / "3-3-1.mp3").write_bytes(b"hidden third tone recording")
-        (self.root / "prosomia" / "3-apostoloi.mp3").write_bytes(b"hidden third tone recording")
+        (self.root / "prosomia" / "2-stauros.mp3").write_bytes(b"unlisted duplicate recording")
         (self.root / "prosomia" / "liturgy.mp3").write_bytes(b"other")
         (self.root / "prosomia" / "book.pdf").write_bytes(b"excluded")
         self.library = IsokratisLibrary(self.root)
@@ -33,22 +28,22 @@ class IsokratisLibraryTests(unittest.TestCase):
         self.assertEqual(self.library.ison_numbers, frozenset({60}))
         self.assertEqual(
             [(mode, len(tracks)) for mode, tracks in self.library.prosomia_by_mode()],
-            [("6", 1), ("other", 1)],
+            [("6", 2)],
         )
         self.assertIsNone(self.library.prosomia_path("1-1.mp3"))
         self.assertIsNone(self.library.prosomia_path("2-stauros.mp3"))
-        self.assertIsNone(self.library.prosomia_path("2-poiois.mp3"))
-        self.assertIsNone(self.library.prosomia_path("2-γυναίκες-ακουτίσθητε.mp3"))
-        self.assertIsNone(self.library.prosomia_path("2-ta-anw(2)-1.mp3"))
-        self.assertIsNone(self.library.prosomia_path("2-sarki (1).mp3"))
-        self.assertIsNone(self.library.prosomia_path("3-3-1.mp3"))
-        self.assertIsNone(self.library.prosomia_path("3-apostoloi.mp3"))
+        self.assertIsNone(self.library.prosomia_path("liturgy.mp3"))
 
     def test_catalog_membership_prevents_arbitrary_paths(self):
         self.assertEqual(self.library.ison_path(60), self.root / "isokratis" / "60.mp3")
         self.assertIsNone(self.library.ison_path(61))
         self.assertEqual(
-            self.library.prosomia_path("6-chant.mp3"), self.root / "prosomia" / "6-chant.mp3"
+            self.library.prosomia_path("6-αγγελικαί δυνάμεις .mp3"),
+            self.root / "prosomia" / "6-αγγελικαί δυνάμεις .mp3",
+        )
+        self.assertEqual(
+            self.library.prosomia_path("ηχος_πλ.β_θεος_κυριος.m4a"),
+            self.root / "prosomia" / "ηχος_πλ.β_θεος_κυριος.m4a",
         )
         self.assertIsNone(self.library.prosomia_path("book.pdf"))
         self.assertIsNone(self.library.prosomia_path("../isokratis/60.mp3"))

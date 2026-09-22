@@ -393,7 +393,7 @@
       const trackSelect = panel.querySelector('[data-prosomia-track]');
       const prosomiaStatus = panel.querySelector('[data-prosomia-status]');
       const trackGroups = {{ prosomia_groups|tojson }};
-      const setTracks = () => {
+      const setTracks = (playFirst = false) => {
         const tracks = trackGroups[Number(prosomiaGroup.value)].tracks;
         trackSelect.replaceChildren(...tracks.map((track) => {
           const option = document.createElement('option');
@@ -401,13 +401,14 @@
         }));
         prosomiaAudio.pause(); prosomiaAudio.currentTime = 0;
         prosomiaStatus.textContent = 'Επίλεξε ηχογράφηση για αυτόματη ακρόαση.';
+        if (playFirst && trackSelect.value) playProsomia();
       };
       const playProsomia = () => {
         if (prosomiaAudio.src !== new URL(trackSelect.value, window.location.href).href) prosomiaAudio.src = trackSelect.value;
         prosomiaAudio.play().then(() => { prosomiaStatus.textContent = `Παίζει: ${trackSelect.selectedOptions[0].textContent}`; })
-          .catch(() => { prosomiaStatus.textContent = 'Ο browser χρειάζεται πάτημα στο κουμπί Ακρόαση.'; });
+          .catch(() => { prosomiaStatus.textContent = 'Ο browser δεν επέτρεψε την έναρξη της ηχογράφησης.'; });
       };
-      prosomiaGroup.addEventListener('change', setTracks);
+      prosomiaGroup.addEventListener('change', () => setTracks(true));
       trackSelect.addEventListener('change', playProsomia);
       panel.querySelector('[data-prosomia-stop]').addEventListener('click', () => {
         prosomiaAudio.pause(); prosomiaAudio.currentTime = 0; prosomiaStatus.textContent = 'Η ηχογράφηση σταμάτησε.';

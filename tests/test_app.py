@@ -43,7 +43,8 @@ class AppTests(unittest.TestCase):
         (byz / "isokratis").mkdir(parents=True)
         (byz / "prosomia").mkdir()
         (byz / "isokratis" / "60.mp3").write_bytes(b"test-ison")
-        (byz / "prosomia" / "1-example.mp3").write_bytes(b"test-prosomia")
+        (byz / "prosomia" / "1-ouraniwn.mp3").write_bytes(b"test-prosomia")
+        (byz / "prosomia" / "ηχος_πλ.β_θεος_κυριος.m4a").write_bytes(b"test-prosomia-m4a")
         (byz / "prosomia" / "not-for-web.pdf").write_bytes(b"test-pdf")
         self.app = create_app(
             {
@@ -100,9 +101,10 @@ class AppTests(unittest.TestCase):
         self.assertIn('data-register-up aria-label="Αύξηση διαστήματος">+1', text)
         self.assertIn('data-semitone-down aria-label="Μείωση ημιτονίου">−6', text)
         self.assertIn('data-semitone-up aria-label="Αύξηση ημιτονίου">+6', text)
-        self.assertIn("1-example", text)
+        self.assertIn("Οὐρανίων ταγμάτων", text)
         self.assertIn('data-ison-url-template="isokratis/ison/__number__.mp3"', text)
-        self.assertIn('value="isokratis/prosomia/1-example.mp3"', text)
+        self.assertIn('value="isokratis/prosomia/1-ouraniwn.mp3"', text)
+        self.assertIn("prosomiaGroup.addEventListener('change', () => setTracks(true))", text)
         self.assertNotIn("not-for-web.pdf", text)
         self.assertIn("melodos-audio?url=", text)
 
@@ -151,11 +153,16 @@ class AppTests(unittest.TestCase):
         self.assertEqual(ison.data, b"test-ison")
         ison.close()
 
-        prosomia = self.client.get("/isokratis/prosomia/1-example.mp3")
+        prosomia = self.client.get("/isokratis/prosomia/1-ouraniwn.mp3")
         self.assertEqual(prosomia.status_code, 200)
         self.assertEqual(prosomia.mimetype, "audio/mpeg")
         self.assertEqual(prosomia.data, b"test-prosomia")
         prosomia.close()
+        prosomia_m4a = self.client.get("/isokratis/prosomia/ηχος_πλ.β_θεος_κυριος.m4a")
+        self.assertEqual(prosomia_m4a.status_code, 200)
+        self.assertEqual(prosomia_m4a.mimetype, "audio/mp4")
+        self.assertEqual(prosomia_m4a.data, b"test-prosomia-m4a")
+        prosomia_m4a.close()
 
         self.assertEqual(self.client.get("/isokratis/prosomia/not-for-web.pdf").status_code, 404)
         self.assertEqual(self.client.get("/isokratis/prosomia/../isokratis/60.mp3").status_code, 404)
