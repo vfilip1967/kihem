@@ -16,7 +16,7 @@ from src.composer import ServiceComposer
 from src.liturgical_calendar import LiturgicalCalendar
 from src.melodos import MELODOS_HOME, MelodosClient, MelodosError
 from src.isokratis import ISON_NOTES, MODE_LABELS, IsokratisLibrary
-from src.scripture_interpretations import ScriptureInterpretationService
+from src.scripture_interpretations import ScriptureInterpretationService, add_reading_bookmarks
 
 
 def create_app(config: dict | None = None) -> Flask:
@@ -70,6 +70,7 @@ def create_app(config: dict | None = None) -> Flask:
         attachment_count = 0
         unmatched_piece_ids: list[str] = []
         music_bookmarks: list[dict[str, str]] = []
+        reading_bookmarks: list[dict[str, str]] = []
 
         try:
             calendar = LiturgicalCalendar(selected_raw)
@@ -96,8 +97,14 @@ def create_app(config: dict | None = None) -> Flask:
                     instance_offset=attachment_count,
                 )
                 service_html = enriched.html
-                if item.service == "orthros":
-                    service_html = interpretation_service.enrich_orthros_html(service_html)
+                service_html = interpretation_service.enrich_service_html(
+                    service_html,
+                    service=item.service,
+                )
+                service_html, document_reading_bookmarks = add_reading_bookmarks(
+                    service_html,
+                    service=item.service,
+                )
                 attachment_count += enriched.attachment_count
                 unmatched_piece_ids.extend(enriched.unmatched_piece_ids)
                 music_bookmarks.extend(
@@ -106,6 +113,13 @@ def create_app(config: dict | None = None) -> Flask:
                         "label": bookmark.title,
                     }
                     for bookmark in enriched.bookmarks
+                )
+                reading_bookmarks.extend(
+                    {
+                        "anchor_id": bookmark.anchor_id,
+                        "label": bookmark.label,
+                    }
+                    for bookmark in document_reading_bookmarks
                 )
                 documents.append(
                     {
@@ -129,6 +143,7 @@ def create_app(config: dict | None = None) -> Flask:
             tone=composition.tone if composition else None,
             attachment_count=attachment_count,
             music_bookmarks=music_bookmarks,
+            reading_bookmarks=reading_bookmarks,
             unmatched_count=len(unmatched_piece_ids),
             error=error,
             melodos_url=MELODOS_HOME,

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>Κιβωτός Ακολουθιών</title>
-  <link rel="stylesheet" href="static/app.css?v=20260921-scripture-interpretations">
+  <link rel="stylesheet" href="static/app.css?v=20260929-reading-bookmarks">
 </head>
 <body>
   <header class="site-header">
@@ -138,10 +138,20 @@
         <div class="reader-nav-row">
           <a class="service-switch-link {{ 'active' if selected_services == 'orthros' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=orthros">Όρθρος</a>
           <a class="service-switch-link {{ 'active' if selected_services == 'litourgia' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=litourgia">Θεία Λειτουργία</a>
+          {% if reading_bookmarks %}
+            <details class="reading-bookmarks-menu">
+              <summary>Αναγνώσεις <span>{{ reading_bookmarks|length }}</span></summary>
+              <div class="bookmark-menu-list reading-bookmarks-list" aria-label="Σελιδοδείκτες αναγνωσμάτων">
+                {% for bookmark in reading_bookmarks %}
+                  <a href="#{{ bookmark.anchor_id }}">{{ bookmark.label }}</a>
+                {% endfor %}
+              </div>
+            </details>
+          {% endif %}
           {% if music_bookmarks %}
             <details class="music-bookmarks-menu">
               <summary>Μουσικά <span>{{ music_bookmarks|length }}</span></summary>
-              <div class="music-bookmarks-list" aria-label="Σελιδοδείκτες μουσικών κειμένων">
+              <div class="bookmark-menu-list music-bookmarks-list" aria-label="Σελιδοδείκτες μουσικών κειμένων">
                 {% for bookmark in music_bookmarks %}
                   <a href="#{{ bookmark.anchor_id }}">{{ bookmark.label }}</a>
                 {% endfor %}
@@ -189,7 +199,7 @@
       if (readerToolbar && isokratisPanel) readerToolbar.append(isokratisPanel);
     })();
 
-    document.querySelectorAll('.music-bookmarks-list a').forEach((link) => {
+    document.querySelectorAll('.bookmark-menu-list a').forEach((link) => {
       link.addEventListener('click', (event) => {
         const target = document.querySelector(link.hash);
         if (!target) return;
@@ -198,7 +208,7 @@
         // precede the target to settle. Otherwise lazy-loaded image heights
         // can move a late excerpt and leave the browser on the previous one.
         event.preventDefault();
-        link.closest('.music-bookmarks-menu').open = false;
+        link.closest('details').open = false;
         history.pushState(null, '', link.hash);
         const precedingImages = [...document.images].filter((image) =>
           image.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING

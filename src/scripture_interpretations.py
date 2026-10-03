@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Cached, Greek Orthodox explanations for the Scripture readings in Orthros."""
+"""Cached, Greek Orthodox explanations for Orthros and Divine Liturgy readings."""
 
 import hashlib
 import html
@@ -25,8 +25,10 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
 DEFAULT_MODEL = "gpt-5.6-luna"
 # Include the requested output structure in cache identity. A bumped version
-# regenerates old entries whose theological messages used short references.
-CACHE_VERSION = 2
+# regenerates entries that reached the token limit before their theological
+# messages, particularly for long Gospel passages, were truncated by an
+# earlier over-broad Alleluia detector, or missed an unlabelled Orthros Gospel.
+CACHE_VERSION = 5
 logger = logging.getLogger(__name__)
 
 
@@ -36,7 +38,16 @@ class ScripturePassage:
     title: str
     reference: str
     text: str
+    start_node: Tag | NavigableString
     end_node: Tag | NavigableString
+
+
+@dataclass(frozen=True)
+class ReadingBookmark:
+    """A compact navigation entry pointing to a primary Scripture reading."""
+
+    anchor_id: str
+    label: str
 
 
 def _compact(value: str) -> str:
@@ -58,6 +69,22 @@ def _is_eothinon(value: str) -> bool:
     return "εωθιν" in _normal(value) and ("κεφ" in _normal(value) or "ευαγγελ" in _normal(value))
 
 
+def _is_orthros_gospel_invitation(value: str) -> bool:
+    """Recognise an Orthros Gospel that Melodos does not title ``Εωθινό``.
+
+    The fixed proclamation ``Σοφία. Ὀρθοί, ἀκούσωμεν τοῦ ἁγίου
+    Εὐαγγελίου`` precedes the reading, which is followed by Psalm 50.  This
+    appears, for example, on 26 September, without an ``Εωθινό`` label.
+    """
+    text = _normal(value)
+    return "σοφια" in text and "ορθοι" in text and "ακουσωμεν" in text and "αγιου ευαγγελιου" in text
+
+
+def _is_gospel_reference(value: str) -> bool:
+    text = _normal(value)
+    return "κεφ" in text and bool(re.search(r"\d+\s*:\s*\d+", text))
+
+
 def _is_apostolos(value: str) -> bool:
     return _normal(value).replace("΄", "") == "αποστολοσ"
 
@@ -72,6 +99,25 @@ def _is_second_apostolos(value: str) -> bool:
     It is a boundary for the first Apostle, not a further reading to explain.
     """
     return bool(re.match(r"^αποστολοσ\s*(?:2|δευτερ)", _normal(value)))
+
+
+def _is_allelouia(value: str) -> bool:
+    """The Alleluia immediately follows an Apostle reading.
+
+    On feast days Melodos may place further optional readings after it without
+    another ``ΑΠΟΣΤΟΛΟΣ`` heading.  We interpret only the first reading, as
+    requested, rather than sending all of those readings in one costly call.
+    """
+    # Do not use a substring: ``ἀλλήλους`` in the Apostle also normalizes to
+    # a string beginning with ``αλληλου``.  Melodos places the liturgical
+    # Alleluia in its own node, whose text starts with the actual word.
+    return bool(re.match(r"^αλληλουια\b", _normal(value)))
+
+
+def _is_second_gospel_marker(value: str) -> bool:
+    """Recognise the preparation heading before Melodos' optional Gospel 2."""
+    text = _normal(value)
+    return "ευαγγελι" in text and bool(re.search(r"(?:^|\s)2(?:ο|ου|ος)?(?:\s|$)", text))
 
 
 def _is_boundary(value: str) -> bool:
@@ -95,8 +141,21 @@ def _reference_from(parts: Iterable[str], fallback: str) -> str:
     return _compact(match.group(1)) if match else fallback
 
 
-def extract_orthros_passages(service_html: str | BeautifulSoup) -> list[ScripturePassage]:
-    """Find the Eothinon, first Apostle and Gospel in the Melodos fragment.
+def _eothinon_content_start(nodes: list[Tag | NavigableString], start: int) -> int:
+    """Include the Gospel book/formula before a reference-heading start."""
+    for index in range(start - 1, max(-1, start - 33), -1):
+        value = _normal(_node_text(nodes[index]))
+        if "εκ του κατα" in value and "ευαγγελι" in value:
+            return index
+    return max(0, start - 7)
+
+
+def extract_service_passages(
+    service_html: str | BeautifulSoup,
+    *,
+    include_eothinon: bool = False,
+) -> list[ScripturePassage]:
+    """Find the first Apostle and Gospel, plus the Orthros Eothinon when requested.
 
     Melodos returns a flat sequence of ``br`` and ``span`` nodes rather than
     semantic reading containers, so its headings are used as stable boundaries.
@@ -110,8 +169,20 @@ def extract_orthros_passages(service_html: str | BeautifulSoup) -> list[Scriptur
     labels: list[tuple[str, int]] = []
     for index, node in enumerate(nodes):
         value = _node_text(node)
-        if _is_eothinon(value):
+        if include_eothinon and _is_eothinon(value):
             labels.append(("eothinon", index))
+        elif include_eothinon and _is_orthros_gospel_invitation(value):
+            # Start at the verse reference, after the initial choir response;
+            # the next ``ΧΟΡΟΣ`` is then the true end of the reading.
+            reference_index = next(
+                (
+                    candidate
+                    for candidate in range(index + 1, min(len(nodes), index + 40))
+                    if _is_gospel_reference(_node_text(nodes[candidate]))
+                ),
+                index,
+            )
+            labels.append(("eothinon", reference_index))
         elif _is_apostolos(value):
             labels.append(("apostolos", index))
         elif _is_evangelion(value):
@@ -127,12 +198,14 @@ def extract_orthros_passages(service_html: str | BeautifulSoup) -> list[Scriptur
         for index in range(start + 1, len(nodes)):
             candidate = _node_text(nodes[index])
             is_eothinon_end = kind == "eothinon" and _normal(candidate).replace(":", "") == "χοροσ"
-            if is_eothinon_end or (kind != "eothinon" and _is_boundary(candidate)):
+            apostolos_end = kind == "apostolos" and _is_allelouia(candidate)
+            gospel_end = kind == "evangelion" and _is_second_gospel_marker(candidate)
+            if is_eothinon_end or apostolos_end or gospel_end or (kind != "eothinon" and _is_boundary(candidate)):
                 end = index
                 break
         # The words introducing the Eothinon (book and liturgical formula)
         # immediately precede its heading and make its reference unambiguous.
-        content_start = max(0, start - 7) if kind == "eothinon" else start
+        content_start = _eothinon_content_start(nodes, start) if kind == "eothinon" else start
         parts = [_node_text(node) for node in nodes[content_start:end]]
         text = _compact("\n".join(part for part in parts if part and part != "~"))
         if len(text) < 80 or end <= start:
@@ -144,10 +217,48 @@ def extract_orthros_passages(service_html: str | BeautifulSoup) -> list[Scriptur
                 title=title,
                 reference=_reference_from(parts, title),
                 text=text,
+                start_node=nodes[start],
                 end_node=nodes[end - 1],
             )
         )
     return passages
+
+
+def extract_orthros_passages(service_html: str | BeautifulSoup) -> list[ScripturePassage]:
+    """Backward-compatible Orthros extractor, including the Eothinon."""
+    return extract_service_passages(service_html, include_eothinon=True)
+
+
+def extract_litourgia_passages(service_html: str | BeautifulSoup) -> list[ScripturePassage]:
+    """Extract the first Apostle and Gospel of the Divine Liturgy."""
+    return extract_service_passages(service_html)
+
+
+def add_reading_bookmarks(service_html: str, *, service: str) -> tuple[str, tuple[ReadingBookmark, ...]]:
+    """Add anchors for the first Apostle and Gospel in a service document.
+
+    Some weekday Orthros pages have an unlabelled Gospel which the extractor
+    identifies as an Eothinon.  It is still the service's Gospel for reader
+    navigation, so it is used only when no explicit ``ΕΥΑΓΓΕΛΙΟΝ`` follows.
+    """
+    if not service_html:
+        return service_html, ()
+
+    soup = BeautifulSoup(service_html, "html.parser")
+    passages = extract_service_passages(soup, include_eothinon=service == "orthros")
+    by_kind = {passage.kind: passage for passage in passages}
+    gospel = by_kind.get("evangelion") or by_kind.get("eothinon")
+    primary = (("apostolos", "1ος Απόστολος", by_kind.get("apostolos")), ("evangelion", "Ευαγγέλιο", gospel))
+    bookmarks: list[ReadingBookmark] = []
+    for kind, label, passage in primary:
+        if passage is None:
+            continue
+        anchor_id = f"reading-{service}-first-{kind}"
+        anchor = soup.new_tag("span", attrs={"id": anchor_id, "class": "reading-bookmark-anchor"})
+        anchor["aria-hidden"] = "true"
+        passage.start_node.insert_before(anchor)
+        bookmarks.append(ReadingBookmark(anchor_id=anchor_id, label=label))
+    return str(soup), tuple(bookmarks)
 
 
 def _markdown_to_html(value: str) -> str:
@@ -201,7 +312,9 @@ class ScriptureInterpretationService:
         self.model = model
         self.session = session or requests.Session()
         self.background = background
-        self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="kihem-scripture") if background else None
+        # Eothinon, first Apostle and first Gospel are independent cache keys.
+        # Three workers avoid making one reading wait behind another.
+        self._executor = ThreadPoolExecutor(max_workers=3, thread_name_prefix="kihem-scripture") if background else None
         self._scheduled: set[str] = set()
         self._scheduled_lock = Lock()
 
@@ -232,9 +345,9 @@ class ScriptureInterpretationService:
 
     @staticmethod
     def _prompt(passage: ScripturePassage) -> str:
-        return f"""When given NT verse references, go sentence by sentence giving the νεοελληνική μετάφραση, then an ερμηνεία according to ελληνορθόδοξη πατερική θεολογία (in understandable modern Greek) for each verse (ancient text + translation + patristic interpretation), and end with a list of the passage's theological messages and which verses contain them. For every theological message, quote in full the complete ancient-Greek verse or sentence that supports it and then give its reference; never give only an isolated reference such as «στίχος 20».
+        return f"""When given NT verse references, go sentence by sentence giving the νεοελληνική μετάφραση, then an ερμηνεία according to ελληνορθόδοξη πατερική θεολογία (in understandable modern Greek) for each verse (ancient text + translation + patristic interpretation), and end with a list titled «Θεολογικά μηνύματα». This final list is mandatory, including for a long Gospel passage; reserve enough space for it. For every theological message, quote in full the complete ancient-Greek verse or sentence that supports it and then give its reference; never give only an isolated reference such as «στίχος 20».
 
-Write only in modern, understandable Greek. Use the supplied ancient Greek text exactly as the source: do not invent verses or citations. Do not claim a precise patristic quotation unless you are certain of it; when appropriate, say simply «κατά την πατερική ερμηνευτική παράδοση». Keep the explanation reverent, educational, and concise enough to read on a phone. Use Markdown headings and bullet points.
+Write only in modern, understandable Greek. Use the supplied ancient Greek text exactly as the source: do not invent verses or citations. Do not claim a precise patristic quotation unless you are certain of it; when appropriate, say simply «κατά την πατερική ερμηνευτική παράδοση». Keep the explanation reverent and concise enough to read on a phone: for each sentence use one compact block with the ancient text, one short translation and at most two short sentences of interpretation. Do not repeat the full heading structure for every sentence. Use Markdown headings and bullet points.
 
 Reading type: {passage.kind}
 Liturgical heading: {passage.title}
@@ -250,10 +363,12 @@ Ancient Greek source text:
                 "model": self.model,
                 "store": False,
                 "reasoning": {"effort": "none"},
-                "max_output_tokens": 5000,
+                "max_output_tokens": 9000,
                 "input": self._prompt(passage),
             },
-            timeout=60,
+            # This is a background task.  A longer read allowance is much
+            # preferable to losing a one-time cache entry for a long Gospel.
+            timeout=(10, 180),
         )
         response.raise_for_status()
         payload = response.json()
@@ -333,13 +448,13 @@ Ancient Greek source text:
 
         self._executor.submit(generate)
 
-    def enrich_orthros_html(self, service_html: str) -> str:
+    def enrich_service_html(self, service_html: str, *, service: str) -> str:
         if not service_html:
             return service_html
         soup = BeautifulSoup(service_html, "html.parser")
         # Extract from this parsed document, then append in reverse document
         # order so the insertion points remain valid.
-        passages = extract_orthros_passages(soup)
+        passages = extract_service_passages(soup, include_eothinon=service == "orthros")
         for passage in reversed(passages):
             path = self._cache_path(passage)
             result = None
@@ -364,3 +479,7 @@ Ancient Greek source text:
             else:
                 soup.append(box)
         return str(soup)
+
+    def enrich_orthros_html(self, service_html: str) -> str:
+        """Backward-compatible entry point for Orthros callers."""
+        return self.enrich_service_html(service_html, service="orthros")

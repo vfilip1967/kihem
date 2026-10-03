@@ -164,6 +164,8 @@ class AttachmentRule:
     month_days: tuple[tuple[int, int], ...] = ()
     match_number: int = 1
     preceding_text: str | None = None
+    nearest_preceding_text: str | None = None
+    exact_after_text: str | None = None
     following_text: str | None = None
     insert_before: bool = False
 
@@ -276,11 +278,45 @@ PIECES: Final[dict[str, MusicPiece]] = {
             _region(303, 0.02, 0.53),
         ),
     ),
+    "tone8-ainoi": MusicPiece(
+        "tone8-ainoi",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος πλ. δ΄",
+        "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
+        # The plagal-fourth Pasapnoaria and all eight resurrectional Ainoi
+        # run from printed p. 420 to the end immediately before Eothinon II
+        # on p. 425 in the 1905 Anastasimatario.
+        (_region(422), _region(423), _region(424), _region(425), _region(426), _region(427, 0.02, 0.52)),
+    ),
+    "tone1-ainoi": MusicPiece(
+        "tone1-ainoi",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος α΄",
+        "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
+        # The first-tone Pasapnoaria and all eight resurrectional Ainoi begin
+        # on printed p. 39 and finish before Eothinon A begins on p. 43.
+        (_region(41), _region(42), _region(43), _region(44), _region(45, 0.02, 0.72)),
+    ),
     "eothinon-4": MusicPiece(
         "eothinon-4",
         "Δοξαστικὸν Ἑωθινὸν Δ΄",
         "Ὄρθρος ἦν βαθύς",
         (_region(200, 0.82), _region(201), _region(202, 0.02, 0.45)),
+    ),
+    "eothinon-6": MusicPiece(
+        "eothinon-6",
+        "Δοξαστικὸν Ἑωθινὸν ΣΤ΄ · ἦχος πλ. β΄",
+        "Ἡ ὄντως εἰρήνη σὺ Χριστέ",
+        # The local scan prints the heading «Ἑωθινὸν ΣΤ΄ · Ἦχος πλ. β΄»
+        # in the middle of printed p. 304.  The piece finishes immediately
+        # before the Great Doxology starts on printed p. 305.
+        (_region(306, 0.35), _region(307, 0.02, 0.70)),
+    ),
+    "eothinon-7": MusicPiece(
+        "eothinon-7",
+        "Δοξαστικὸν Ἑωθινὸν Ζ΄ · ἦχος βαρύς",
+        "Ἰδοὺ σκοτία καὶ πρωΐ",
+        # The seventh Eothinon begins at the foot of printed p. 365 and ends
+        # before the following first-tone Great Doxology on p. 366.
+        (_region(367, 0.75), _region(368, 0.02, 0.67)),
     ),
     "tone6-great-doxology": MusicPiece(
         "tone6-great-doxology",
@@ -294,6 +330,24 @@ PIECES: Final[dict[str, MusicPiece]] = {
             _region(311),
             _region(312, 0.02, 0.17),
         ),
+    ),
+    "plagal4-great-doxology": MusicPiece(
+        "plagal4-great-doxology",
+        "Μεγάλη Δοξολογία, πλ. δ΄ · Μανουὴλ Πρωτοψάλτου",
+        "Δόξα σοι τῷ δείξαντι τὸ φῶς",
+        # The local 1905 scan explicitly heads the setting «Δοξολογία
+        # Μανουὴλ Πρωτοψάλτου · Ἦχος πλ. δ΄» at the foot of printed p. 426.
+        # It finishes before the following plagal-first material on p. 431.
+        (_region(428, 0.69), _region(429), _region(430), _region(431), _region(432, 0.02, 0.68)),
+    ),
+    "tone1-great-doxology": MusicPiece(
+        "tone1-great-doxology",
+        "Μεγάλη Δοξολογία, ἦχος α΄ · Μανουὴλ Πρωτοψάλτου",
+        "Δόξα σοι τῷ δείξαντι τὸ φῶς",
+        # The first-tone setting is explicitly headed «Δοξολογία Μανουὴλ
+        # Πρωτοψάλτου · Ἦχος Α΄» on printed p. 45.  The final cropped page
+        # stops before «Σήμερον σωτηρία», which is a separate hymn.
+        (_region(47), _region(48), _region(49), _region(50, 0.02, 0.55)),
     ),
     "psalm-50-tone2": MusicPiece(
         "psalm-50-tone2",
@@ -338,6 +392,22 @@ PIECES: Final[dict[str, MusicPiece]] = {
         ),
         book_id=IRMOLOGION_BOOK_ID,
     ),
+    "theotokos-katavasies-tone4": MusicPiece(
+        "theotokos-katavasies-tone4",
+        "Καταβασίες Θεοτόκου · ἦχος δ΄ · Ἀνοίξω τὸ στόμα μου",
+        "Ἀνοίξω τὸ στόμα μου, καὶ πληρωθήσεται Πνεύματος",
+        # The complete short Theotokos Katavasies, printed pages 51–56.
+        # They are the setting explicitly selected by Melodos on 26/9.
+        (
+            ScanRegion(59, 51),
+            ScanRegion(60, 52),
+            ScanRegion(61, 53),
+            ScanRegion(62, 54),
+            ScanRegion(63, 55),
+            ScanRegion(64, 56),
+        ),
+        book_id=IRMOLOGION_BOOK_ID,
+    ),
     "kypseli-08-apolytikion": MusicPiece(
         "kypseli-08-apolytikion",
         "Ἀπολυτίκιον Γενεθλίου Θεοτόκου · ἦχος δ΄ · Μηναία",
@@ -378,13 +448,18 @@ PIECES: Final[dict[str, MusicPiece]] = {
         (ScanRegion(41, 41, (0.02, 0.02, 0.98, 0.48)),),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
-    "litourgia-trisagion-pandekti": MusicPiece(
-        "litourgia-trisagion-pandekti",
-        "Τρισάγιος ὕμνος · σύντομον · Μουσικὴ Πανδέκτη",
+    "litourgia-trisagion-argon-pandekti": MusicPiece(
+        "litourgia-trisagion-argon-pandekti",
+        "Τρισάγιος ὕμνος · ἀργός · τριπλή ἐκτέλεση · Μουσικὴ Πανδέκτη",
         "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος",
-        # The former page 29 was an unrelated troparion.  Page 45 contains
-        # the complete first short Trisagion, immediately before the Dynamis.
-        (ScanRegion(45, 45, (0.02, 0.30, 0.98, 0.67)),),
+        # The complete slow setting begins on p. 43, includes the third
+        # execution, and continues through the Dynamis at the top of p. 45.
+        # Do not include the separate short alternatives lower on p. 45.
+        (
+            ScanRegion(43, 43),
+            ScanRegion(44, 44),
+            ScanRegion(45, 45, (0.02, 0.02, 0.98, 0.29)),
+        ),
         book_id=PANDEKTI_LITOURGIA_BOOK_ID,
     ),
     "litourgia-cherouvikon-pandekti": MusicPiece(
@@ -604,15 +679,38 @@ _TONE_LABEL_TEXT: Final[dict[int, str]] = {
     8: "πλ. δ΄",
 }
 
-_TONE_AMIN_PAGES: Final[dict[int, tuple[int, ...]]] = {
-    1: (12,),
-    2: (10,),
-    3: (8, 9),
-    4: (8, 9),
-    5: (11, 12),
-    6: (9,),
-    7: (9,),
-    8: (11, 12),
+# In the compact Melodos books the two Amens / «Σὲ ὑμνοῦμεν» and
+# «Ἄξιον ἐστίν» commonly share a page.  Keep each as one complete excerpt:
+# do not start the first response on a continuation syllable, and do not make
+# its final page also begin the Axion Estin setting.
+_TONE_AMIN_REGIONS: Final[dict[int, tuple[ScanRegion, ...]]] = {
+    1: (ScanRegion(11, 11, (0.02, 0.52, 0.98, 0.98)), ScanRegion(12, 12, (0.02, 0.02, 0.98, 0.38))),
+    2: (ScanRegion(9, 9, (0.02, 0.67, 0.98, 0.98)), ScanRegion(10, 10, (0.02, 0.02, 0.98, 0.51))),
+    3: (ScanRegion(8, 8, (0.02, 0.62, 0.98, 0.98)), ScanRegion(9, 9, (0.02, 0.02, 0.98, 0.25))),
+    4: (ScanRegion(8, 8, (0.02, 0.60, 0.98, 0.98)), ScanRegion(9, 9, (0.02, 0.02, 0.98, 0.14))),
+    5: (ScanRegion(10, 10, (0.02, 0.33, 0.98, 0.98)),),
+    6: (ScanRegion(9, 9, (0.02, 0.45, 0.98, 0.98)), ScanRegion(10, 10, (0.02, 0.02, 0.98, 0.15))),
+    7: (ScanRegion(9, 9, (0.02, 0.10, 0.98, 0.65)),),
+    8: (ScanRegion(11, 11, (0.02, 0.23, 0.98, 0.67)),),
+}
+
+_TONE_AXION_ESTIN_REGIONS: Final[dict[int, tuple[ScanRegion, ...]]] = {
+    1: (
+        ScanRegion(12, 12, (0.02, 0.39, 0.98, 0.98)),
+        ScanRegion(13, 13),
+        ScanRegion(14, 14, (0.02, 0.02, 0.98, 0.23)),
+    ),
+    2: (ScanRegion(10, 10, (0.02, 0.52, 0.98, 0.98)), ScanRegion(11, 11, (0.02, 0.02, 0.98, 0.64))),
+    3: (ScanRegion(9, 9, (0.02, 0.27, 0.98, 0.98)), ScanRegion(10, 10, (0.02, 0.02, 0.98, 0.57))),
+    4: (ScanRegion(9, 9, (0.02, 0.18, 0.98, 0.98)), ScanRegion(10, 10, (0.02, 0.02, 0.98, 0.40))),
+    5: (ScanRegion(11, 11), ScanRegion(12, 12, (0.02, 0.02, 0.98, 0.39))),
+    6: (ScanRegion(10, 10, (0.02, 0.18, 0.98, 0.98)), ScanRegion(11, 11, (0.02, 0.02, 0.98, 0.83))),
+    7: (
+        ScanRegion(9, 9, (0.02, 0.66, 0.98, 0.98)),
+        ScanRegion(10, 10),
+        ScanRegion(11, 11, (0.02, 0.02, 0.98, 0.28)),
+    ),
+    8: (ScanRegion(11, 11, (0.02, 0.68, 0.98, 0.98)), ScanRegion(12, 12, (0.02, 0.02, 0.98, 0.86))),
 }
 
 _TONE_KYRIE_PARASCHOU_REGIONS: Final[dict[int, tuple[ScanRegion, ...]]] = {
@@ -679,7 +777,14 @@ for _tone, (
         f"litourgia-tone-{_tone}-amin-se-ymnoumen",
         f"Ἀμήν · Σὲ ὑμνοῦμεν… · ἦχος {_TONE_LABEL_TEXT[_tone]} · Μελωδός",
         "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν",
-        _tone_scan_regions(_TONE_AMIN_PAGES[_tone]),
+        _TONE_AMIN_REGIONS[_tone],
+        book_id=_book_id,
+    )
+    PIECES[f"litourgia-tone-{_tone}-axion-estin"] = MusicPiece(
+        f"litourgia-tone-{_tone}-axion-estin",
+        f"Ἄξιόν ἐστιν · ἦχος {_TONE_LABEL_TEXT[_tone]} · Μελωδός",
+        "Ἄξιόν ἐστιν ὡς ἀληθῶς μακαρίζειν σε τὴν Θεοτόκον",
+        _TONE_AXION_ESTIN_REGIONS[_tone],
         book_id=_book_id,
     )
     PIECES[f"litourgia-tone-{_tone}-axion-kai-dikaion"] = MusicPiece(
@@ -750,10 +855,44 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "orthros",
+        "Παντοδύναμε Σωτὴρ ἐλέησον ἡμᾶς.",
+        "tone8-ainoi",
+        weekly_tone=8,
+        required_text=("Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄",),
+        # This is the final resurrectional sticheron of the Ainoi supplied by
+        # Melodos. The score follows the complete textual sequence, before
+        # the Eothinon Doxastikon, rather than an unrelated later boundary.
+    ),
+    AttachmentRule(
+        "orthros",
+        "παρέχει τῶ κόσμω τὸ μέγα ἔλεος.",
+        "tone1-ainoi",
+        weekly_tone=1,
+        required_text=("Στιχηρὰ Ἀναστάσιμα Ἦχος α΄",),
+        # The complete score follows the final first-tone resurrectional
+        # sticheron and precedes the Eothinon Doxastikon.
+    ),
+    AttachmentRule(
+        "orthros",
         "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
         "plagal4-timiotera",
         required_text=("Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.",),
         required_text_any=("Ἦχος πλ δ΄", "Ηχος πλ δ΄"),
+        # The tone must belong to this Timiotera block, not to a Prokeimenon
+        # or another musical instruction earlier in the daily document.
+        preceding_text=(
+            "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών. Ἦχος πλ δ΄"
+        ),
+        match_number=6,
+    ),
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "tone4-timiotera",
+        required_text=("Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.",),
+        preceding_text=(
+            "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών. Ἦχος δ΄"
+        ),
         match_number=6,
     ),
     AttachmentRule(
@@ -763,6 +902,19 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         required_text=("Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο του Ειρμού.",),
         required_text_any=("Ἦχος δ΄", "Ηχος δ΄"),
         match_number=6,
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "theotokos-katavasies-tone4",
+        required_text=(
+            "Καταβασίες Τῆς Θεοτόκου",
+            # Melodos separates the decorated initial alpha into its own span.
+            "νοίξω τὸ στόμα μου",
+        ),
+        # The complete score must precede the invitation to the Timiotera,
+        # after the eighth ode and before the ninth ode.
+        insert_before=True,
     ),
     AttachmentRule(
         "orthros",
@@ -801,6 +953,22 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "orthros",
+        "Κύριε δόξα σοι.",
+        "eothinon-6",
+        # The conclusion itself also occurs in the Kathismata.  Require the
+        # actual Melodos heading and make it precede the matched conclusion.
+        required_text=("ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ ΣΤ",),
+        preceding_text="ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ ΣΤ",
+    ),
+    AttachmentRule(
+        "orthros",
+        "ἀνυμνοῦμέν σε τὸν ζωοδότην Χριστόν.",
+        "eothinon-7",
+        required_text=("ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ Ζ",),
+        preceding_text="ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ Ζ",
+    ),
+    AttachmentRule(
+        "orthros",
         "πρὸς ἑαυτὸν τὰ θαυμάσια.",
         "eothinon-4",
     ),
@@ -822,11 +990,36 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "orthros",
         "Σήμερον σωτηρία τῷ κόσμῳ γέγονεν.",
         "tone6-great-doxology",
-        required_text=("Ἦχος πλ β΄",),
-        weekly_tone=6,
+        # The Great Doxology can take the local Doxastikon's tone even when
+        # the weekly tone is different (for example 28 September 2026).
+        # Trust Melodos' explicit Doxology instruction, not the week's tone.
+        required_text=(
+            "η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού",
+            "Ἦχος πλ β΄",
+        ),
         # The Great Doxology belongs immediately before the resurrectional
         # dismissal hymn, never at the opening Trisagion.
         insert_before=True,
+    ),
+    AttachmentRule(
+        "orthros",
+        "αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.",
+        "plagal4-great-doxology",
+        # This marker is added only when Melodos explicitly says that the
+        # Doxology takes the preceding Doxastikon's local plagal-fourth tone.
+        # It avoids using the weekly tone or an unrelated feast tone.
+        required_text=("Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος πλ. δ΄",),
+        preceding_text="Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος πλ. δ΄",
+    ),
+    AttachmentRule(
+        "orthros",
+        "αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.",
+        "tone1-great-doxology",
+        # The selector immediately before the heading is parsed from
+        # Melodos' own Doxology directory (``70 doxologies/1``).  Require its
+        # reconstructed local label rather than guessing from the weekday.
+        required_text=("Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος α΄",),
+        preceding_text="Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος α΄",
     ),
     # Compatibility for a shortened source extract which contains the
     # Doxology but not its following resurrectional dismissal hymn.
@@ -834,8 +1027,10 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "orthros",
         "γιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.",
         "tone6-great-doxology",
-        required_text=("Ἦχος πλ β΄",),
-        weekly_tone=6,
+        required_text=(
+            "η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού",
+            "Ἦχος πλ β΄",
+        ),
         excluded_text_any=("Σήμερον σωτηρία τῷ κόσμῳ γέγονεν.",),
         preceding_text="ἐν τῷ φωτί σου ὀψόμεθα φῶς.",
     ),
@@ -890,7 +1085,7 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     AttachmentRule(
         "litourgia",
         "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.",
-        "litourgia-trisagion-pandekti",
+        "litourgia-trisagion-argon-pandekti",
         match_number=3,
         following_text="Δύναμις",
     ),
@@ -922,11 +1117,61 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia",
         "Ταῖς πρεσβείαις τῆς Θεοτόκου, Σῶτερ, σῶσον ἡμᾶς.",
         "litourgia-tais-presveiais-pandekti",
+        # The first Antiphon has four refrains.  The musical page belongs
+        # after the final refrain, following «Δόξα... Καὶ νῦν...», not after
+        # the first refrain following the alpha verse.
+        nearest_preceding_text="Δόξα... Καὶ νῦν...",
+    ),
+    # Keep a single-refrain excerpt usable in partial source documents (for
+    # example, an intentionally shortened test or imported bulletin).  A
+    # complete Antiphon always has its «Δόξα... Καὶ νῦν...» marker and uses
+    # the rule above instead.
+    AttachmentRule(
+        "litourgia",
+        "Ταῖς πρεσβείαις τῆς Θεοτόκου, Σῶτερ, σῶσον ἡμᾶς.",
+        "litourgia-tais-presveiais-pandekti",
+        excluded_text_any=("Δόξα... Καὶ νῦν...",),
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Ταῖς πρεσβείαις τῆς Θεοτόκου...",
+        "litourgia-tais-presveiais-pandekti",
+        # Weekday documents abbreviate the repeated final refrain. Its score
+        # still follows the completed A Antiphon, just as it does on Sunday.
+        nearest_preceding_text="Δόξα... Καὶ νῦν...",
+        exact_after_text="Ταῖς πρεσβείαις τῆς Θεοτόκου...",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Δόξα... Καὶ νῦν...",
+        "litourgia-soson-yie-pandekti",
+        # The second occurrence closes Antiphon B, after its beta and gamma
+        # verses and their «Σῶσον ἡμᾶς» refrains.
+        required_text=("Σῶσον ἡμᾶς Υἱὲ Θεοῦ",),
+        match_number=2,
     ),
     AttachmentRule(
         "litourgia",
         "Σῶσον ἡμᾶς Υἱὲ Θεοῦ, ὁ ἐν Ἁγίοις θαυμαστός ψάλλοντάς σοι, Ἀλληλούϊα.",
         "litourgia-soson-yie-pandekti",
+        excluded_text_any=("Δόξα... Καὶ νῦν...",),
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Σῶσον ἡμᾶς Υἱὲ Θεοῦ, ὁ ἀναστὰς ἐκ νεκρῶν ψάλλοντάς σοι, Ἀλληλούϊα.",
+        "litourgia-soson-yie-pandekti",
+        excluded_text_any=("Δόξα... Καὶ νῦν...",),
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Καὶ νῦν...",
+        "litourgia-soson-yie-pandekti",
+        # On weekdays Melodos supplies the saints' refrain for Antiphon B
+        # and abbreviates the closing as «Καὶ νῦν...».  Retain the same
+        # requested score placement before the Monogenes.
+        required_text=("Πρεσβείαις τῶν ἁγίων σου",),
+        match_number=2,
+        following_text="Ὁ Μονογενὴς Υἱὸς καὶ Λόγος",
     ),
     AttachmentRule(
         "litourgia",
@@ -968,24 +1213,30 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
 
 
 _TONE_REQUIREMENTS: Final[dict[int, tuple[str, ...]]] = {
-    1: ("ψάλλονται σε ήχο α΄",),
-    2: ("ψάλλονται σε ήχο β΄",),
-    3: ("ψάλλονται σε ήχο γ΄",),
+    1: ("ψάλλονται σε ήχο α΄", "ψάλλονται στον κύριο ήχο της ημέρας, ήχο α΄"),
+    2: ("ψάλλονται σε ήχο β΄", "ψάλλονται στον κύριο ήχο της ημέρας, ήχο β΄"),
+    3: ("ψάλλονται σε ήχο γ΄", "ψάλλονται στον κύριο ήχο της ημέρας, ήχο γ΄"),
     # A simple fourth-tone day uses the compact fourth-tone scan below.  The
     # feast-day «δ΄ ἅγια» note is intentionally excluded: it has its own
     # verified settings in the D΄ volume and must not receive both variants.
-    4: ("ψάλλονται σε ήχο δ΄",),
+    4: ("ψάλλονται σε ήχο δ΄", "ψάλλονται στον κύριο ήχο της ημέρας, ήχο δ΄"),
     5: (
         "ψάλλονται σε ήχο πλ α΄",
         "ψάλλονται στον πλ α΄",
         "ήχο της εβδομάδος  πλ α΄",
+        "ψάλλονται στον κύριο ήχο της ημέρας, ήχο πλ α΄",
     ),
-    6: ("ψάλλονται σε ήχο πλ β΄", "ήχο πλ β΄"),
+    6: ("ψάλλονται σε ήχο πλ β΄", "ήχο πλ β΄", "ψάλλονται στον κύριο ήχο της ημέρας, ήχο πλ β΄"),
     7: (
         "ψάλλονται σε ήχο βαρύ",
         "κύριο ήχο της ημέρας, ήχο βαρύ",
     ),
-    8: ("ψάλλονται σε ήχο πλ δ΄",),
+    8: (
+        "ψάλλονται σε ήχο πλ δ΄",
+        # Sunday 27 September 2026: Melodos spells the same instruction as
+        # «στον κύριο ήχο της ημέρας, ήχο πλ δ΄».
+        "ψάλλονται στον κύριο ήχο της ημέρας, ήχο πλ δ΄",
+    ),
 }
 
 # Sunday Orthros is not an appendix: the resurrectional Kathismata,
@@ -1024,7 +1275,9 @@ _ORTHROS_TONE_REGIONS: Final[dict[int, tuple[tuple[ScanRegion, ...], ...]]] = {
         (_region(16, .48), _region(17), _region(18, .02, .58)),
         (_region(22, .78), _region(23), _region(24, .02, .42)),
         (_region(25, .18), _region(26, .02, .76)),
-        (_region(27, .64), _region(28, .02, .76)),
+        # Ode 3 begins on printed p. 24 and completes before Ode 4 on p. 25.
+        # The former p. 25–26 crop was the following Ode 4, not Ode 3.
+        (_region(26, .37), _region(27, .02, .54)),
     ),
     2: (
         (_region(68, .42), _region(69), _region(70, .02, .72)),
@@ -1057,10 +1310,19 @@ _ORTHROS_TONE_REGIONS: Final[dict[int, tuple[tuple[ScanRegion, ...], ...]]] = {
         (_region(345, .64), _region(346, .02, .76)),
     ),
     8: (
-        (_region(400, .30), _region(401), _region(402, .02, .66)),
-        (_region(402, .60), _region(403), _region(404, .02, .40)),
-        (_region(405, .26), _region(406, .02, .76)),
-        (_region(407, .62), _region(408, .02, .76)),
+        # Include both Sunday Kathismata.  The old crop began with the
+        # second one and lost the opening music of «Τὴν Σοφίαν καὶ Λόγον».
+        (_region(398, .10), _region(399), _region(400), _region(401, .02, .57)),
+        # The first antiphon begins at the foot of printed p. 399.  Starting
+        # from p. 400 cut its first three melodic phrases; retain all four
+        # antiphons and stop before the Canon on printed p. 403.
+        (_region(401, .57), _region(402), _region(403), _region(404)),
+        # Keep the heading and the opening Heirmos «Ἁρματηλάτην Φαραώ».
+        (_region(405, .08), _region(406, .02, .76)),
+        # The third Ode begins under its own heading on printed p. 405 and
+        # its Theotokion ends at the top of p. 407, before Ode 5 begins.
+        # Do not crop its opening phrases as the old .62 crop did.
+        (_region(407, .24), _region(408), _region(409, .02, .20)),
     ),
 }
 
@@ -1086,6 +1348,13 @@ _LITOURGIA_SANCTUS: Final[str] = (
     "ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις."
 )
 
+_LITOURGIA_AXION_ESTIN: Final[str] = (
+    "Ἄξιόν ἐστιν ὡς ἀληθῶς μακαρίζειν σε τὴν Θεοτόκον, τὴν "
+    "ἀειμακάριστον καὶ παναμώμητον καὶ μητέρα τοῦ Θεοῦ ἡμῶν. Τὴν "
+    "τιμιωτέραν τῶν Χερουβεὶμ καὶ ἐνδοξοτέραν ἀσυγκρίτως τῶν Σεραφείμ· "
+    "τὴν ἀδιαφθόρως Θεὸν Λόγον τεκοῦσαν, τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν."
+)
+
 _TONE_ATTACHMENT_RULES: list[AttachmentRule] = []
 for _tone, _requirements in _TONE_REQUIREMENTS.items():
     _TONE_ATTACHMENT_RULES.extend(
@@ -1109,6 +1378,13 @@ for _tone, _requirements in _TONE_REQUIREMENTS.items():
                 "litourgia",
                 "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν",
                 f"litourgia-tone-{_tone}-amin-se-ymnoumen",
+                required_text_any=_requirements,
+                excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
+            ),
+            AttachmentRule(
+                "litourgia",
+                _LITOURGIA_AXION_ESTIN,
+                f"litourgia-tone-{_tone}-axion-estin",
                 required_text_any=_requirements,
                 excluded_text_any=("ψάλλονται σε ήχο δ΄ άγια",) if _tone == 4 else (),
             ),
@@ -1244,6 +1520,22 @@ for _tone, _context in _ORTHROS_TONE_CONTEXT.items():
         # The pilot clips above use their precise closing incipits and retain
         # the two sixth-tone Kathismata as separate excerpts.
         continue
+    _ode_one_anchor = "ΩΔΗ Α΄ ΚΑΝΟΝΩΝ"
+    _ode_one_before = True
+    _ode_three_anchor = "ΩΔΗ Γ΄ ΚΑΝΟΝΩΝ"
+    _ode_three_before = True
+    if _tone == 8:
+        # In the plagal-fourth Sunday source, Melodos puts the full
+        # resurrectional first ode before the feast-day Canon.  Attach the
+        # score after that final resurrectional troparion, not before its
+        # heading, so «Ἁρματηλάτην Φαραώ» remains visible first.
+        _ode_one_anchor = "τὴν μετὰ Θεὸν προστασίαν ἡμῶν."
+        _ode_one_before = False
+        # The next explicit heading is the feast Canon.  Put the complete
+        # resurrectional third-Ode score immediately before it, rather than
+        # before the opening heading of Ode 3.
+        _ode_three_anchor = "Κανόνας τοῦ Ἁγίου Καλλιστράτου."
+        _ode_three_before = True
     _ORTHROS_TONE_ATTACHMENT_RULES.extend(
         (
             AttachmentRule(
@@ -1266,19 +1558,19 @@ for _tone, _context in _ORTHROS_TONE_CONTEXT.items():
             ),
             AttachmentRule(
                 "orthros",
-                "ΩΔΗ Α΄ ΚΑΝΟΝΩΝ",
+                _ode_one_anchor,
                 f"tone{_tone}-canon-ode-1",
                 weekly_tone=_tone,
                 required_text=("Κανὼν Ἀναστάσιμος",),
-                insert_before=True,
+                insert_before=_ode_one_before,
             ),
             AttachmentRule(
                 "orthros",
-                "ΩΔΗ Γ΄ ΚΑΝΟΝΩΝ",
+                _ode_three_anchor,
                 f"tone{_tone}-canon-ode-3",
                 weekly_tone=_tone,
                 required_text=("Κανὼν Ἀναστάσιμος",),
-                insert_before=True,
+                insert_before=_ode_three_before,
             ),
         )
     )
@@ -1386,7 +1678,14 @@ def _music_markup(piece: MusicPiece, instance: int) -> str:
 
 def _insertion_point(text_node: NavigableString) -> NavigableString | Tag:
     point: NavigableString | Tag = text_node
-    if isinstance(text_node.parent, Tag) and text_node.parent.name not in {"[document]", "body"}:
+    # Melodos places the complete service in one #div1.  Lifting a text node
+    # to that container would append every score to the end of the service;
+    # lift only a small inline wrapper that contains this one text fragment.
+    if (
+        isinstance(text_node.parent, Tag)
+        and text_node.parent.name not in {"[document]", "body"}
+        and len(list(text_node.parent.stripped_strings)) == 1
+    ):
         point = text_node.parent
     sibling = point.next_sibling
     while isinstance(sibling, NavigableString) and not str(sibling).strip():
@@ -1398,7 +1697,11 @@ def _insertion_point(text_node: NavigableString) -> NavigableString | Tag:
 
 def _insertion_point_before(text_node: NavigableString) -> NavigableString | Tag:
     point: NavigableString | Tag = text_node
-    if isinstance(text_node.parent, Tag) and text_node.parent.name not in {"[document]", "body"}:
+    if (
+        isinstance(text_node.parent, Tag)
+        and text_node.parent.name not in {"[document]", "body"}
+        and len(list(text_node.parent.stripped_strings)) == 1
+    ):
         point = text_node.parent
     return point
 
@@ -1449,11 +1752,20 @@ def enrich_service_html(
         for node_index, node in enumerate(text_nodes):
             if needle not in _normalized(str(node)):
                 continue
+            if rule.exact_after_text and str(node).strip() != rule.exact_after_text.strip():
+                continue
             if isinstance(node.parent, Tag) and node.parent.find_parent("aside"):
                 continue
             if rule.preceding_text:
                 preceding = _normalized(" ".join(str(item) for item in text_nodes[:node_index]))
                 if _normalized(rule.preceding_text) not in preceding:
+                    continue
+            if rule.nearest_preceding_text:
+                preceding_nodes = (
+                    _normalized(str(item)) for item in reversed(text_nodes[:node_index])
+                )
+                nearest_preceding = next((item for item in preceding_nodes if item), "")
+                if _normalized(rule.nearest_preceding_text) not in nearest_preceding:
                     continue
             if rule.following_text:
                 following = _normalized(" ".join(str(item) for item in text_nodes[node_index + 1 :]))

@@ -31,6 +31,16 @@ POLYTONIC_SAMPLE = """
 </div>
 """
 
+DOXOLOGY_AUDIO_SAMPLE = """
+<div id="div1">
+  <span>Δόξα...</span><span>Ἦχος πλ δ΄</span><br>
+  <span>Σύμφωνα με το άγραφο τυπικό, η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού.</span><br>
+  <select class="epilogeas_hxitikon" onChange="paixe_hxitiko('mousika/orthros/70 doxologies/8/' + this.options[this.selectedIndex].value)">
+    <option label="___Επίλεξε ή PAUSE"></option><option value="chant.mp3" label="___Στανίτσας ηχ πλδ"></option>
+  </select><br><span class="ep">ΜΕΓΑΛΗ ΔΟΞΟΛΟΓΙΑ</span>
+</div>
+"""
+
 
 class MelodosTests(unittest.TestCase):
     def test_parse_tone_variants(self):
@@ -67,6 +77,21 @@ class MelodosTests(unittest.TestCase):
         self.assertIn('class="melodos-green"', document.service_html)
         self.assertIn("Ἦχος πλ. β΄", document.service_html)
         self.assertIn("/////////////////////", document.service_html)
+
+    def test_doxology_audio_picker_has_a_visible_context_label(self):
+        document = MelodosClient.parse_document(DOXOLOGY_AUDIO_SAMPLE, "orthros")
+        self.assertIn("Μουσικό απόσπασμα Μεγάλης Δοξολογίας", document.service_html)
+        self.assertIn("Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος πλ. δ΄", document.service_html)
+        self.assertIn('aria-label="Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος πλ. δ΄"', document.service_html)
+
+    def test_doxology_tone_is_read_from_the_accusative_local_typikon_wording(self):
+        source = DOXOLOGY_AUDIO_SAMPLE.replace(
+            "στον ήχο του δοξαστικού.",
+            "στην ήχο της ημέρας δηλαδή ήχο πλ δ΄. Αλλά, κατα το ΤΜΕ στον ήχο του δοξαστικού.",
+        ).replace("<span>Δόξα...</span>", "<span>Ἦχος β΄</span><br><span>Δόξα...</span>")
+        document = MelodosClient.parse_document(source, "orthros")
+
+        self.assertIn("Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος πλ. δ΄", document.service_html)
 
     def test_payload_is_new_calendar_and_correct_service_defaults(self):
         with TemporaryDirectory() as temporary:

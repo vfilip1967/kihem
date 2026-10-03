@@ -84,6 +84,33 @@ TONE_LABELS: Final = {
 }
 
 
+def _local_tone_from_text(text: str) -> int | None:
+    """Return the last explicitly printed tone in a small local text window."""
+    normalized = _normalized(text).replace("΄", "")
+    # Melodos uses both the nominative «Ἦχος πλ. δ΄» and the accusative
+    # «στον/στην ήχο πλ. δ΄».  Examine each explicit, parseable tone from
+    # the end rather than stopping at a later phrase such as «στον ήχο του
+    # δοξαστικού», which names no tone itself.
+    markers = list(re.finditer(r"ηχ(?:ος|ο)", normalized))
+    for index in range(len(markers) - 1, -1, -1):
+        marker = markers[index]
+        next_start = markers[index + 1].start() if index + 1 < len(markers) else marker.end() + 32
+        value = normalized[marker.end() : next_start].lstrip()
+        if value.startswith("πλ"):
+            if re.match(r"πλ\s*α", value):
+                return 5
+            if re.match(r"πλ\s*β", value):
+                return 6
+            if re.match(r"πλ\s*δ", value):
+                return 8
+        if value.startswith("βαρ"):
+            return 7
+        for letter, number in (("α", 1), ("β", 2), ("γ", 3), ("δ", 4)):
+            if value.startswith(letter):
+                return number
+    return None
+
+
 class MelodosClient:
     """Fetch and sanitize services for any supported Gregorian-calendar date."""
 
@@ -333,6 +360,38 @@ class MelodosClient:
             elif "color:red" in inline_style:
                 classes.append("melodos-red")
             node.attrs = {"class": classes} if classes else {}
+
+        # Keep the source audio attached to the actual Great Doxology visibly
+        # identifiable.  On feast days Melodos places its selector immediately
+        # before the heading and selects the doxastikon's tone (23/09: pl. δ΄).
+        for picker in container.select("select.melodos-audio-picker"):
+            next_text = " ".join(
+                sibling.get_text(" ", strip=True) if isinstance(sibling, Tag) else str(sibling).strip()
+                for sibling in list(picker.next_siblings)[:4]
+            )
+            if "μεγαλη δοξολογια" not in next_text.casefold():
+                continue
+            # ``previous_siblings`` walks backwards from the picker. Restore
+            # document order before finding the last printed local tone; an
+            # older «Ἦχος β΄» for Ὑπερευλογημένη must not override the nearby
+            # Doxology instruction that follows it.
+            previous_text = " ".join(
+                sibling.get_text(" ", strip=True) if isinstance(sibling, Tag) else str(sibling).strip()
+                for sibling in reversed(list(picker.previous_siblings)[:20])
+            )
+            # This wording varies («στον»/«στην ήχο της ημέρας…»), but the
+            # picker was already confirmed to be the Great Doxology one.
+            special_typikon = "δοξολογια σημερα ψαλλεται" in _normalized(previous_text)
+            tone = _local_tone_from_text(previous_text) if special_typikon else None
+            context_label = "Μουσικό απόσπασμα Μεγάλης Δοξολογίας"
+            if tone is not None:
+                context_label = f"{context_label} · {TONE_LABELS[tone]}"
+            picker["aria-label"] = context_label
+            picker["title"] = context_label
+            marker = BeautifulSoup("", "html.parser").new_tag("span")
+            marker["class"] = ["melodos-audio-context"]
+            marker.string = context_label
+            picker.insert_before(marker)
 
         rendered = "".join(str(child) for child in container.contents)
         # Do not normalize, retype or replace any visible source character.

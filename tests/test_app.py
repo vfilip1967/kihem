@@ -17,6 +17,10 @@ class FakeComposer:
                 service_html=(
                     'Ήχος εβδομάδος πλ β΄.<br><span class="ep">Δοκιμαστικό κείμενο</span><br>'
                     "Ἀγγελικαὶ Δυνάμεις, ὁ ἀναστὰς ἐκ των νεκρῶν, Κύριε δόξα σοί.<br>"
+                    '<span class="ep">ΑΠΟΣΤΟΛΟΣ</span><br>Πρὸς Ῥωμαίους 1:1-7<br>'
+                    "Ἀδελφοί, τὸ εὐαγγέλιον τοῦ Χριστοῦ εἶναι δύναμις Θεοῦ καὶ κλήση σε πίστη, αγάπη και ελπίδα για κάθε άνθρωπο.<br>"
+                    '<span class="ar">Ἀλληλούϊα</span><br><span class="ep">ΕΥΑΓΓΕΛΙΟΝ</span><br>Ἐκ τοῦ κατὰ Λουκᾶν 5:1-11<br>'
+                    "Τῷ καιρῷ ἐκείνῳ, ἐδίδασκεν ὁ Ἰησοῦς τοὺς μαθητὰς καὶ ἐκάλεσεν αὐτοὺς νὰ τὸν ἀκολουθήσουν με πίστη και ταπείνωση.<br>"
                     '<span class="ep">Επόμενο μέρος</span>'
                 ),
                 plain_text="Δοκιμαστικό κείμενο — Ἀγγελικαὶ Δυνάμεις",
@@ -64,7 +68,7 @@ class AppTests(unittest.TestCase):
         response = self.client.get("/?date=2026-09-13&services=orthros")
         self.assertEqual(response.status_code, 200)
         text = response.get_data(as_text=True)
-        self.assertIn('href="static/app.css?v=20260921-scripture-interpretations"', text)
+        self.assertIn('href="static/app.css?v=20260929-reading-bookmarks"', text)
         self.assertIn("Όρθρος", text)
         self.assertIn("Θεία Λειτουργία", text)  # separate-page navigation
         self.assertIn('class="service-switch-link active" href="?date=2026-09-13&amp;services=orthros"', text)
@@ -74,12 +78,16 @@ class AppTests(unittest.TestCase):
         self.assertNotIn("τοποθετήθηκαν κάτω από τα αντίστοιχα μέλη", text)
         self.assertIn("music/ioannis-protopsaltis-1905/tone6-apolytikion/1.png", text)
         self.assertIn('class="music-bookmarks-menu"', text)
+        self.assertIn('class="reading-bookmarks-menu"', text)
         self.assertIn('class="reader-nav-row"', text)
+        self.assertIn('<summary>Αναγνώσεις <span>2</span></summary>', text)
+        self.assertIn('href="#reading-orthros-first-apostolos"', text)
+        self.assertIn('href="#reading-orthros-first-evangelion"', text)
         self.assertIn('<summary>Μουσικά <span>1</span></summary>', text)
         self.assertNotIn('Μουσικά κείμενα', text)
         self.assertIn('href="#music-tone6-apolytikion-1"', text)
         self.assertNotIn('href="#music-tone6-apolytikion-2"', text)
-        self.assertIn("link.closest('.music-bookmarks-menu').open = false", text)
+        self.assertIn("link.closest('details').open = false", text)
         self.assertIn('data-scroll-controls', text)
         self.assertIn('data-scroll-toggle', text)
         self.assertIn('readerToolbar.append(isokratisPanel)', text)

@@ -5,6 +5,7 @@ from src.anastasimatarion import (
     BOOK_ID,
     IRMOLOGION_BOOK_ID,
     KYPSELI_BOOK_ID,
+    MusicBookmark,
     PANDEKTI_LITOURGIA_BOOK_ID,
     PANDEKTI_BOOK_ID,
     catalog_books,
@@ -17,7 +18,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 113)
+        self.assertEqual(len(pieces), 128)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -25,6 +26,18 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(
             [region.printed_page for region in pieces["tone6-great-doxology"].regions],
             [305, 306, 307, 308, 309, 310],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone1-ainoi"].regions],
+            [39, 40, 41, 42, 43],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["eothinon-7"].regions],
+            [365, 366],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone1-great-doxology"].regions],
+            [45, 46, 47, 48],
         )
         self.assertEqual(
             [region.printed_page for region in pieces["plagal4-timiotera"].regions],
@@ -71,8 +84,16 @@ class AnastasimatarionTests(unittest.TestCase):
             [251, 252],
         )
         self.assertEqual(
-            [region.printed_page for region in pieces["litourgia-trisagion-pandekti"].regions],
-            [45],
+            [region.printed_page for region in pieces["litourgia-trisagion-argon-pandekti"].regions],
+            [43, 44, 45],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["litourgia-tone-1-amin-se-ymnoumen"].regions],
+            [11, 12],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["litourgia-tone-1-axion-estin"].regions],
+            [12, 13, 14],
         )
         self.assertEqual(
             [region.printed_page for region in pieces["litourgia-tone-6-eis-mnimosynon"].regions],
@@ -155,7 +176,9 @@ class AnastasimatarionTests(unittest.TestCase):
         with_tone = enrich_service_html(
             date(2026, 9, 8),
             "orthros",
-            "Ήχος εβδομάδος πλ β΄.<br><span>Ἦχος πλ β΄</span><br>"
+            "Ήχος εβδομάδος πλ β΄.<br>"
+            "Σύμφωνα με το άγραφο τυπικό, η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού.<br>"
+            "<span>Ἦχος πλ β΄</span><br>"
             "ἐν τῷ φωτί σου ὀψόμεθα φῶς.<br>" + doxology_end,
         )
         self.assertEqual(without_tone.attachment_count, 0)
@@ -167,12 +190,186 @@ class AnastasimatarionTests(unittest.TestCase):
         result = enrich_service_html(
             date(2026, 9, 8),
             "orthros",
-            "Ήχος εβδομάδος πλ β΄.<br><span>Ἦχος πλ β΄</span><br>"
+            "Ήχος εβδομάδος πλ β΄.<br>"
+            "Σύμφωνα με το άγραφο τυπικό, η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού.<br>"
+            "<span>Ἦχος πλ β΄</span><br>"
             + trisagion + "Μεσότητα του Όρθρου<br>" + late_marker + trisagion,
         )
 
         self.assertEqual(result.attachment_count, 1)
         self.assertLess(result.html.index(late_marker[:-4]), result.html.index('data-music-piece="tone6-great-doxology"'))
+
+    def test_local_plagal_second_doxology_overrides_a_different_weekly_tone(self):
+        source = (
+            "Ήχος εβδομάδος α΄.<br>"
+            "Σύμφωνα με το άγραφο τυπικό, η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού.<br>"
+            "Ἦχος πλ β΄<br>ΜΕΓΑΛΗ ΔΟΞΟΛΟΓΙΑ<br>"
+            "Ὅτι παρὰ σοὶ πηγὴ ζωῆς, ἐν τῷ φωτί σου ὀψόμεθα φῶς.<br>"
+            "Παράτεινον τὸ ἔλεός σου τοῖς γινώσκουσί σε.<br>"
+            "Ἅγιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
+            "Ἀπολυτίκιον."
+        )
+        result = enrich_service_html(date(2026, 9, 28), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn('data-music-piece="tone6-great-doxology"', result.html)
+        self.assertLess(
+            result.html.index("Ἅγιος ὁ Θεός"),
+            result.html.index('data-music-piece="tone6-great-doxology"'),
+        )
+        self.assertLess(
+            result.html.index('data-music-piece="tone6-great-doxology"'),
+            result.html.index("Ἀπολυτίκιον"),
+        )
+
+    def test_plagal_fourth_great_doxology_is_attached_from_its_local_melodos_tone(self):
+        source = (
+            '<span class="melodos-audio-context">Μουσικό απόσπασμα Μεγάλης Δοξολογίας · '
+            'Ἦχος πλ. δ΄</span><select class="melodos-audio-picker"><option>Χορός</option></select><br>'
+            '<span class="ep">ΜΕΓΑΛΗ ΔΟΞΟΛΟΓΙΑ</span><br>Δόξα σοι τῷ δείξαντι τὸ φῶς.<br>'
+            'Ὅτι παρὰ σοὶ πηγὴ ζωῆς, ἐν τῷ φωτί σου ὀψόμεθα φῶς.<br>'
+            '<span class="ar">Π</span>αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.<br>'
+            '<span class="ar">Ἅ</span>γιος ὁ Θεός.'
+        )
+        result = enrich_service_html(date(2026, 9, 26), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn('data-music-piece="plagal4-great-doxology"', result.html)
+        self.assertLess(
+            result.html.index("αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε."),
+            result.html.index('data-music-piece="plagal4-great-doxology"'),
+        )
+        self.assertLess(
+            result.html.index('data-music-piece="plagal4-great-doxology"'),
+            result.html.index("γιος ὁ Θεός."),
+        )
+        self.assertEqual(
+            result.bookmarks,
+            (MusicBookmark("music-plagal4-great-doxology-1", "Μεγάλη Δοξολογία, πλ. δ΄ · Μανουὴλ Πρωτοψάλτου"),),
+        )
+
+    def test_first_tone_great_doxology_is_attached_from_melodos_local_selector(self):
+        source = (
+            '<span class="melodos-audio-context">Μουσικό απόσπασμα Μεγάλης Δοξολογίας · '
+            'Ἦχος α΄</span><select class="melodos-audio-picker"><option>Χορός</option></select><br>'
+            '<span class="ep">ΜΕΓΑΛΗ ΔΟΞΟΛΟΓΙΑ</span><br>Δόξα σοι τῷ δείξαντι τὸ φῶς.<br>'
+            'Ὅτι παρὰ σοὶ πηγὴ ζωῆς, ἐν τῷ φωτί σου ὀψόμεθα φῶς.<br>'
+            '<span class="ar">Π</span>αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.<br>'
+            '<span class="ar">Ἅ</span>γιος ὁ Θεός.<br>Σήμερον σωτηρία τῷ κόσμῳ γέγονεν.'
+        )
+        result = enrich_service_html(date(2026, 10, 4), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn('data-music-piece="tone1-great-doxology"', result.html)
+        self.assertLess(
+            result.html.index("αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε."),
+            result.html.index('data-music-piece="tone1-great-doxology"'),
+        )
+        self.assertLess(
+            result.html.index('data-music-piece="tone1-great-doxology"'),
+            result.html.index("Σήμερον σωτηρία"),
+        )
+        self.assertEqual(
+            result.bookmarks,
+            (MusicBookmark("music-tone1-great-doxology-1", "Μεγάλη Δοξολογία, ἦχος α΄ · Μανουὴλ Πρωτοψάλτου"),),
+        )
+
+    def test_plagal_fourth_ainoi_follow_their_final_sticheron(self):
+        source = (
+            "Ήχος εβδομάδος πλ δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄<br>"
+            "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον. Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν.<br>"
+            "Κύριε, εἰ καὶ κριτηρίῳ παρέστης, ὑπὸ Πιλάτου κρινόμενος.<br>"
+            "Παντοδύναμε Σωτὴρ ἐλέησον ἡμᾶς.<br>"
+            "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ ΣΤ'"
+        )
+        result = enrich_service_html(date(2026, 9, 27), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn('data-music-piece="tone8-ainoi"', result.html)
+        self.assertLess(
+            result.html.index("Παντοδύναμε Σωτὴρ ἐλέησον ἡμᾶς."),
+            result.html.index('data-music-piece="tone8-ainoi"'),
+        )
+        self.assertLess(
+            result.html.index('data-music-piece="tone8-ainoi"'),
+            result.html.index("ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ ΣΤ'"),
+        )
+
+    def test_sixth_eothinon_is_attached_only_after_its_own_doxastikon(self):
+        source = (
+            "Κύριε δόξα σοι.<br>"
+            "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ ΣΤ'<br>Ἦχος πλ β' Ἰδιόμελον<br>"
+            "Ἡ ὄντως εἰρήνη σὺ Χριστέ.<br>Κύριε δόξα σοι.<br>"
+            "Ὑπερευλογημένη ὑπάρχεις, Θεοτόκε Παρθένε."
+        )
+        result = enrich_service_html(date(2026, 9, 27), "orthros", source)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn('data-music-piece="eothinon-6"', result.html)
+        self.assertLess(
+            result.html.rindex("Κύριε δόξα σοι."),
+            result.html.index('data-music-piece="eothinon-6"'),
+        )
+        self.assertLess(
+            result.html.index('data-music-piece="eothinon-6"'),
+            result.html.index("Ὑπερευλογημένη"),
+        )
+
+    def test_plagal_fourth_kathismata_and_anavathmoi_keep_their_openings(self):
+        pieces = {piece.piece_id: piece for piece in catalog_pieces()}
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone8-kathismata"].regions],
+            [396, 397, 398, 399],
+        )
+        self.assertEqual(pieces["tone8-kathismata"].regions[0].clip[1], .10)
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone8-anavathmoi"].regions],
+            [399, 400, 401, 402],
+        )
+        self.assertEqual(pieces["tone8-anavathmoi"].regions[0].clip[1], .57)
+
+    def test_plagal_fourth_first_ode_keeps_armaitilatin_and_follows_its_text(self):
+        source = (
+            "Ήχος εβδομάδος πλ δ΄.<br>ΩΔΗ Α΄ ΚΑΝΟΝΩΝ<br>"
+            "Κανὼν Ἀναστάσιμος<br>Ἁρματηλάτην Φαραὼ ἐβύθισε.<br>"
+            "τὴν μετὰ Θεὸν προστασίαν ἡμῶν.<br>"
+            "Κανόνας τοῦ Ἁγίου Καλλιστράτου."
+        )
+        result = enrich_service_html(date(2026, 9, 27), "orthros", source)
+        pieces = {piece.piece_id: piece for piece in catalog_pieces()}
+
+        self.assertIn('data-music-piece="tone8-canon-ode-1"', result.html)
+        self.assertLess(
+            result.html.index("τὴν μετὰ Θεὸν προστασίαν ἡμῶν."),
+            result.html.index('data-music-piece="tone8-canon-ode-1"'),
+        )
+        self.assertLess(
+            result.html.index('data-music-piece="tone8-canon-ode-1"'),
+            result.html.index("Κανόνας τοῦ Ἁγίου Καλλιστράτου."),
+        )
+        self.assertEqual(pieces["tone8-canon-ode-1"].regions[0].clip[1], .08)
+
+    def test_plagal_fourth_third_ode_is_complete_and_precedes_the_feast_canon(self):
+        source = (
+            "Ήχος εβδομάδος πλ δ΄.<br>ΩΔΗ Γ΄ ΚΑΝΟΝΩΝ<br>"
+            "Κανὼν Ἀναστάσιμος<br>Ὁ στερεώσας κατ’ ἀρχάς.<br>"
+            "ὕμνοις ἀεὶ μακαρίζομεν.<br>"
+            "Κανόνας τοῦ Ἁγίου Καλλιστράτου.<br>Ἦχος πλ δ΄<br>"
+            "Ὁ Εἱρμός. (Ο ειρμός δεν ψάλλεται)"
+        )
+        result = enrich_service_html(date(2026, 9, 27), "orthros", source)
+        pieces = {piece.piece_id: piece for piece in catalog_pieces()}
+
+        self.assertIn('data-music-piece="tone8-canon-ode-3"', result.html)
+        self.assertLess(
+            result.html.index('data-music-piece="tone8-canon-ode-3"'),
+            result.html.index("Κανόνας τοῦ Ἁγίου Καλλιστράτου."),
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone8-canon-ode-3"].regions],
+            [405, 406, 407],
+        )
+        self.assertEqual(pieces["tone8-canon-ode-3"].regions[0].clip[1], .24)
 
     def test_plagal_fourth_timiotera_is_attached_after_sixth_refrain(self):
         refrain = (
@@ -318,6 +515,25 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertLess(result.html.index("cross-katavasies"), result.html.index("Καὶ ψάλλεται"))
         self.assertLess(result.html.index("cross-katavasies"), result.html.index("Ὠδὴ θ΄"))
 
+    def test_tone_fourth_theotokos_katavasies_precede_timiotera(self):
+        refrain = "Τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.<br>"
+        source = (
+            "Καταβασίες Τῆς Θεοτόκου<br>Ἦχος δ΄.<br>"
+            "Ἀνοίξω τὸ στόμα μου, καὶ πληρωθήσεται Πνεύματος.<br>"
+            "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
+            "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.<br>"
+            "Ἦχος δ΄<br>" + refrain * 6 +
+            "Κατόπιν ψάλλεται ἡ θ΄ Ωδή των καταβασιών"
+        )
+        result = enrich_service_html(date(2026, 9, 26), "orthros", source)
+        self.assertEqual(result.attachment_count, 2)
+        self.assertIn('data-music-piece="theotokos-katavasies-tone4"', result.html)
+        self.assertIn('data-music-piece="tone4-timiotera"', result.html)
+        self.assertNotIn('data-music-piece="plagal4-timiotera"', result.html)
+        self.assertIn("music/ioannis-protopsaltis-eirmologion-1903/theotokos-katavasies-tone4/1.png", result.html)
+        self.assertLess(result.html.index("theotokos-katavasies-tone4"), result.html.index("Τὴν Θεοτόκον"))
+        self.assertLess(result.html.index("theotokos-katavasies-tone4"), result.html.index("θ΄ Ωδή"))
+
     def test_cross_katavasies_precede_the_feast_ninth_ode_when_timiotera_is_omitted(self):
         source = (
             "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ<br>"
@@ -344,10 +560,76 @@ class AnastasimatarionTests(unittest.TestCase):
 
         self.assertEqual(result.attachment_count, 2)
         self.assertIn('data-music-piece="litourgia-eisodikon-pandekti"', result.html)
-        self.assertIn('data-music-piece="litourgia-trisagion-pandekti"', result.html)
+        self.assertIn('data-music-piece="litourgia-trisagion-argon-pandekti"', result.html)
         self.assertIn("music/pandekti-litourgia-1851/litourgia-eisodikon-pandekti/1.png", result.html)
-        self.assertIn("music/pandekti-litourgia-1851/litourgia-trisagion-pandekti/1.png", result.html)
-        self.assertLess(result.html.index("litourgia-trisagion-pandekti"), result.html.index("Δύναμις"))
+        self.assertIn("music/pandekti-litourgia-1851/litourgia-trisagion-argon-pandekti/1.png", result.html)
+        self.assertIn("music/pandekti-litourgia-1851/litourgia-trisagion-argon-pandekti/3.png", result.html)
+        self.assertLess(result.html.index("litourgia-trisagion-argon-pandekti"), result.html.index("Δύναμις"))
+
+    def test_antiphon_scores_follow_the_completed_first_and_second_antiphons(self):
+        tais = "Ταῖς πρεσβείαις τῆς Θεοτόκου, Σῶτερ, σῶσον ἡμᾶς."
+        soson = "Σῶσον ἡμᾶς Υἱὲ Θεοῦ, ὁ ἀναστὰς ἐκ νεκρῶν ψάλλοντάς σοι, Ἀλληλούϊα."
+        source = (
+            "Στίχ. α΄. Εὐλόγει ἡ ψυχή μου, τὸν Κύριον.<br>"
+            + tais
+            + "<br>Στίχ. β΄. Εὐλόγει, ἡ ψυχή μου, τὸν Κύριον καὶ μὴ ἐπιλανθάνου πάσας τὰς ἀνταποδόσεις αὐτοῦ.<br>"
+            + tais
+            + "<br>Στίχ. γ΄. Κύριος ἐν τῷ οὐρανῷ ἡτοίμασε τὸν θρόνον αὐτοῦ, καὶ ἡ βασιλεία αὐτοῦ πάντων δεσπόζει.<br>"
+            + tais
+            + "<br>Δόξα... Καὶ νῦν...<br>"
+            + tais
+            + "<br>Στίχ. α΄. Αἴνει ἡ ψυχή μου, τὸν Κύριον.<br>"
+            + soson
+            + "<br>Στίχ. β΄. Μακάριος οὗ ὁ Θεὸς Ἰακὼβ βοηθὸς αὐτοῦ, ἡ ἐλπὶς αὐτοῦ ἐπὶ Κύριον τὸν Θεὸν αὐτοῦ.<br>"
+            + soson
+            + "<br>Στίχ. γ΄. Βασιλεύσει Κύριος εἰς τὸν αἰῶνα, ὁ Θεός σου, Σιών, εἰς γενεὰν καὶ γενεάν.<br>"
+            + soson
+            + "<br>Δόξα... Καὶ νῦν...<br>Ἀκολουθεῖ τὸ Ὁ Μονογενής"
+        )
+
+        result = enrich_service_html(date(2026, 9, 27), "litourgia", source)
+
+        self.assertEqual(result.attachment_count, 2)
+        self.assertEqual(result.html.count('data-music-piece="litourgia-tais-presveiais-pandekti"'), 1)
+        self.assertEqual(result.html.count('data-music-piece="litourgia-soson-yie-pandekti"'), 1)
+        self.assertLess(
+            result.html.rindex(tais),
+            result.html.index('data-music-piece="litourgia-tais-presveiais-pandekti"'),
+        )
+        self.assertLess(
+            result.html.index('data-music-piece="litourgia-soson-yie-pandekti"'),
+            result.html.index("Ἀκολουθεῖ"),
+        )
+
+        weekday_result = enrich_service_html(date(2026, 9, 30), "litourgia", source)
+        self.assertEqual(weekday_result.attachment_count, 2)
+        self.assertIn('data-music-piece="litourgia-tais-presveiais-pandekti"', weekday_result.html)
+        self.assertIn('data-music-piece="litourgia-soson-yie-pandekti"', weekday_result.html)
+
+    def test_weekday_antiphons_get_the_same_two_score_insertions(self):
+        source = (
+            "Στίχ. α΄. Ἀγαθὸν τὸ ἐξομολογεῖσθαι τῷ Κυρίῳ.<br>"
+            "Ταῖς πρεσβείαις τῆς Θεοτόκου, Σῶτερ, σῶσον ἡμᾶς.<br>"
+            "Στίχ. β΄. Τοῦ ἀναγγέλλειν τὸ πρωῒ τὸ ἔλεός σου.<br>"
+            "Ταῖς πρεσβείαις τῆς Θεοτόκου...<br>"
+            "Στίχ. γ΄. Ὅτι εὐθὺς Κύριος ὁ Θεὸς ἡμῶν.<br>"
+            "Ταῖς πρεσβείαις τῆς Θεοτόκου...<br>Δόξα... Καὶ νῦν...<br>"
+            "Ταῖς πρεσβείαις τῆς Θεοτόκου...<br>"
+            "Πρεσβείαις τῶν ἁγίων σου, σῶσον ἡμᾶς, Κύριε.<br>"
+            "Πρεσβείαις τῶν ἁγίων σου, σῶσον ἡμᾶς, Κύριε.<br>"
+            "Καὶ νῦν...<br>"
+            "Ὁ Μονογενὴς Υἱὸς καὶ Λόγος τοῦ Θεοῦ"
+        )
+
+        result = enrich_service_html(date(2026, 9, 30), "litourgia", source)
+
+        self.assertEqual(result.attachment_count, 3)
+        self.assertEqual(result.html.count('data-music-piece="litourgia-tais-presveiais-pandekti"'), 1)
+        self.assertEqual(result.html.count('data-music-piece="litourgia-soson-yie-pandekti"'), 1)
+        self.assertLess(
+            result.html.index('data-music-piece="litourgia-soson-yie-pandekti"'),
+            result.html.index("Ὁ Μονογενὴς"),
+        )
 
     def test_theotokos_feast_adds_fourth_tone_liturgy_music(self):
         note = (
@@ -484,6 +766,56 @@ class AnastasimatarionTests(unittest.TestCase):
             self.assertIn(f'data-music-piece="{piece_id}"', result.html)
         self.assertNotIn("litourgia-leitourgika-pandekti", result.html)
 
+    def test_sunday_liturgy_accepts_melodos_day_tone_wording_and_resurrection_soson(self):
+        source = (
+            "Σῶσον ἡμᾶς Υἱὲ Θεοῦ, ὁ ἀναστὰς ἐκ νεκρῶν ψάλλοντάς σοι, Ἀλληλούϊα.<br>"
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, ψάλλονται στον "
+            "κύριο ήχο της ημέρας, ήχο πλ δ΄.<br>"
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+            "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>Παράσχου Κύριε.<br>"
+            "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, "
+            "ὁ Θεὸς ἡμῶν.<br>"
+            "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ τῆς "
+            "δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος ἐν "
+            "ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.<br>"
+            "Τῇ Κυριακῇ ψάλλεται το Κοινωνικόν.<br>Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν"
+        )
+        result = enrich_service_html(date(2026, 9, 27), "litourgia", source)
+
+        for piece_id in (
+            "litourgia-soson-yie-pandekti",
+            "litourgia-tone-8-cherouvikon",
+            "litourgia-tone-8-kyrie-paraschou",
+            "litourgia-tone-8-amin-se-ymnoumen",
+            "litourgia-tone-8-axion-kai-dikaion",
+            "litourgia-tone-8-koinonikon",
+        ):
+            self.assertIn(f'data-music-piece="{piece_id}"', result.html)
+
+    def test_sunday_liturgy_first_tone_accepts_the_same_melodos_day_tone_wording(self):
+        source = (
+            "το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, ψάλλονται στον "
+            "κύριο ήχο της ημέρας, ήχο α΄.<br>"
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+            "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>Παράσχου Κύριε.<br>"
+            "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, "
+            "ὁ Θεὸς ἡμῶν.<br>"
+            "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ τῆς "
+            "δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος ἐν "
+            "ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις.<br>"
+            "Τῇ Κυριακῇ ψάλλεται το Κοινωνικόν.<br>Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν"
+        )
+        result = enrich_service_html(date(2026, 10, 4), "litourgia", source)
+
+        for piece_id in (
+            "litourgia-tone-1-cherouvikon",
+            "litourgia-tone-1-kyrie-paraschou",
+            "litourgia-tone-1-amin-se-ymnoumen",
+            "litourgia-tone-1-axion-kai-dikaion",
+            "litourgia-tone-1-koinonikon",
+        ):
+            self.assertIn(f'data-music-piece="{piece_id}"', result.html)
+
     def test_litourgia_opening_kyrie_is_first_bookmark_and_is_tone_independent(self):
         opening = (
             "Εὐλογημένη ἡ βασιλεία τοῦ Πατρὸς καὶ τοῦ Υἱοῦ καὶ τοῦ Ἁγίου Πνεύματος.<br>"
@@ -568,11 +900,21 @@ class AnastasimatarionTests(unittest.TestCase):
                 f"{note}<br>Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
                 "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>Παράσχου Κύριε.<br>"
                 f"{sanctus}<br>Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, "
-                "Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν."
+                "Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν.<br>"
+                "Ἄξιόν ἐστιν ὡς ἀληθῶς μακαρίζειν σε τὴν Θεοτόκον, τὴν "
+                "ἀειμακάριστον καὶ παναμώμητον καὶ μητέρα τοῦ Θεοῦ ἡμῶν. Τὴν "
+                "τιμιωτέραν τῶν Χερουβεὶμ καὶ ἐνδοξοτέραν ἀσυγκρίτως τῶν Σεραφείμ· "
+                "τὴν ἀδιαφθόρως Θεὸν Λόγον τεκοῦσαν, τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν."
             )
             result = enrich_service_html(date(2026, 9, 10), "litourgia", source)
-            self.assertEqual(result.attachment_count, 4, tone)
-            for member in ("cherouvikon", "kyrie-paraschou", "axion-kai-dikaion", "amin-se-ymnoumen"):
+            self.assertEqual(result.attachment_count, 5, tone)
+            for member in (
+                "cherouvikon",
+                "kyrie-paraschou",
+                "axion-kai-dikaion",
+                "amin-se-ymnoumen",
+                "axion-estin",
+            ):
                 self.assertIn(f'data-music-piece="litourgia-tone-{tone}-{member}"', result.html)
 
     def test_tenth_september_adds_plagal_fourth_thursday_social(self):
