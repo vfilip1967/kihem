@@ -17,6 +17,7 @@ from src.liturgical_calendar import LiturgicalCalendar
 from src.melodos import MELODOS_HOME, MelodosClient, MelodosError
 from src.isokratis import ISON_NOTES, MODE_LABELS, IsokratisLibrary
 from src.scripture_interpretations import ScriptureInterpretationService, add_reading_bookmarks
+from src.typesafe_decisions import TypesafeDecisionService
 
 
 def create_app(config: dict | None = None) -> Flask:
@@ -29,6 +30,7 @@ def create_app(config: dict | None = None) -> Flask:
         # regular visits open tomorrow's Orthros by default.
         DEFAULT_DATE=os.environ.get("KIHEM_DEFAULT_DATE"),
         INTERPRETATION_MODEL=os.environ.get("KIHEM_INTERPRETATION_MODEL", "gpt-5.6-luna"),
+        TYPESAFE_MODEL=os.environ.get("KIHEM_TYPESAFE_MODEL", "jev-latest"),
     )
     if config:
         app.config.update(config)
@@ -53,6 +55,10 @@ def create_app(config: dict | None = None) -> Flask:
         app.config["CACHE_DIR"], model=app.config["INTERPRETATION_MODEL"]
     )
     app.extensions["kihem_scripture_interpretation_service"] = interpretation_service
+    typesafe_decisions = app.config.get("TYPESAFE_DECISION_SERVICE") or TypesafeDecisionService(
+        app.config["CACHE_DIR"], model=app.config["TYPESAFE_MODEL"]
+    )
+    app.extensions["kihem_typesafe_decision_service"] = typesafe_decisions
 
     @app.get("/")
     def index():
@@ -95,6 +101,7 @@ def create_app(config: dict | None = None) -> Flask:
                     item.service,
                     item.service_html,
                     instance_offset=attachment_count,
+                    semantic_reviewer=typesafe_decisions,
                 )
                 service_html = enriched.html
                 service_html = interpretation_service.enrich_service_html(

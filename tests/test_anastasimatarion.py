@@ -18,7 +18,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 128)
+        self.assertEqual(len(pieces), 133)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -30,6 +30,30 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(
             [region.printed_page for region in pieces["tone1-ainoi"].regions],
             [39, 40, 41, 42, 43],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone2-ainoi"].regions],
+            [86, 87, 88, 89, 90, 91],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone3-ainoi"].regions],
+            [138, 139, 140, 141, 142, 143, 144, 145],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone4-ainoi"].regions],
+            [193, 194, 195, 196, 197, 198],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone5-ainoi"].regions],
+            [244, 245, 246, 247, 248, 249, 250, 251],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone6-ainoi"].regions],
+            [298, 299, 300, 301, 302, 303, 304],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone7-ainoi"].regions],
+            [360, 361, 362, 363, 364, 365],
         )
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-7"].regions],
@@ -295,6 +319,35 @@ class AnastasimatarionTests(unittest.TestCase):
             result.html.index("ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ ΣΤ'"),
         )
 
+    def test_sunday_ainoi_always_use_the_verified_slow_or_short_setting(self):
+        expected = (
+            ("α΄", "tone1-ainoi", "slow"),
+            ("β΄", "tone2-ainoi", "slow"),
+            ("γ΄", "tone3-ainoi", "short"),
+            ("δ΄", "tone4-ainoi", "short"),
+            ("πλ α΄", "tone5-ainoi", "slow"),
+            ("πλ β΄", "tone6-ainoi", "slow"),
+            ("βαρύς", "tone7-ainoi", "short"),
+            ("πλ δ΄", "tone8-ainoi", "short"),
+        )
+        for tone, piece_id, form in expected:
+            with self.subTest(tone=tone):
+                source = (
+                    f"Ήχος εβδομάδος {tone}.<br>"
+                    f"Στιχηρὰ Ἀναστάσιμα Ἦχος {tone}<br>"
+                    "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον.<br>"
+                    "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ"
+                )
+                result = enrich_service_html(date(2026, 10, 4), "orthros", source)
+
+                self.assertEqual(result.attachment_count, 1)
+                self.assertIn(f'data-music-piece="{piece_id}"', result.html)
+                self.assertIn(f"μέλος {('ἀργόν' if form == 'slow' else 'σύντομον')}", result.html)
+                self.assertLess(
+                    result.html.index(f'data-music-piece="{piece_id}"'),
+                    result.html.index("ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ"),
+                )
+
     def test_sixth_eothinon_is_attached_only_after_its_own_doxastikon(self):
         source = (
             "Κύριε δόξα σοι.<br>"
@@ -405,6 +458,24 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(result.html.count('data-music-piece="tone4-timiotera"'), 1)
         self.assertLess(result.html.rindex("σὲ μεγαλύνομεν"), result.html.index("tone4-timiotera"))
         self.assertLess(result.html.index("tone4-timiotera"), result.html.index("Εἰρμός θ΄"))
+
+    def test_plagal_fourth_timiotera_uses_its_local_eirmos_tone_not_an_earlier_fourth_tone(self):
+        refrain = (
+            "Τὴν Τιμιωτέραν τῶν Χερουβείμ, καὶ ἐνδοξοτέραν ἀσυγκρίτως "
+            "τῶν Σεραφείμ, τὴν ἀδιαφθόρως Θεὸν Λόγον τεκοῦσαν, "
+            "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.<br>"
+        )
+        source = (
+            "Ἦχος δ΄ από προηγούμενο μέλος.<br>"
+            "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο του Ειρμού. "
+            "Ἦχος πλ δ΄<br>"
+            + refrain * 6
+            + "Εἰρμός θ΄ ᾠδής"
+        )
+        result = enrich_service_html(date(2026, 10, 3), "orthros", source)
+
+        self.assertIn('data-music-piece="plagal4-timiotera"', result.html)
+        self.assertNotIn('data-music-piece="tone4-timiotera"', result.html)
 
     def test_evlogitaria_are_attached_after_the_third_final_alleluia(self):
         ending = "λληλούϊα, Ἀλληλούϊα, Ἀλληλούϊα. Δόξα σοὶ ὁ Θεός.<br>"

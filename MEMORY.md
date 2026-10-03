@@ -28,10 +28,13 @@ This file records only durable implementation decisions.
 - Kathismata precede the Resurrectional Evlogitaria; Anavathmoi precede the
   Prokeimenon; Canon clips start at the named Ode A/G blocks.  The plagal-
   second Great Doxology is inserted immediately before «Σήμερον σωτηρία».
-  The complete plagal-fourth resurrectional Ainoi score (printed pp. 420–425)
-  is attached after the final resurrectional sticheron «Παντοδύναμε Σωτήρ
-  ἐλέησον ἡμᾶς», before the Eothinon Doxastikon, when Melodos itself marks
-  the plagal-fourth Ainoi; this is verified for Sunday 27 September 2026.
+  Sunday resurrectional Ainoi are always selected from Melodos' explicit
+  weekly tone and placed immediately before the Eothinon Doxastikon. The
+  verified Anastasimatario forms are invariant: tones 1, 2, 5 and 6 use the
+  slow setting; tones 3, 4, 7 and 8 use the short setting. Verified printed
+  ranges are respectively 39–43, 86–91, 244–251, 298–304 (slow) and
+  138–145, 193–198, 360–365, 420–425 (short). Never infer this from the
+  calendar date or substitute a partial Ainoi clip.
   The plagal-fourth
   Kathismata and Anavathmoi scans retain their openings (both Kathismata and
   all four antiphons respectively), rather than cropping the first phrases.
@@ -54,6 +57,28 @@ This file records only durable implementation decisions.
 - Timiotera tone rules must use the nearby «Καὶ ψάλλεται…» and its own tone
   label. Never choose πλ. δ΄ merely because that tone occurs elsewhere in the
   daily Orthros; 26 September's local label is explicitly «Ἦχος δ΄».
+- The converse is equally mandatory: when the nearby rule says «στον ίδιο
+  ήχο του Ειρμού · Ἦχος πλ δ΄», select the plagal-fourth Timiotera, never an
+  earlier incidental fourth-tone mention. This is verified for 3 October
+  2026 Orthros.
+- `AttachmentRule.semantic_context` is the preferred mechanism for a rule
+  whose musical decision depends on a local Melodos instruction. The first
+  resolver is `timiotera`: it reads the last nearby instruction «Καὶ ψάλλεται
+  ἡ Τιμιωτέρα στον ίδιο ήχο…», parses its immediately following explicit
+  label, and selects the matching verified score. It must never use a tone
+  elsewhere in the document or guess when the local instruction is absent.
+- `src/typesafe_decisions.py` is an optional TypeSafe Jev pilot, enabled only
+  by `TYPESAFE_API_KEY` and configured with `KIHEM_TYPESAFE_MODEL` (default
+  `jev-latest`). It is a closed-set reviewer for that same local Timiotera
+  instruction: `plagal4_timiotera`, `tone4_timiotera` or `no_score`; it never
+  generates a score or substitutes for the Melodos rule. Cache successful
+  answers in `KIHEM_CACHE_DIR/typesafe-decisions`. A high-confidence (>=0.95)
+  disagreement blocks an unsafe insertion; an unavailable service keeps the
+  deterministic local decision. Never store or log the API key.
+- The same TypeSafe reviewer validates the Sunday-Ainoi form with the closed
+  choices `slow_ainoi`, `short_ainoi` or `no_score`. It receives the parsed
+  weekly tone and the local Eothinon boundary, not an arbitrary scan; the
+  deterministic tone-to-form rule above remains authoritative.
 - «Ὑπερευλογημένη» always uses the fixed second-tone Petros Lampadarios
   setting from the separate Pemptousia source, because the 1905 local
   Anastasimatario does not contain a usable engraved setting for it.
@@ -140,8 +165,8 @@ This file records only durable implementation decisions.
   The Tuesday/saints `Εἰς μνημόσυνον` anthology supplies all eight tones.
   Verified excerpts are also attached for `Πληρωθήτω` and `Εἴη τὸ ὄνομα`.
 
-- For first-tone Sunday Orthros, attach the complete resurrectional Ainoi
-  after their final sticheron and before the Eothinon (printed pp. 39–43),
+- For first-tone Sunday Orthros, attach the complete slow resurrectional Ainoi
+  immediately before the Eothinon (printed pp. 39–43),
   then attach Eothinon VII «Ἰδοὺ σκοτία καὶ πρωΐ» after its own full text
   and before «Ὑπερευλογημένη» (printed pp. 365–366). The first-tone Canon
   Ode 3 is printed pp. 24–25; do not reuse the following Ode 4 pages.

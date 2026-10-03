@@ -1,17 +1,24 @@
 from __future__ import annotations
 
 import html
+import logging
 import os
 import threading
 import unicodedata
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from typing import Final, Literal
+from typing import TYPE_CHECKING, Final, Literal
 
 import pymupdf
 import requests
 from bs4 import BeautifulSoup, NavigableString, Tag
+
+if TYPE_CHECKING:
+    from src.typesafe_decisions import TypesafeDecisionService
+
+
+logger = logging.getLogger(__name__)
 
 
 BOOK_ID: Final = "ioannis-protopsaltis-1905"
@@ -167,6 +174,15 @@ class AttachmentRule:
     nearest_preceding_text: str | None = None
     exact_after_text: str | None = None
     following_text: str | None = None
+    # A local liturgical instruction can determine a score independently of
+    # the weekly tone.  This is intentionally a semantic, bounded context
+    # (not a document-wide phrase search): it must be resolved immediately
+    # before the member that will receive the score.
+    semantic_context: Literal["timiotera", "ainoi"] | None = None
+    expected_context_tone: int | None = None
+    # TypeSafe validates only a closed, already verified alternative.  It may
+    # never choose a scan region which is not in this catalogue.
+    expected_reviewer_choice: str | None = None
     insert_before: bool = False
 
 
@@ -267,20 +283,98 @@ PIECES: Final[dict[str, MusicPiece]] = {
         # The PDF has two unnumbered preliminary pages.
         (_region(193, 0.72), _region(194, 0.02, 0.47)),
     ),
-    "tone6-ainoi-first-four": MusicPiece(
-        "tone6-ainoi-first-four",
-        "Αἶνοι · τὰ τέσσερα ἀναστάσιμα στιχηρά",
-        "Ὁ Σταυρός σου Κύριε",
+    "tone2-ainoi": MusicPiece(
+        "tone2-ainoi",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος β΄ · μέλος ἀργόν",
+        "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
         (
-            _region(300, 0.43),
+            # Printed pp. 86–91: the Eothinon B΄ begins at the foot of p. 91.
+            _region(88, 0.37),
+            _region(89),
+            _region(90),
+            _region(91),
+            _region(92),
+            _region(93, 0.02, 0.77),
+        ),
+    ),
+    "tone3-ainoi": MusicPiece(
+        "tone3-ainoi",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος γ΄ · μέλος σύντομον",
+        "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
+        (
+            # Printed pp. 138–145: the Eothinon Γ΄ follows at the foot of p. 145.
+            _region(140, 0.48),
+            _region(141),
+            _region(142),
+            _region(143),
+            _region(144),
+            _region(145),
+            _region(146),
+            _region(147, 0.02, 0.55),
+        ),
+    ),
+    "tone4-ainoi": MusicPiece(
+        "tone4-ainoi",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος δ΄ · μέλος σύντομον",
+        "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
+        (
+            # Printed pp. 193–198: the Eothinon Δ΄ begins at the foot of p. 198.
+            _region(195),
+            _region(196),
+            _region(197),
+            _region(198),
+            _region(199),
+            _region(200, 0.02, 0.78),
+        ),
+    ),
+    "tone5-ainoi": MusicPiece(
+        "tone5-ainoi",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος πλ. α΄ · μέλος ἀργόν",
+        "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
+        (
+            # Printed pp. 244–251: the Eothinon E΄ follows at the foot of p. 251.
+            _region(246),
+            _region(247),
+            _region(248),
+            _region(249),
+            _region(250),
+            _region(251),
+            _region(252),
+            _region(253, 0.02, 0.78),
+        ),
+    ),
+    "tone6-ainoi": MusicPiece(
+        "tone6-ainoi",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος πλ. β΄ · μέλος ἀργόν",
+        "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
+        (
+            # Printed pp. 298–304: the Eothinon ΣΤ΄ begins part-way through p. 304.
+            _region(300, 0.45),
             _region(301),
             _region(302),
-            _region(303, 0.02, 0.53),
+            _region(303),
+            _region(304),
+            _region(305),
+            _region(306, 0.02, 0.31),
+        ),
+    ),
+    "tone7-ainoi": MusicPiece(
+        "tone7-ainoi",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος βαρύς · μέλος σύντομον",
+        "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
+        (
+            # Printed pp. 360–365: the Eothinon Ζ΄ follows at the foot of p. 365.
+            _region(362, 0.28),
+            _region(363),
+            _region(364),
+            _region(365),
+            _region(366),
+            _region(367, 0.02, 0.76),
         ),
     ),
     "tone8-ainoi": MusicPiece(
         "tone8-ainoi",
-        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος πλ. δ΄",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος πλ. δ΄ · μέλος σύντομον",
         "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
         # The plagal-fourth Pasapnoaria and all eight resurrectional Ainoi
         # run from printed p. 420 to the end immediately before Eothinon II
@@ -289,7 +383,7 @@ PIECES: Final[dict[str, MusicPiece]] = {
     ),
     "tone1-ainoi": MusicPiece(
         "tone1-ainoi",
-        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος α΄",
+        "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος α΄ · μέλος ἀργόν",
         "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον",
         # The first-tone Pasapnoaria and all eight resurrectional Ainoi begin
         # on printed p. 39 and finish before Eothinon A begins on p. 43.
@@ -855,52 +949,98 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "orthros",
-        "Παντοδύναμε Σωτὴρ ἐλέησον ἡμᾶς.",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
         "tone8-ainoi",
         weekly_tone=8,
-        required_text=("Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄",),
-        # This is the final resurrectional sticheron of the Ainoi supplied by
-        # Melodos. The score follows the complete textual sequence, before
-        # the Eothinon Doxastikon, rather than an unrelated later boundary.
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="short_ainoi",
+        insert_before=True,
     ),
     AttachmentRule(
         "orthros",
-        "παρέχει τῶ κόσμω τὸ μέγα ἔλεος.",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
         "tone1-ainoi",
         weekly_tone=1,
-        required_text=("Στιχηρὰ Ἀναστάσιμα Ἦχος α΄",),
-        # The complete score follows the final first-tone resurrectional
-        # sticheron and precedes the Eothinon Doxastikon.
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="slow_ainoi",
+        insert_before=True,
+    ),
+    AttachmentRule(
+        "orthros",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
+        "tone2-ainoi",
+        weekly_tone=2,
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="slow_ainoi",
+        insert_before=True,
+    ),
+    AttachmentRule(
+        "orthros",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
+        "tone3-ainoi",
+        weekly_tone=3,
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="short_ainoi",
+        insert_before=True,
+    ),
+    AttachmentRule(
+        "orthros",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
+        "tone4-ainoi",
+        weekly_tone=4,
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="short_ainoi",
+        insert_before=True,
+    ),
+    AttachmentRule(
+        "orthros",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
+        "tone5-ainoi",
+        weekly_tone=5,
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="slow_ainoi",
+        insert_before=True,
+    ),
+    AttachmentRule(
+        "orthros",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
+        "tone6-ainoi",
+        weekly_tone=6,
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="slow_ainoi",
+        insert_before=True,
+    ),
+    AttachmentRule(
+        "orthros",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
+        "tone7-ainoi",
+        weekly_tone=7,
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="short_ainoi",
+        insert_before=True,
     ),
     AttachmentRule(
         "orthros",
         "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
         "plagal4-timiotera",
-        required_text=("Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.",),
-        required_text_any=("Ἦχος πλ δ΄", "Ηχος πλ δ΄"),
-        # The tone must belong to this Timiotera block, not to a Prokeimenon
-        # or another musical instruction earlier in the daily document.
-        preceding_text=(
-            "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών. Ἦχος πλ δ΄"
-        ),
+        semantic_context="timiotera",
+        expected_context_tone=8,
         match_number=6,
     ),
     AttachmentRule(
         "orthros",
         "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
         "tone4-timiotera",
-        required_text=("Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.",),
-        preceding_text=(
-            "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών. Ἦχος δ΄"
-        ),
-        match_number=6,
-    ),
-    AttachmentRule(
-        "orthros",
-        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
-        "tone4-timiotera",
-        required_text=("Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο του Ειρμού.",),
-        required_text_any=("Ἦχος δ΄", "Ηχος δ΄"),
+        semantic_context="timiotera",
+        expected_context_tone=4,
         match_number=6,
     ),
     AttachmentRule(
@@ -944,12 +1084,6 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         ),
         excluded_text_any=("Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός",),
         insert_before=True,
-    ),
-    AttachmentRule(
-        "orthros",
-        "καὶ ἀνυμνεῖ σου τὴν Ἀνάστασιν.",
-        "tone6-ainoi-first-four",
-        weekly_tone=6,
     ),
     AttachmentRule(
         "orthros",
@@ -1630,6 +1764,59 @@ def _weekly_tone_from_document(normalized_document: str) -> int | None:
     return None
 
 
+def _explicit_tone_from_local_text(normalized_text: str) -> int | None:
+    """Parse one explicitly printed tone label, never a weekly-tone heading."""
+    value = normalized_text.strip()
+    if "πλ α" in value:
+        return 5
+    if "πλ β" in value:
+        return 6
+    if "βαρυ" in value:
+        return 7
+    if "πλ δ" in value:
+        return 8
+    for letter, tone in (("α", 1), ("β", 2), ("γ", 3), ("δ", 4)):
+        if value.startswith(letter):
+            return tone
+    return None
+
+
+def _semantic_context_tone(context: str, preceding_text: str) -> int | None:
+    """Interpret a Melodos instruction in the local liturgical block.
+
+    A member's score is chosen only from the instruction which introduces
+    that member.  This deliberately differs from a document-wide phrase
+    match: a preceding hymn may have a different tone on the same day.
+    """
+    if context != "timiotera":
+        return None
+
+    instruction = "και ψαλλεται η τιμιωτερα στον ιδιο ηχο"
+    start = preceding_text.rfind(instruction)
+    if start < 0:
+        return None
+
+    # Melodos prints either «...των καταβασιών. Ἦχος ...» or
+    # «...του Ειρμού. Ἦχος ...».  Restrict interpretation to this small
+    # instruction block, ending before the first Timiotera refrain.
+    block = preceding_text[start : start + 180]
+    label_start = block.find("ηχοσ")
+    # The label belongs to the instruction itself; do not borrow a tone from
+    # a later hymn if an incomplete instruction happens to precede it.
+    if label_start < 0 or label_start > 96:
+        return None
+    return _explicit_tone_from_local_text(block[label_start + len("ηχοσ") :])
+
+
+def _semantic_context_block(context: str, preceding_text: str) -> str | None:
+    """Return just the local instruction which determines a member's score."""
+    if context != "timiotera":
+        return None
+    marker = "και ψαλλεται η τιμιωτερα στον ιδιο ηχο"
+    start = preceding_text.rfind(marker)
+    return preceding_text[start : start + 180] if start >= 0 else None
+
+
 def _bookmark_id(piece: MusicPiece, instance: int) -> str:
     return f"music-{piece.piece_id}-{instance}"
 
@@ -1712,6 +1899,7 @@ def enrich_service_html(
     service_html: str,
     *,
     instance_offset: int = 0,
+    semantic_reviewer: "TypesafeDecisionService | None" = None,
 ) -> EnrichmentResult:
     """Attach verified book matches based on the actual text returned by Melodos."""
     rules = tuple(rule for rule in PILOT_RULES if rule.service == service)
@@ -1756,10 +1944,80 @@ def enrich_service_html(
                 continue
             if isinstance(node.parent, Tag) and node.parent.find_parent("aside"):
                 continue
-            if rule.preceding_text:
+            preceding = ""
+            if rule.preceding_text or rule.semantic_context:
                 preceding = _normalized(" ".join(str(item) for item in text_nodes[:node_index]))
+            if rule.preceding_text:
                 if _normalized(rule.preceding_text) not in preceding:
                     continue
+            if rule.semantic_context:
+                # The same refrain occurs six times.  Only its selected
+                # occurrence is a candidate for attachment, so review that
+                # one instead of needlessly reading the same cached decision
+                # for every refrain.
+                is_selected_occurrence = (
+                    rule.occurrences != "first" or len(matches) == rule.match_number - 1
+                )
+                if rule.semantic_context == "timiotera":
+                    local_tone = _semantic_context_tone(rule.semantic_context, preceding)
+                    if local_tone != rule.expected_context_tone:
+                        continue
+                    if not semantic_reviewer or not is_selected_occurrence:
+                        pass
+                    else:
+                        instruction = _semantic_context_block(rule.semantic_context, preceding)
+                        decision = (
+                            semantic_reviewer.review_timiotera(instruction or "")
+                            if instruction
+                            else None
+                        )
+                        expected_choice = {
+                            "plagal4-timiotera": "plagal4_timiotera",
+                            "tone4-timiotera": "tone4_timiotera",
+                        }[rule.piece_id]
+                        # Jev can only confirm the explicit local instruction;
+                        # it cannot invent a third score. An unavailable API
+                        # leaves the deterministic Melodos instruction in
+                        # force, while a high-confidence disagreement blocks
+                        # an unsafe insertion.
+                        if (
+                            decision is not None
+                            and decision.confidence >= 0.95
+                            and decision.choice != expected_choice
+                        ):
+                            logger.warning(
+                                "TypeSafe rejected %s for %s (choice=%s, confidence=%.3f)",
+                                rule.piece_id,
+                                rule.semantic_context,
+                                decision.choice,
+                                decision.confidence,
+                            )
+                            continue
+                elif (
+                    semantic_reviewer
+                    and rule.semantic_context == "ainoi"
+                    and is_selected_occurrence
+                ):
+                    # The Sunday Ainoi form is a stable rule from the
+                    # verified Anastasimatario: a/b/plagal-a/plagal-b are
+                    # slow; c/d/grave/plagal-d are short. Jev sees exactly
+                    # this closed choice and can only veto a doubtful match.
+                    decision = semantic_reviewer.review_ainoi_style(
+                        weekly_tone=weekly_tone,
+                        local_heading=_normalized(str(node)),
+                    )
+                    if (
+                        decision is not None
+                        and decision.confidence >= 0.95
+                        and decision.choice != rule.expected_reviewer_choice
+                    ):
+                        logger.warning(
+                            "TypeSafe rejected %s for Sunday Ainoi (choice=%s, confidence=%.3f)",
+                            rule.piece_id,
+                            decision.choice,
+                            decision.confidence,
+                        )
+                        continue
             if rule.nearest_preceding_text:
                 preceding_nodes = (
                     _normalized(str(item)) for item in reversed(text_nodes[:node_index])
