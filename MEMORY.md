@@ -375,9 +375,10 @@ This file records only durable implementation decisions.
   separately confirmed opening Martyria `Ga / Nana / Diatonic`, where the
   visible sign below the Γ is two small η (Neanes `martyriaNanaBelow`, U+E154).
   Earlier candidates were wrong: `Varys` (U+E150) renders as a wavy dash, and
-  `DeltaDotted` (U+E155) has dots above. The user confirmed the rendered form
-  against the source on the protected player; auditory review is still needed.
-  The phrase
+  `DeltaDotted` (U+E155) has dots above. The named reviewer `vfilip` confirmed
+  the rendered form visually and auditorily on the protected player, so the
+  pilot is `verified` and published in the public catalogue (`.byzx` and
+  player only; no PNG or MusicXML derivatives exist for it). The phrase
   anchors come from `Formula1p.doc` run 3322; the evidence for the Martyria
   comes separately from the visible `AnastaOTheos.pdf` heading and psaltis
   confirmation, so it must never be presented as inferred from that Word
@@ -388,9 +389,8 @@ This file records only durable implementation decisions.
   check against the source; never infer visual acceptance from the serialized
   fields alone.
   A generic automatic Martyria on an otherwise empty staff starts at Pa and
-  is prohibited for this pilot. It carries no lyrics, remains
-  `needs_review`, and is restricted to the protected review player until a
-  second visual/auditory check.
+  was prohibited for this pilot. It carries no lyrics. The `verified` status
+  covers only this five-event technical formula, not a complete chant.
 - The private Neanes player must version the **browser-side filename** as
   well as the authenticated `.byzx` URL. Neanes persists documents by
   filename; reusing `<score-id>.byzx` can retain an earlier tab and display
