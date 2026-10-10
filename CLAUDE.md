@@ -24,16 +24,16 @@ feature or an implementation decision changes.
 - The active private Word→Neanes test is
   `formula1p-ez-word-varys-ga-diatonic-pilot`: five confirmed events
   `Oligon → Ison → Apostrophos ×3`, with a separately confirmed opening
-  `Ga / Varys / Diatonic`. It is not a complete chant and remains
-  `needs_review`.
+  `Ga / Nana / Diatonic` (the two small η below the Γ, glyph U+E154). It is not
+  a complete chant and remains `needs_review`. The user confirmed the visible
+  initial martyria against the source; auditory review is still outstanding.
 - Its protected player is
   `/kihem/review/digital-scores/formula1p-ez-word-varys-ga-diatonic-pilot/playback`.
-  The latest user concern is the **visible** initial martyria. Do not call it
-  accepted until the user confirms the current rendered form against the
-  source. A prior screenshot was an old Neanes document tab showing Pa.
+  Earlier `Varys` (wavy dash) and `DeltaDotted` (dotted) renderings were
+  rejected by the user. A prior screenshot was an old Neanes document tab showing Pa.
 - `src/neanes_byzx_bridge.py` must use Neanes' own `Score` and `SaveService`,
   then reopen the result. For an explicit Martyria, the generated-worker test
-  must assert `auto=false`, `Ga`, `Varys`, and `Diatonic` after reopening.
+  must assert `auto=false`, `Ga`, `Nana`, and `Diatonic` after reopening.
   `auto=true` derives Pa on an empty staff.
 - The review player must version both the asset URL and the browser-side File
   name. Neanes persists documents by filename; changing only `?v=` can leave

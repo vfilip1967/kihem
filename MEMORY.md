@@ -372,12 +372,17 @@ This file records only durable implementation decisions.
 - The direct-Word Formula1p pilot now has a second **private** `.byzx`
   rendition, `formula1p-ez-word-varys-ga-diatonic-pilot`, for the same five
   exact Word events (`Oligon → Ison → Apostrophos ×3`). It adds only the
-  separately confirmed opening Martyria `Ga / Varys / Diatonic`. The phrase
+  separately confirmed opening Martyria `Ga / Nana / Diatonic`, where the
+  visible sign below the Γ is two small η (Neanes `martyriaNanaBelow`, U+E154).
+  Earlier candidates were wrong: `Varys` (U+E150) renders as a wavy dash, and
+  `DeltaDotted` (U+E155) has dots above. The user confirmed the rendered form
+  against the source on the protected player; auditory review is still needed.
+  The phrase
   anchors come from `Formula1p.doc` run 3322; the evidence for the Martyria
   comes separately from the visible `AnastaOTheos.pdf` heading and psaltis
   confirmation, so it must never be presented as inferred from that Word
   formula. The bridge writes this as a manual Neanes Martyria with
-  `note: Ga`, `rootSign: Varys`, `scale: Diatonic`, `auto: false` and a
+  `note: Ga`, `rootSign: Nana`, `scale: Diatonic`, `auto: false` and a
   retained `rootSignOverride`. This resets Neanes' analysis/playback state to
   the supplied base. Its exact visual form remains subject to the psaltis'
   check against the source; never infer visual acceptance from the serialized

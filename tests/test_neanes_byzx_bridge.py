@@ -27,7 +27,7 @@ class NeanesByzxBridgeTests(unittest.TestCase):
 
     def test_generated_worker_keeps_a_confirmed_martyria_manual_through_layout(self):
         draft = event_draft()
-        draft["opening_martyria"] = {"note": "Ga", "rootSign": "Varys", "scale": "Diatonic"}
+        draft["opening_martyria"] = {"note": "Ga", "rootSign": "Nana", "scale": "Diatonic"}
         worker = _typescript_worker(draft, Path("/tmp/private.byzx"), "Δοκιμή")
         self.assertIn("const element = new MartyriaElement()", worker)
         self.assertIn("element.auto = false", worker)
