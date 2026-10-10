@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ψηφιακές παρτιτούρες · Kihem</title>
+  <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261008-digital-public">
+</head>
+<body class="review-body">
+  <header class="review-header public-score-header">
+    <p class="eyebrow">Kihem · ψηφιακές παρτιτούρες</p>
+    <h1>Επαληθευμένες ψηφιακές παρτιτούρες</h1>
+    <p>Η έντυπη σάρωση παραμένει η αυθεντική αναφορά. Τα διαθέσιμα αρχεία είναι ψηφιακά τεκμήρια με καταγεγραμμένο ελεγκτή.</p>
+  </header>
+  <main class="review-main public-score-main">
+    {% if scores %}
+      <ul class="public-score-list">
+        {% for score in scores %}
+          <li>
+            <a href="{{ base_url }}/digital-scores/{{ score.score_id }}/">
+              <strong>{{ score.title }}</strong>
+              <span>{{ score.incipit }} · {{ score.tone_label }}</span>
+            </a>
+            <small>Ελεγκτής: {{ score.reviewed_by }}</small>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="notice">Δεν υπάρχουν ακόμη δημοσιευμένες ψηφιακές παρτιτούρες.</p>
+    {% endif %}
+  </main>
+</body>
+</html>

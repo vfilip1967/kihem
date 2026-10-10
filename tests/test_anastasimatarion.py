@@ -18,7 +18,7 @@ from src.anastasimatarion import (
 class AnastasimatarionTests(unittest.TestCase):
     def test_pilot_catalog_uses_verified_pages(self):
         pieces = {piece.piece_id: piece for piece in catalog_pieces()}
-        self.assertEqual(len(pieces), 133)
+        self.assertEqual(len(pieces), 134)
         self.assertEqual(
             [region.printed_page for region in pieces["eothinon-4"].regions],
             [198, 199, 200],
@@ -62,6 +62,10 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(
             [region.printed_page for region in pieces["tone1-great-doxology"].regions],
             [45, 46, 47, 48],
+        )
+        self.assertEqual(
+            [region.printed_page for region in pieces["tone2-great-doxology"].regions],
+            [93, 94, 95, 96, 97],
         )
         self.assertEqual(
             [region.printed_page for region in pieces["plagal4-timiotera"].regions],
@@ -348,6 +352,39 @@ class AnastasimatarionTests(unittest.TestCase):
                     result.html.index("ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ"),
                 )
 
+    def test_holy_fathers_sunday_uses_tone_two_core_scores_at_their_real_boundaries(self):
+        source = (
+            "Ήχος εβδομάδος β΄.<br>Καθίσματα Αναστάσιμα<br>Ἦχος β΄<br>"
+            "Τῶν Μαθητῶν σου ὁ χορός, τῶ λαῶ σου παράσχου τὸ μέγα ἔλεος.<br>"
+            "Ἐν συνεχεία ψάλλονται τά Ἀναστάσιμα εὐλογητάρια.<br>"
+            "Προκείμενον Ἦχος β΄<br>ΩΔΗ Α΄ ΚΑΝΟΝΩΝ<br>Κανὼν Ἀναστάσιμος<br>"
+            "Ὁ Κανὼν τῶν Ἁγίων Πατέρων.<br>"
+            "ΩΔΗ Γ΄ ΚΑΝΟΝΩΝ<br>Κανὼν Ἀναστάσιμος<br>"
+            "Ὁ Κανὼν τῶν Ἁγίων Πατέρων.<br>"
+            "Στιχηρὰ Ἀναστάσιμα Ἦχος β΄<br>Στιχηρὰ Προσόμοια τῶν Πατέρων.<br>"
+            '<span class="melodos-audio-context">Μουσικό απόσπασμα Μεγάλης Δοξολογίας · '
+            "Ἦχος β΄</span><br>ΜΕΓΑΛΗ ΔΟΞΟΛΟΓΙΑ<br>"
+            "Παράτεινον τὸ ἔλεός σου τοῖς γινώσκουσί σε.<br>"
+            "Ἅγιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος.<br>"
+        )
+        result = enrich_service_html(date(2026, 10, 11), "orthros", source)
+
+        for piece_id in (
+            "tone2-kathismata", "tone2-anavathmoi", "tone2-canon-ode-1",
+            "tone2-canon-ode-3", "tone2-ainoi", "tone2-great-doxology",
+        ):
+            self.assertIn(f'data-music-piece="{piece_id}"', result.html)
+        self.assertLess(result.html.index("τῶ λαῶ σου παράσχου"), result.html.index("tone2-kathismata"))
+        self.assertLess(result.html.index("tone2-kathismata"), result.html.index("Ἀναστάσιμα εὐλογητάρια"))
+        self.assertLess(result.html.index("tone2-anavathmoi"), result.html.index("Προκείμενον"))
+        first_fathers_canon = result.html.index("Ὁ Κανὼν τῶν Ἁγίων Πατέρων.")
+        second_fathers_canon = result.html.rindex("Ὁ Κανὼν τῶν Ἁγίων Πατέρων.")
+        self.assertLess(result.html.index("tone2-canon-ode-1"), first_fathers_canon)
+        self.assertLess(result.html.index("tone2-canon-ode-3"), second_fathers_canon)
+        self.assertLess(result.html.index("tone2-ainoi"), result.html.index("Στιχηρὰ Προσόμοια"))
+        self.assertLess(result.html.index("Παράτεινον"), result.html.index("tone2-great-doxology"))
+        self.assertLess(result.html.index("tone2-great-doxology"), result.html.index("Ἅγιος ὁ Θεός"))
+
     def test_sixth_eothinon_is_attached_only_after_its_own_doxastikon(self):
         source = (
             "Κύριε δόξα σοι.<br>"
@@ -494,6 +531,7 @@ class AnastasimatarionTests(unittest.TestCase):
     def test_sunday_core_members_follow_the_weekly_tone_without_feast_tone_leakage(self):
         source = (
             "Ήχος εβδομάδος Βαρύς.<br>"
+            "Καθίσματα Αναστάσιμα<br>"
             "Οἱ Ἀναβαθμοὶ Ἦχος βαρύς<br>"
             "Προκείμενον Ἦχος βαρύς<br>"
             "ΚΑΝΟΝΕΣ<br>ΩΔΗ Α΄ ΚΑΝΟΝΩΝ<br>Κανὼν Ἀναστάσιμος<br>"
@@ -886,6 +924,10 @@ class AnastasimatarionTests(unittest.TestCase):
             "litourgia-tone-1-koinonikon",
         ):
             self.assertIn(f'data-music-piece="{piece_id}"', result.html)
+        self.assertIn(
+            "music/melodos-liturgy-tone-1/litourgia-tone-1-koinonikon/3.png",
+            result.html,
+        )
 
     def test_litourgia_opening_kyrie_is_first_bookmark_and_is_tone_independent(self):
         opening = (

@@ -1,2 +1,10 @@
 venv/
 __pycache__/
+digital_scores/word_importer/target/
+
+# Runtime/private material.  The production service reads these outside Git.
+/byz/
+/debug/
+/oldapp/
+/.agents/
+/-

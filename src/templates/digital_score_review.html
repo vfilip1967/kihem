@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Ιδιωτικός έλεγχος · {{ score.incipit }}</title>
+  <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261008-digital-review-reader">
+</head>
+<body class="review-body">
+  <header class="review-header">
+    <p class="eyebrow">Ιδιωτικός χώρος ελέγχου · μη δημοσιευμένη μεταγραφή</p>
+    <h1>{{ score.title }}</h1>
+    <p>{{ score.incipit }} · {{ score.tone_label }}</p>
+    <p class="review-status">Κατάσταση καταλόγου: <strong>{{ score.review_state }}</strong>. Η αποθήκευση αυτής της φόρμας δεν δημοσιεύει ούτε πιστοποιεί το μέλος.</p>
+  </header>
+
+  <main class="review-main">
+    {% if saved %}
+      <p class="review-notice success">Η ιδιωτική σημείωση ελέγχου αποθηκεύτηκε.</p>
+    {% endif %}
+    {% if error %}
+      <p class="review-notice error" role="alert">{{ error }}</p>
+    {% endif %}
+
+    <section class="review-context">
+      <h2>Πηγή και όρια του ελέγχου</h2>
+      <p>{{ score.source_description }}</p>
+      <p>{{ score.notes }}</p>
+      <p>Η έντυπη σάρωση είναι η αυθεντική πηγή. Η ψηφιακή προεπισκόπηση και το MusicXML είναι παράγωγα του υπάρχοντος αρχείου Neanes· δεν αποτελούν αυτόματη μεταγραφή της σάρωσης.</p>
+      <p class="review-downloads">
+        <a href="{{ playback_url }}">Ενσωματωμένη ακρόαση Neanes</a>
+        {% if has_byzx %}<a href="{{ byzx_url }}" download>Neanes .byzx</a>{% endif %}
+        {% if has_ocr %}<a href="{{ ocr_url }}" download>Αποτέλεσμα OCR .byzocr</a>{% endif %}
+        {% if has_musicxml %}<a href="{{ musicxml_url }}" download>MusicXML</a>{% endif %}
+      </p>
+      <p class="review-playback"><strong>Τεχνική ακρόαση:</strong> η «Ενσωματωμένη ακρόαση Neanes» φορτώνει αυτόματα το προστατευμένο `.byzx` στο ίδιο το Kihem. Πάτησε Play μέσα στον player. Η αναπαραγωγή είναι συνθετική, με τονικό ύψος και χρόνο από το αρχείο· δεν είναι ηχογράφηση ούτε ψαλτική ερμηνεία. Η λήψη και το <a href="https://neanes.github.io/neanes/web-app/" target="_blank" rel="noopener">Neanes Web</a> παραμένουν διαθέσιμα ως εναλλακτική.</p>
+    </section>
+
+    <section class="review-compare{% if not source_urls %} review-compare-no-source{% endif %}" aria-label="Σύγκριση έντυπης και ψηφιακής παρτιτούρας">
+      <div class="review-source-column">
+        <header><p class="step">Αυθεντική πηγή</p><h2>{{ score.source_reference or "Έντυπη αντιστοίχιση σε εκκρεμότητα" }}</h2></header>
+        {% if source_urls %}
+          {% for source_url in source_urls %}
+            <figure class="review-score-figure">
+              <img src="{{ source_url }}" alt="Σάρωση πηγής, τμήμα {{ loop.index }}" loading="eager">
+              <figcaption>Έντυπη πηγή · τμήμα {{ loop.index }}</figcaption>
+            </figure>
+          {% endfor %}
+        {% else %}
+          <p class="review-empty">Δεν έχει ακόμη ταυτοποιηθεί και εγκατασταθεί η ακριβής έντυπη σελίδα για αυτό το μέλος. Οι σ. 13–14 αφορούν το «Τοῦ λίθου σφραγισθέντος» του α΄ ήχου και δεν χρησιμοποιούνται εδώ.</p>
+        {% endif %}
+      </div>
+
+      <div class="review-digital-column">
+        <header><p class="step">Ψηφιακό τεκμήριο</p><h2>{% if has_preview %}Neanes · εσωτερική προεπισκόπηση{% else %}Neanes · ενσωματωμένη προβολή εργασίας{% endif %}</h2></header>
+        {% if has_preview %}
+        <figure class="review-score-figure review-neanes-figure">
+          <a class="review-neanes-zoom" href="{{ preview_url }}" target="_blank" rel="noopener" aria-label="Άνοιγμα της πλήρους εικόνας Neanes σε νέα καρτέλα">
+            <span class="review-neanes-crop"><img src="{{ preview_url }}" alt="Μεγεθυμένη ψηφιακή παρτιτούρα Neanes για {{ score.incipit }}" loading="eager"></span>
+          </a>
+          <figcaption>Μεγεθυμένη προβολή της σελίδας παρτιτούρας. <a href="{{ preview_url }}" target="_blank" rel="noopener">Πλήρης αρχική εικόνα Neanes</a></figcaption>
+        </figure>
+        {% else %}
+          <p class="review-empty">Δεν έχει παραχθεί ακόμη στατική προεπισκόπηση PNG ή MusicXML. Το προστατευμένο αρχείο μπορεί όμως να εξεταστεί και να ακουστεί απευθείας εδώ:</p>
+          <iframe class="review-inline-player" src="{{ playback_url }}?embedded=1" title="Ενσωματωμένος Neanes player για {{ score.incipit }}" allow="autoplay"></iframe>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="review-form-section">
+      <header><p class="step">Ανθρώπινος έλεγχος</p><h2>Σημείωση ελέγχου</h2></header>
+      <p>Συμπλήρωσε μόνο όσα έχουν πράγματι ελεγχθεί. Όλα τα πεδία αποθηκεύονται ιδιωτικά στον server.</p>
+      <form method="post" class="review-form">
+        <label>Ελεγκτής
+          <input name="reviewer" value="{{ form_reviewer }}" maxlength="160" required autocomplete="name">
+        </label>
+        <fieldset>
+          <legend>Πεδία ελέγχου</legend>
+          {% set saved_checks = review.get('checks', {}) if review else {} %}
+          {% for check_id, label in review_checks %}
+            <label class="review-check"><input type="checkbox" name="{{ check_id }}" value="1" {{ 'checked' if check_id in request.form or saved_checks.get(check_id) else '' }}> {{ label }}</label>
+          {% endfor %}
+        </fieldset>
+        <label>Παρατηρήσεις / απαιτούμενες διορθώσεις
+          <textarea name="notes" rows="8" maxlength="8000">{{ form_notes }}</textarea>
+        </label>
+        <button type="submit">Αποθήκευση ιδιωτικής σημείωσης</button>
+      </form>
+      {% if review and review.get('saved_at') %}
+        <p class="review-saved">Τελευταία αποθήκευση: {{ review.get('saved_at') }} UTC.</p>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

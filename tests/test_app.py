@@ -1,3 +1,5 @@
+import json
+from base64 import b64encode
 import unittest
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -153,6 +155,161 @@ class AppTests(unittest.TestCase):
     def test_health(self):
         response = self.client.get("/health")
         self.assertEqual(response.json["calendar"], "gregorian")
+
+    def test_digital_score_endpoints_hide_unreviewed_transcriptions(self):
+        digital_assets = Path(self.temporary.name) / "digital-scores"
+        digital_assets.mkdir()
+        catalog_path = Path(self.temporary.name) / "digital-scores.json"
+        catalog_path.write_text(
+            json.dumps(
+                {
+                    "schema": 1,
+                    "scores": [
+                        {
+                            "id": "draft-score",
+                            "title": "Πρόχειρο μέλος",
+                            "incipit": "Δοκιμή",
+                            "tone_label": "Ἦχος α΄",
+                            "source_description": "Πρωτότυπη σάρωση",
+                            "source_reference": "Δοκιμαστική έντυπη πηγή · σ. 1",
+                            "transcription_by": "Δοκιμή",
+                            "review_state": "draft",
+                            "byzx_filename": "draft-score.byzx",
+                            "ocr_filename": "draft-score.byzocr",
+                            "musicxml_filename": "draft-score.musicxml",
+                            "preview_filename": "draft-score-preview.png",
+                            "source_scan_filenames": ["draft-source-1.png"],
+                        },
+                        {
+                            "id": "verified-score",
+                            "title": "Ελεγμένο μέλος",
+                            "incipit": "Δοκιμή ελεγμένη",
+                            "tone_label": "Ἦχος α΄",
+                            "source_description": "Πρωτότυπη σάρωση",
+                            "transcription_by": "Δοκιμή",
+                            "review_state": "verified",
+                            "reviewed_by": "Πρωτοψάλτης δοκιμής",
+                            "byzx_filename": "verified-score.byzx",
+                        },
+                    ],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+        (digital_assets / "draft-score.byzx").write_text("{}", encoding="utf-8")
+        (digital_assets / "draft-score.byzocr").write_text("pages: []\n", encoding="utf-8")
+        (digital_assets / "draft-score.musicxml").write_text("<score-partwise/>", encoding="utf-8")
+        (digital_assets / "draft-score-preview.png").write_bytes(b"preview")
+        (digital_assets / "draft-source-1.png").write_bytes(b"source")
+        (digital_assets / "verified-score.byzx").write_text("{}", encoding="utf-8")
+        neanes_web = Path(self.temporary.name) / "neanes-web"
+        neanes_web.mkdir()
+        (neanes_web / "index.html").write_text("<!doctype html><title>Neanes</title>", encoding="utf-8")
+        (neanes_web / "app.js").write_text("window.neanes = true;", encoding="utf-8")
+        app = create_app(
+            {
+                "TESTING": True,
+                "CACHE_DIR": self.temporary.name,
+                "BYZ_DIR": str(Path(self.temporary.name) / "byz"),
+                "COMPOSER": FakeComposer(),
+                "DIGITAL_SCORES_CATALOG": str(catalog_path),
+                "DIGITAL_SCORES_DIR": str(digital_assets),
+                "DIGITAL_SCORES_REVIEW_DIR": str(Path(self.temporary.name) / "review-notes"),
+                "NEANES_WEB_DIR": str(neanes_web),
+                "REVIEW_USERNAME": "reviewer",
+                "REVIEW_PASSWORD": "test-secret",
+            }
+        )
+        client = app.test_client()
+        response = client.get("/digital-scores")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([score["id"] for score in response.json], ["verified-score"])
+        self.assertEqual(response.json[0]["assets"]["byzx"], "/digital-scores/verified-score/byzx")
+        public_list = client.get("/digital-scores", headers={"Accept": "text/html"})
+        self.assertEqual(public_list.status_code, 200)
+        self.assertIn("Επαληθευμένες ψηφιακές παρτιτούρες", public_list.get_data(as_text=True))
+        public_score = client.get("/digital-scores/verified-score/")
+        self.assertEqual(public_score.status_code, 200)
+        self.assertEqual(public_score.headers["Cache-Control"], "no-store, max-age=0")
+        self.assertIn("Ελεγμένο μέλος", public_score.get_data(as_text=True))
+        self.assertIn("digital-scores/neanes/app", public_score.get_data(as_text=True))
+        self.assertIn("reclaimReaderWidth", public_score.get_data(as_text=True))
+        self.assertIn("useNeanesPageWidth", public_score.get_data(as_text=True))
+        self.assertIn("Kihem public reader", public_score.get_data(as_text=True))
+        self.assertIn(".dv-groupview:has", public_score.get_data(as_text=True))
+        public_neanes = client.get("/digital-scores/neanes/app/")
+        self.assertEqual(public_neanes.status_code, 200)
+        self.assertIn("Neanes", public_neanes.get_data(as_text=True))
+        self.assertEqual(client.get("/digital-scores/draft-score/").status_code, 404)
+        self.assertEqual(client.get("/digital-scores/draft-score/byzx").status_code, 404)
+        download = client.get("/digital-scores/verified-score/byzx")
+        self.assertEqual(download.status_code, 200)
+        self.assertEqual(download.mimetype, "application/json")
+        download.close()
+
+        review_path = "/review/digital-scores/draft-score"
+        self.assertEqual(client.get(review_path).status_code, 401)
+        authorization = {"Authorization": "Basic " + b64encode(b"reviewer:test-secret").decode()}
+        review = client.get(
+            review_path,
+            headers={**authorization, "X-Forwarded-Prefix": "/kihem"},
+        )
+        self.assertEqual(review.status_code, 200)
+        self.assertIn("Ιδιωτικός χώρος ελέγχου", review.get_data(as_text=True))
+        review_html = review.get_data(as_text=True)
+        self.assertIn(
+            '/kihem/review/digital-scores/draft-score/asset/source?position=0',
+            review_html,
+        )
+        self.assertIn("Πλήρης αρχική εικόνα Neanes", review_html)
+        self.assertIn("Τεχνική ακρόαση", review_html)
+        self.assertIn("Ενσωματωμένη ακρόαση Neanes", review_html)
+        self.assertIn("Αποτέλεσμα OCR .byzocr", review_html)
+        self.assertIn("Δοκιμαστική έντυπη πηγή · σ. 1", review_html)
+        unpreviewed_review = client.get(
+            "/review/digital-scores/verified-score",
+            headers={**authorization, "X-Forwarded-Prefix": "/kihem"},
+        )
+        self.assertEqual(unpreviewed_review.status_code, 200)
+        unpreviewed_html = unpreviewed_review.get_data(as_text=True)
+        self.assertIn("Neanes · ενσωματωμένη προβολή εργασίας", unpreviewed_html)
+        self.assertIn('class="review-inline-player"', unpreviewed_html)
+        self.assertNotIn("MusicXML</a>", unpreviewed_html)
+        playback = client.get(
+            f"{review_path}/playback",
+            headers={**authorization, "X-Forwarded-Prefix": "/kihem"},
+        )
+        self.assertEqual(playback.status_code, 200)
+        playback_html = playback.get_data(as_text=True)
+        self.assertIn('/kihem/review/neanes/app/', playback_html)
+        self.assertIn('/kihem/review/digital-scores/draft-score/asset/byzx', playback_html)
+        self.assertIn("reclaimReaderWidth", playback_html)
+        self.assertIn("useNeanesPageWidth", playback_html)
+        self.assertIn("kihem-neanes-reader-mode", playback_html)
+        self.assertEqual(client.get("/review/neanes/app/").status_code, 401)
+        neanes_index = client.get("/review/neanes/app/", headers=authorization)
+        self.assertEqual(neanes_index.status_code, 200)
+        self.assertIn("Neanes", neanes_index.get_data(as_text=True))
+        neanes_index.close()
+        source = client.get(f"{review_path}/asset/source?position=0", headers=authorization)
+        self.assertEqual(source.status_code, 200)
+        self.assertEqual(source.data, b"source")
+        source.close()
+        ocr = client.get(f"{review_path}/asset/ocr", headers=authorization)
+        self.assertEqual(ocr.status_code, 200)
+        self.assertEqual(ocr.mimetype, "application/yaml")
+        ocr.close()
+        saved = client.post(
+            review_path,
+            headers=authorization,
+            data={"reviewer": "Δοκιμαστικός ψάλτης", "lyrics": "1", "notes": "Πρώτη σημείωση."},
+        )
+        self.assertEqual(saved.status_code, 200)
+        self.assertIn("αποθηκεύτηκε", saved.get_data(as_text=True))
+        note = json.loads((Path(self.temporary.name) / "review-notes" / "draft-score.json").read_text(encoding="utf-8"))
+        self.assertTrue(note["checks"]["lyrics"])
+        self.assertFalse(note["checks"]["neumes"])
 
     def test_isokratis_audio_routes_only_serve_catalogued_mp3_files(self):
         ison = self.client.get("/isokratis/ison/60.mp3")

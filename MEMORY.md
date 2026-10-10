@@ -26,10 +26,17 @@ This file records only durable implementation decisions.
   Require Melodos' resurrectional-Evlogitaria marker; weekday Orthros may
   have that tone and a Prokeimenon without any Anavathmoi (as on 2026-09-22).
 - Kathismata precede the Resurrectional Evlogitaria; Anavathmoi precede the
-  Prokeimenon; Canon clips start at the named Ode A/G blocks.  The plagal-
+  Prokeimenon; Canon clips normally start at the named Ode A/G blocks. On
+  the Holy-Fathers Sunday in tone 2, however, the Kathismata score follows
+  the final «Τῶν Μαθητῶν σου… τὸ μέγα ἔλεος», while Odes 1 and 3 follow their
+  complete resurrectional text and precede the corresponding Fathers' Canon.
+  The plagal-
   second Great Doxology is inserted immediately before «Σήμερον σωτηρία».
   Sunday resurrectional Ainoi are always selected from Melodos' explicit
-  weekly tone and placed immediately before the Eothinon Doxastikon. The
+  weekly tone and placed immediately before the Eothinon Doxastikon. When a
+  feast Sunday replaces it with its own Prosomoia/Doxastikon, place the same
+  verified Ainoi immediately before that feast block instead; never omit
+  them merely because the Eothinon-Doxastikon heading is absent. The
   verified Anastasimatario forms are invariant: tones 1, 2, 5 and 6 use the
   slow setting; tones 3, 4, 7 and 8 use the short setting. Verified printed
   ranges are respectively 39–43, 86–91, 244–251, 298–304 (slow) and
@@ -174,6 +181,277 @@ This file records only durable implementation decisions.
   Koinonikon are sung «στον κύριο ήχο της ημέρας». Treat that wording as the
   normal tone-specific instruction for all eight tones, so Sunday receives
   the same core score bookmarks as a weekday Liturgy.
+- The Sunday first-tone Koinonikon «Αἰνεῖτε τὸν Κύριον» uses all three pages
+  15–17 of `melodos-liturgy-tone-1.pdf`; page 17 is the indispensable final
+  «Ἀλληλούϊα», not a publisher-only closing page.
+
+## Digital Byzantine scores (pilot)
+
+- Do not claim that a scanned Byzantine score has been automatically and
+  correctly interpreted. Image recognition may assist a later transcription
+  workflow, but the authoritative source remains the scan and every
+  performance-capable result needs named psaltis review.
+- `src/digital_scores.py` is an intentionally small, source-agnostic local
+  catalogue for Neanes `.byzx`, optional MusicXML and preview assets. Its
+  public schema is `src/data/digital_scores.json`; assets live outside Git in
+  `KIHEM_DIGITAL_SCORES_DIR` (default `/var/lib/kihem/digital-scores`).
+- A score has one of `draft`, `needs_review`, `verified`. A `verified` score
+  must identify its reviewer. No library item is an instructional playback
+  candidate before that state. The first pilot is the Greek resurrectional
+  apolytikion «Τοῦ λίθου σφραγισθέντος», tone 1, not a complex Cheroubikon.
+  The external Greek Neanes example (`lithou-sfragisthentos-tone1.byzx`) has
+  110 note positions and is `verified` by the named reviewer `vfilip`; it
+  must never be called a Kihem scan conversion.
+- A second, deliberately non-public candidate is the official Greek Neanes
+  example «Ὅτε κατῆλθες πρὸς τὸν θάνατον» in tone 2
+  (`ote-katilthes-tone2`). It is `needs_review`, has no named reviewer and
+  must not be promoted until the full visual comparison and technical/audible
+  check have been recorded. Its matching source spans printed pp. 65–66 of
+  the *Anastasimatario Ioannou Protopsaltou* (1905), installed privately as
+  `ote-katilthes-tone2-source-1.png` and `ote-katilthes-tone2-source-2.png`,
+  because the apolytikion begins at the end of p. 65. Its review page must never reuse the
+  first-tone source pages 13–14. PNG/MusicXML derivatives still do not exist,
+  so it remains private and exposes the protected `.byzx` and embedded Neanes
+  technical player.
+- The first actual scan-to-score experiment is the separate private `draft`
+  `ote-katilthes-tone2-ocr-draft`: exact crops from pp. 65–66 are joined
+  before OCR, excluding the following Kathismata. Byzantine Chant OCR model
+  v0.0.4 yields a `.byzocr` (86 interpreted groups, 6 lines) and the official
+  Neanes OCR importer yields a `.byzx` (82 notes, 5 carried line breaks).
+  The neume OCR does not recognise lyrics; a separate local Greek Tesseract
+  pass supplies source-corrected text, temporarily attached to the successive
+  note groups line by line. That syllable-to-neume mapping must remain a
+  private draft until a psaltis checks it. The subsequent visual comparison
+  found systematic neume errors, so this is a failed experiment, not a
+  candidate score, a training example or a source for a glyph map. No claim
+  of musical correctness is permitted.
+  The external `needs_review` Neanes example remains an
+  independent comparator and was not used to create this draft.
+- A second, intentionally separate research path analyses born-digital PDF
+  layout before any transcription. `src/vector_pdf.py` and
+  `digital_scores/extract_vector_pdf.py` preserve each selected page's font,
+  embedded font instance/subset, rendered glyph id, supporting codepoint,
+  geometry and lyric text in a private JSON report. The pair `font instance +
+  glyph id`, not a potentially misleading Unicode CMap value or visible font
+  name, is the key for any font-specific mapping: the PDF can subset the same
+  named font differently on another page. They do
+  not raster-OCR, infer a Neanes note, create a `.byzx`, copy a source into
+  Kihem or make it publishable. A future font-code-to-Neanes map must be
+  explicit, tested and compatible with the source licence. Reports stay out
+  of Git and outside the public digital-score catalogue.
+- The optional second stage `write_neanes_glyph_suggestions` renders the
+  official Neanes font vocabulary and ranks only visual outline similarity
+  for each source `font instance + glyph id`. Its JSON rows are explicitly
+  `visual-candidate-only`: they do not resolve composite/contextual neumes,
+  lyrics or timing and can never directly generate a `.byzx`.
+  The first real comparison against both Neanes and Neanes Stathis Series on
+  the Iviron vector PDF page 12 produced only 0.51–0.70 top similarity, below
+  the conservative 0.82 `reviewable-shape-only` threshold. Treat those rows
+  as `insufficient-shape-evidence`, never as a font map.
+- `src/pdf_font_forensics.py` and
+  `digital_scores/inspect_embedded_fonts.py` provide a private feasibility
+  report before further work on a vector PDF. They inspect only the embedded
+  program/table metadata and PDF ToUnicode entries; font binaries are not
+  stored or served. For the Iviron vector PDF, the PSALTIRIOUBodoni,
+  isokratima3 and FTHOGOS2 subsets have anonymous glyph names and no `cmap`,
+  `GSUB` or `GPOS`; their PDF ToUnicode tables merely map CIDs to Greek text.
+  Therefore its embedded font data has no recoverable semantic music mapping.
+- Public PDFs demonstrably written with St Anthony's **EZ Byzantine Music Font
+  Package** are a better, separate path than anonymous embedded-font PDFs:
+  the complete official fonts retain the same PUA code and glyph-id inventory
+  as the PDF. `src/ez_font_mapping.py` and
+  `digital_scores/build_ez_mapping_template.py` create a private evidence
+  template keyed by `font instance + glyph id + PUA code`; every Neanes field
+  remains `unconfirmed` and the tool cannot write `.byzx`. This prevents a
+  precomposed EZ glyph, a supporting mark or a Word-macro layout instruction
+  from being treated as an independently timed Neanes note. Keep EZ sources,
+  fonts and templates out of Git and the public catalogue until the licence
+  and semantic mapping are checked.
+  The official EZ template and instructions give source semantics for a small
+  initial set (`1` Oligon, `!` Apostrophos, `@` Elaphron, `)` Hyporoe,
+  `S` Gorgon and specified Klasma/composite variants). These are attached as
+  `source_definition` evidence only; `neanes.status` remains `unconfirmed`
+  because attachment, timing and decomposition require the local score
+  context. The template also records the official EZ character-table family;
+  glyphs with no legacy keyboard key are treated as potential macro/secondary
+  insertions and never receive an inferred Neanes value.
+- The permitted next EZ stage is private, reviewer-confirmed phrase assembly:
+  `src/ez_neanes_draft.py` and
+  `digital_scores/build_ez_neanes_event_draft.py` turn a phrase plan into
+  Neanes-compatible `Note` event JSON only when every event has
+  `confirmed: true`, stable template anchors (`font instance + glyph id + PUA
+  code`), exactly one documented quantitative base and a separately anchored
+  gorgon/time/quality attachment. It fails closed on an unknown or mismatched
+  glyph and on precomposed EZ glyph decomposition. It deliberately does **not**
+  write a full `.byzx`, publish content, or claim a musical result is verified:
+  score construction, lyrics and visual/auditory Neanes review remain separate.
+- A subsequent private bridge, `src/neanes_byzx_bridge.py` and
+  `digital_scores/build_ez_neanes_byzx.py`, can turn that checked event draft
+  into a full `.byzx`. It requires an explicit local Neanes checkout and uses
+  Neanes' own `Score`/`SaveService` classes inside a short-lived Vitest worker,
+  then reopens the file as a technical validation. It never copies a generic
+  JSON skeleton, cannot accept a non-private or non-`needs_review` event
+  draft, and does not publish/register the result. An opening Martyria is
+  included only when the phrase plan separately confirms note, root sign and
+  scale; otherwise the file contains no inferred starting mode.
+- The direct legacy-Word bridge applies the same rule more strictly:
+  `src/ez_word_neanes_draft.py` permits `opening_martyria` only after a
+  reviewer marks it confirmed, supplies a non-empty visual `source_evidence`
+  reference, and supplies valid Neanes `note`, `rootSign`, and `scale`.
+  A formula collection heading is never evidence for a formula's exact
+  starting base.
+- The separate official EZ sample *Anasta O Theos* has a reviewer-confirmed
+  opening indication «Ἦχος βαρὺς · Γα», confirmed by the psaltis as «βαρύς
+  εκ του Γα διατονικός»: its private review candidate records
+  `note: Ga`, `rootSign: Varys`, `scale: Diatonic`. This is source-specific
+  and must never become a blanket rule for every member in grave mode; its
+  phrase itself remains unreviewed.
+- To reduce the reviewer's lookup work before phrase confirmation,
+  `src/ez_phrase_review.py` and
+  `digital_scores/build_ez_phrase_review_sheet.py` join the vector-PDF report
+  with the EZ evidence template into private, geometry-grouped notation lines.
+  Each occurrence retains its exact `source_anchor`, geometry, keyboard/table
+  category and documented source definition; nearby text is explicitly only a
+  candidate and is never assigned to a note. The sheet has empty phrase/event
+  review fields and cannot write `.byzx`. On the official public EZ sample it
+  identified 215 notation-glyph occurrences in 10 review lines; this is a
+  private organisation result, not a music transcription.
+- `src/ez_review_packet.py` and
+  `digital_scores/create_ez_line_review_packet.py` make the next human step
+  usable: given a review-line id and the permitted local PDF, they create a
+  private source crop, Markdown checklist and empty phrase-plan skeleton with
+  all anchors still unassigned. The initial public-EZ demonstration packet is
+  `/tmp/kihem-ez-pilot/reviews/anasta-o-theos-greek-line-1/` for
+  `page-1-line-7`, the Greek line beginning «Ἀνάστα ὁ Θεός…». It has no
+  musical events and must not be compiled until the reviewer provides them.
+- The reviewer of the first Greek line confirmed that the red EZ Special-II
+  glyphs above the melody are **isokratemata**, not missing ornamentation.
+  The documented key-row plus visual packet now map `N`/`U+F04E` to
+  `Ison.Ga` (Γ), `c`/`U+F063` to `Ison.Ni` (Ν) and `M`/`U+F04D` to
+  `Ison.Thi` (Δι). `?`/`U+F03F` is the Μ instruction: the human isokratis
+  stops ison and chants with the main singer. It is therefore `isonControl:
+  Pause`, never a Neanes pitch; confirmed controls are retained in a separate
+  `ison_controls` list in the private event draft, for a future continuous
+  software ison to pause. Neanes itself has no such continuous second voice.
+  Key `0` is now documented as the quantitative Neanes `Ison`. The review sheet
+  exposes every gorgon, time mark and isokratema as an attachment candidate
+  with nearest preceding/following **line positions** for reviewer selection,
+  rather than silently associating or dropping later gorgons.
+- The reviewer identified `z`/`U+F07A` of EZPsaltica as **βαρεία**: a modal,
+  non-timed sign placed before and energising the following note. Its source
+  definition maps to the Neanes boolean note property `vareia: true`; it is
+  shown as an attachment candidate to the following confirmed base and is
+  never emitted as an independent timed Neanes note.
+- `'/U+F027` of EZPsaltica is a visually confirmed **ίσον** variant in the
+  first private review packet. It is a quantitative `Ison`, not an attachment
+  or an isokratema; its earlier absence was simply because the initial EZ
+  source-definition table intentionally covered only a small documented set.
+- `:`/`U+F03A` of EZPsaltica is visually confirmed as the **απλή χρονική**:
+  Neanes `timeNeume: Hapli`, worth one time unit. It remains an attachment
+  candidate until a reviewer confirms the base note it belongs to; it is not
+  an independent note.
+- The public St Anthony Formula Word archive is available locally under the
+  private EZ pilot (`Formula1p.doc` … `Formula8p.doc` etc.). It is direct
+  Word source evidence for EZ character sequences, not a source copy of the
+  Greek `AnastaOTheos` PDF. The legacy `wvWare` route in `src/ez_word.py`
+  remains an ordered-PUA diagnostic only. The authoritative private import
+  route is now `digital_scores/extract_ez_word_runs.py`, backed by the local
+  Apache POI/HWPF helper in `digital_scores/word_importer/`: it reads each
+  Word `CharacterRun` and preserves the actual EZ font, so a PUA character is
+  source-font-confirmed rather than inferred. It still never emits `.byzx`:
+  layout attachments, timing and Neanes semantics require documented mapping
+  plus psaltis review. PDF is only visual comparison for this path.
+- A direct Word→Neanes bridge now exists in `src/ez_word_neanes_draft.py`
+  and `digital_scores/build_ez_word_neanes_event_draft.py`. It uses only
+  exact `word_occurrence + pua_codepoint` anchors from a POI font-run report;
+  every event requires `confirmed: true`, a named psaltis reviewer and one
+  documented quantitative EZ base. It rejects non-EZ runs, unsupported
+  decompositions and unanchored attachments. Its output is still an internal
+  `needs_score_and_auditory_review` event draft before the Neanes serializer
+  writes any private `.byzx`.
+- The direct-Word Formula1p pilot now has a second **private** `.byzx`
+  rendition, `formula1p-ez-word-varys-ga-diatonic-pilot`, for the same five
+  exact Word events (`Oligon → Ison → Apostrophos ×3`). It adds only the
+  separately confirmed opening Martyria `Ga / Varys / Diatonic`. The phrase
+  anchors come from `Formula1p.doc` run 3322; the evidence for the Martyria
+  comes separately from the visible `AnastaOTheos.pdf` heading and psaltis
+  confirmation, so it must never be presented as inferred from that Word
+  formula. The bridge writes this as a manual Neanes Martyria with
+  `note: Ga`, `rootSign: Varys`, `scale: Diatonic`, `auto: false` and a
+  retained `rootSignOverride`. This resets Neanes' analysis/playback state to
+  the supplied base. Its exact visual form remains subject to the psaltis'
+  check against the source; never infer visual acceptance from the serialized
+  fields alone.
+  A generic automatic Martyria on an otherwise empty staff starts at Pa and
+  is prohibited for this pilot. It carries no lyrics, remains
+  `needs_review`, and is restricted to the protected review player until a
+  second visual/auditory check.
+- The private Neanes player must version the **browser-side filename** as
+  well as the authenticated `.byzx` URL. Neanes persists documents by
+  filename; reusing `<score-id>.byzx` can retain an earlier tab and display
+  its Pa martyria after the asset has changed. `digital_score_playback` now
+  passes `<score-id>-<asset-mtime-ns>.byzx`, so every installed revision is
+  opened as a new document. The bridge's Neanes worker must reopen the saved
+  file and assert the explicit Martyria's `auto=false`, note, root sign and
+  scale, so a serializer regression cannot silently turn the initial note
+  back into Pa.
+- For that pilot, the title, tone, complete text, neumes and timing have been
+  visually checked against the Kihem *Anastasimatario Ioannou Protopsaltou*
+  (1905), printed pp. 13–14. This is documented in
+  `digital_scores/lithou-sfragisthentos-tone1-review.md`. The named reviewer
+  `vfilip` also completed the technical/audible Neanes-player check, which
+  makes the catalogued digital derivatives public; it does not turn the
+  external example into a scan-to-score conversion.
+- The official Neanes application has opened the pilot `.byzx` and produced
+  PNG and MusicXML derivatives. Its `verified` public catalog entry exposes
+  only `.byzx`, PNG and MusicXML; the source scans and review workspace stay
+  private. The derivatives describe the existing external Neanes document and
+  are never evidence of scan-to-score correctness.
+- `/digital-scores` renders a public HTML catalogue for browsers, while API
+  callers receive JSON. Each verified item has a public page at
+  `/digital-scores/<score-id>/` with the preview and only the public digital
+  derivatives; source scans never appear on that page. That page embeds the
+  local Neanes player, automatically loads only its verified `.byzx`, and
+  starts synthesis only when the visitor presses Neanes' ▶. The public Neanes
+  asset route rewrites its compiled review-base paths at delivery; it exposes
+  no review route, draft, source scan or arbitrary local file. The public
+  reader closes Neanes' `neume-selector` and `properties` Dockview panes after
+  loading. It also injects public-reader-only CSS that hides menus, editing
+  toolbars and document tabs, while retaining the central score, zoom and
+  playback/speed controls. The CSS directly hides the two pane-owning
+  `.dv-groupview:has(...)` columns as the robust fallback when Neanes' own
+  close-action cannot be invoked across the iframe; the script also directly
+  sets those group elements to `display: none`. Public score pages are served
+  with `Cache-Control: no-store` so mobile browsers cannot retain stale reader
+  wrappers. Once the page has mounted, the reader sets the Neanes zoom to fit
+  the available width and removes the canvas padding, so its empty left/right
+  canvas is converted into usable score space on desktop and mobile.
+- The private review workspace is `/review/digital-scores/<score-id>` and is
+  deliberately disabled unless both `KIHEM_REVIEW_USERNAME` and
+  `KIHEM_REVIEW_PASSWORD` exist. It uses HTTP Basic Auth, serves draft assets
+  only after that authentication, and writes human checklists/notes under
+  `KIHEM_DIGITAL_SCORES_REVIEW_DIR`; saving a note never switches a score to
+  `verified`. The pilot's two source images correspond to printed pp. 13–14.
+- The private workspace embeds an unmodified, local Neanes 0.5.55 web build
+  at `/review/digital-scores/<score-id>/playback`. Its Kihem wrapper fetches
+  the already authenticated `.byzx` on the same origin and programmatically
+  passes it to Neanes' normal browser file input; no score appears in a URL
+  or public route. The build lives outside Git in `KIHEM_NEANES_WEB_DIR`
+  (default `/var/lib/kihem/neanes-web`) and its `/review/neanes/app/` assets
+  require the same HTTP Basic protection. The wrapper, not Neanes, performs
+  auto-loading; retain Neanes GPL-3.0-only attribution and source provenance.
+  Playback is a technical synthesis, not an MP3 or a human chant recording,
+  and can never alone satisfy a human review requirement. The current pilot is
+  `verified` by `vfilip`: title, text, neumes and timing were visually checked,
+  and technical listening was completed in the embedded player.
+- A supervised reference-pair ledger is now the only permitted next step for
+  exploiting that confirmation. `src/reference_alignment.py` and
+  `digital_scores/create_reference_ledger.py` extract the ordered Neanes
+  points of a **verified** score into a private JSON file with empty,
+  human-confirmed `source_anchor` fields. It never reads the failed OCR draft
+  as training data, never writes a `.byzx`, and never treats visual similarity
+  as musical fact. Any future mapping remains edition-specific and needs
+  several independently confirmed pairs.
 
 ## Isokratis
 

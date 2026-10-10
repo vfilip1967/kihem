@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ score.incipit }} · ψηφιακή παρτιτούρα</title>
+  <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261008-digital-public">
+</head>
+<body class="review-body">
+  <header class="review-header public-score-header">
+    <p class="eyebrow">Kihem · επαληθευμένο ψηφιακό τεκμήριο</p>
+    <h1>{{ score.title }}</h1>
+    <p>{{ score.incipit }} · {{ score.tone_label }}</p>
+    <p><a href="{{ catalogue_url }}">← Όλες οι ψηφιακές παρτιτούρες</a></p>
+  </header>
+  <main class="review-main public-score-main">
+    <section class="public-score-card">
+      <p><strong>Ελεγκτής:</strong> {{ score.reviewed_by }}</p>
+      <p>{{ score.source_description }}</p>
+      {% if score.notes %}<p>{{ score.notes }}</p>{% endif %}
+      <p class="public-score-warning">Η προεπισκόπηση και το MusicXML παράγονται από το υπάρχον αρχείο Neanes. Δεν αποτελούν αυτόματη μεταγραφή της έντυπης σάρωσης του Kihem.</p>
+      <p class="review-downloads">
+        {% if asset_urls.preview %}<a href="{{ asset_urls.preview }}" target="_blank" rel="noopener">Πλήρης προεπισκόπηση</a>{% endif %}
+        {% if asset_urls.byzx %}<a href="{{ asset_urls.byzx }}">Neanes .byzx</a>{% endif %}
+        {% if asset_urls.musicxml %}<a href="{{ asset_urls.musicxml }}">MusicXML</a>{% endif %}
+      </p>
+    </section>
+    {% if asset_urls.preview %}
+      <figure class="review-score-figure public-score-figure">
+        <a href="{{ asset_urls.preview }}" target="_blank" rel="noopener"><img src="{{ asset_urls.preview }}" alt="Ψηφιακή παρτιτούρα Neanes για {{ score.incipit }}"></a>
+        <figcaption>Επιλέξτε την εικόνα για πλήρες μέγεθος.</figcaption>
+      </figure>
+    {% endif %}
+    {% if player_available %}
+      <section class="public-score-player">
+        <h2>Ακρόαση με Neanes</h2>
+        <p>Η παρτιτούρα φορτώνεται αυτόματα. Πάτησε το ▶ μέσα στο Neanes για να αρχίσει η συνθετική ακρόαση, χωρίς λήψη ή μεταφόρτωση αρχείου.</p>
+        <p id="neanes-load-status" class="playback-status" role="status">Φορτώνεται η παρτιτούρα στο Neanes…</p>
+        <button id="neanes-retry" class="quiet-button playback-retry" type="button" hidden>Επανάληψη φόρτωσης παρτιτούρας</button>
+        <iframe id="neanes-player" class="neanes-player" src="{{ neanes_url }}" title="Neanes player για {{ score.incipit }}" allow="autoplay"></iframe>
+      </section>
+    {% endif %}
+  </main>
+  {% if player_available %}
+  <script>
+    (() => {
+      const player = document.getElementById('neanes-player');
+      const status = document.getElementById('neanes-load-status');
+      const retry = document.getElementById('neanes-retry');
+      const scoreUrl = {{ score_url|tojson }};
+      const filename = {{ (score.score_id + '.byzx')|tojson }};
+      const neanesPath = new URL({{ neanes_url|tojson }}, window.location.origin).pathname;
+      let isLoading = false;
+      let isLoaded = false;
+
+      const waitForFileInput = async () => {
+        for (let attempt = 0; attempt < 200; attempt += 1) {
+          const input = player.contentDocument && player.contentDocument.querySelector('input[type="file"]');
+          if (input) return input;
+          await new Promise((resolve) => window.setTimeout(resolve, 100));
+        }
+        throw new Error('Δεν βρέθηκε ο επιλογέας αρχείου του Neanes.');
+      };
+
+      // The public reader has no edit panes.  Hiding their Dockview groups is
+      // not sufficient: Dockview still reserves their old 240px/320px widths.
+      // Flatten the center branch itself, then ask Neanes to apply its native
+      // "Page Width" zoom mode.  This gives the reclaimed space to the score
+      // on both desktop and phone screens.
+      const reclaimReaderWidth = () => {
+        const frameDocument = player.contentDocument;
+        const center = frameDocument && frameDocument.querySelector('.workspace-center-editor');
+        if (!center) return false;
+
+        let view = center.closest('.dv-view');
+        while (view) {
+          view.style.setProperty('left', '0px', 'important');
+          view.style.setProperty('width', '100%', 'important');
+          const container = view.parentElement;
+          const siblings = container && container.classList.contains('dv-view-container')
+            ? [...container.children].filter((element) => element.classList.contains('dv-view'))
+            : [];
+          if (siblings.length > 1) {
+            for (const sibling of siblings) {
+              if (sibling === view) continue;
+              sibling.style.setProperty('display', 'none', 'important');
+              sibling.style.setProperty('width', '0px', 'important');
+            }
+          }
+          view = container && container.closest('.dv-view');
+        }
+
+        // Dockview also writes a pixel width on its nested grid, so that
+        // explicit size must be reset separately from the surrounding view.
+        for (const grid of frameDocument.querySelectorAll('.dv-grid-view:has(.workspace-center-editor)')) {
+          grid.style.setProperty('width', '100%', 'important');
+        }
+        for (const sash of frameDocument.querySelectorAll('.dv-sash')) {
+          sash.style.setProperty('display', 'none', 'important');
+        }
+        return true;
+      };
+
+      const useNeanesPageWidth = async () => {
+        const frameDocument = player.contentDocument;
+        if (!frameDocument) return false;
+        for (let attempt = 0; attempt < 30; attempt += 1) {
+          const toggle = frameDocument.querySelector('button[aria-label="Show zoom options"]');
+          if (toggle) {
+            const existingOptions = frameDocument.querySelectorAll('[role="menuitemcheckbox"]');
+            if (existingOptions.length) {
+              existingOptions[0].click(); // Neanes' first zoom-fit option: Page Width.
+              return true;
+            }
+            toggle.click();
+          }
+          await new Promise((resolve) => window.setTimeout(resolve, 100));
+        }
+        return false;
+      };
+
+      const configureReaderWidth = async () => {
+        for (let attempt = 0; attempt < 30; attempt += 1) {
+          if (reclaimReaderWidth()) {
+            // Dockview applies its outer split reflow on the next frame. Run
+            // the inner-grid reset once more after that reflow, otherwise its
+            // native Page Width command can still see the former center width.
+            await new Promise((resolve) => window.setTimeout(resolve, 150));
+            reclaimReaderWidth();
+            if (await useNeanesPageWidth()) return;
+          }
+          await new Promise((resolve) => window.setTimeout(resolve, 100));
+        }
+      };
+
+      const applyReaderMode = () => {
+        const frameDocument = player.contentDocument;
+        if (!frameDocument || frameDocument.getElementById('kihem-neanes-reader-mode')) return;
+        const style = frameDocument.createElement('style');
+        style.id = 'kihem-neanes-reader-mode';
+        style.textContent = `
+          /* Kihem public reader: retain zoom and playback, remove editing UI. */
+          .chrome-menubar, .workspace-tab-container { display: none !important; }
+          .dv-groupview:has([data-pane-id="neume-selector"]),
+          .dv-groupview:has([data-pane-id="properties"]) { display: none !important; }
+          .main-toolbar { min-height: 0 !important; padding: 2px 4px !important; }
+          .toolbar-left { display: flex !important; flex: 0 0 auto !important; min-width: 0 !important; }
+          .toolbar-leading-group, .toolbar-aligned-group, .toolbar-zoom-adjacent-actions, .toolbar-rest { display: none !important; }
+          .toolbar-primary-group-zoom { display: flex !important; }
+          .toolbar-primary-group-zoom > :not(.zoom-control) { display: none !important; }
+          .toolbar-playback-section { flex: 0 1 auto !important; }
+          /* A reader has no use for the surrounding editor canvas. */
+          .page-background { padding: 0 !important; }
+        `;
+        frameDocument.head.append(style);
+      };
+
+      const loadScore = async () => {
+        if (isLoaded || isLoading) return;
+        try {
+          const frameLocation = player.contentWindow && player.contentWindow.location;
+          if (!frameLocation || frameLocation.pathname !== neanesPath) return;
+          isLoading = true;
+          retry.hidden = true;
+          status.textContent = 'Φορτώνεται η παρτιτούρα στο Neanes…';
+          status.classList.remove('ready', 'error');
+          const response = await fetch(scoreUrl, { credentials: 'same-origin', cache: 'no-store' });
+          if (!response.ok) throw new Error(`Δεν ήταν δυνατή η φόρτωση του αρχείου (${response.status}).`);
+          const input = await waitForFileInput();
+          applyReaderMode();
+          const transfer = new DataTransfer();
+          transfer.items.add(new File([await response.text()], filename, { type: 'application/json' }));
+          input.files = transfer.files;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+          await configureReaderWidth();
+          isLoaded = true;
+          status.textContent = 'Η παρτιτούρα φορτώθηκε. Πάτησε ▶ στο Neanes για ακρόαση.';
+          status.classList.add('ready');
+        } catch (error) {
+          status.textContent = `Η αυτόματη φόρτωση απέτυχε: ${error.message}`;
+          status.classList.add('error');
+          retry.hidden = false;
+        } finally {
+          isLoading = false;
+        }
+      };
+
+      player.addEventListener('load', () => { void loadScore(); });
+      retry.addEventListener('click', () => { void loadScore(); });
+      window.setTimeout(() => { void loadScore(); }, 0);
+      window.setTimeout(() => { void loadScore(); }, 500);
+      window.setTimeout(() => { void loadScore(); }, 1500);
+    })();
+  </script>
+  {% endif %}
+</body>
+</html>

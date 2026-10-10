@@ -297,6 +297,20 @@ PIECES: Final[dict[str, MusicPiece]] = {
             _region(93, 0.02, 0.77),
         ),
     ),
+    "tone2-great-doxology": MusicPiece(
+        "tone2-great-doxology",
+        "Μεγάλη Δοξολογία, ἦχος β΄ · Μανουὴλ Πρωτοψάλτου",
+        "Δόξα σοι τῷ δείξαντι τὸ φῶς",
+        (
+            # Printed pp. 93–97. «Ὁ Μακαρισμός» begins in the lower third
+            # of printed p. 97 and is deliberately excluded.
+            _region(95, 0.34),
+            _region(96),
+            _region(97),
+            _region(98),
+            _region(99, 0.02, 0.33),
+        ),
+    ),
     "tone3-ainoi": MusicPiece(
         "tone3-ainoi",
         "Αἶνοι · τὰ ὀκτὼ ἀναστάσιμα στιχηρά · ἦχος γ΄ · μέλος σύντομον",
@@ -681,7 +695,9 @@ _TONE_SOURCE_SPECS: Final[dict[int, tuple[str, str, str, str, str, int, tuple[in
         17,
         (1, 2, 3, 4),
         (10, 11),
-        (15, 16),
+        # The Sunday Koinonikon starts on p. 15 and its final «Ἀλληλούϊα»
+        # concludes on p. 17.  Do not truncate the musical phrase at p. 16.
+        (15, 16, 17),
     ),
     2: (
         "melodos-liturgy-tone-2",
@@ -977,6 +993,19 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         expected_reviewer_choice="slow_ainoi",
         insert_before=True,
     ),
+    # A feast Sunday can replace the Eothinon Doxastikon with the Doxastikon
+    # of the feast. The Resurrectional Ainoi still belong immediately before
+    # those feast Prosomoia (Holy Fathers, 11 October 2026).
+    AttachmentRule(
+        "orthros",
+        "Στιχηρὰ Προσόμοια τῶν Πατέρων.",
+        "tone2-ainoi",
+        weekly_tone=2,
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="slow_ainoi",
+        insert_before=True,
+    ),
     AttachmentRule(
         "orthros",
         "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
@@ -1154,6 +1183,15 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         # reconstructed local label rather than guessing from the weekday.
         required_text=("Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος α΄",),
         preceding_text="Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος α΄",
+    ),
+    AttachmentRule(
+        "orthros",
+        "αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.",
+        "tone2-great-doxology",
+        # This local selector takes precedence over the distinct plagal-sixth
+        # tone of the Holy-Fathers Doxastikon earlier in the Ainoi.
+        required_text=("Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος β΄",),
+        preceding_text="Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος β΄",
     ),
     # Compatibility for a shortened source extract which contains the
     # Doxology but not its following resurrectional dismissal hymn.
@@ -1415,9 +1453,13 @@ _ORTHROS_TONE_REGIONS: Final[dict[int, tuple[tuple[ScanRegion, ...], ...]]] = {
     ),
     2: (
         (_region(68, .42), _region(69), _region(70, .02, .72)),
-        (_region(73, .20), _region(74), _region(75, .02, .38)),
-        (_region(78, .22), _region(79), _region(80, .02, .34)),
-        (_region(82, .78), _region(83, .02, .82)),
+        # The Anavathmoi begin halfway down printed p. 69. Keep all three
+        # antiphons and stop before the Prokeimenon.
+        (_region(71, .56), _region(72), _region(73, .02, .70)),
+        # Ode 1 starts on printed p. 72 and ends just before Ode 3 on p. 73.
+        (_region(74, .24), _region(75, .02, .64)),
+        # Ode 3 begins at the foot of printed p. 73 and ends before Ode 5.
+        (_region(75, .64), _region(76, .02, .86)),
     ),
     3: (
         (_region(115, .36), _region(116), _region(117, .02, .72)),
@@ -1658,6 +1700,20 @@ for _tone, _context in _ORTHROS_TONE_CONTEXT.items():
     _ode_one_before = True
     _ode_three_anchor = "ΩΔΗ Γ΄ ΚΑΝΟΝΩΝ"
     _ode_three_before = True
+    _ode_one_match_number = 1
+    _ode_three_match_number = 1
+    _kathismata_anchor = "Καθίσματα Ἀναστάσιμα"
+    _kathismata_before = False
+    if _tone == 2:
+        # On the Holy-Fathers Sunday Melodos prints the two resurrectional
+        # Kathismata and then the Theotokion before the Evlogitaria. The score
+        # belongs after their final text, not below the initial heading.
+        _kathismata_anchor = "τῶ λαῶ σου παράσχου τὸ μέγα ἔλεος."
+        # Each resurrectional Ode is followed by the Fathers' Canon. Put the
+        # score at that boundary, after the Ode's complete text.
+        _ode_one_anchor = "Ὁ Κανὼν τῶν Ἁγίων Πατέρων."
+        _ode_three_anchor = "Ὁ Κανὼν τῶν Ἁγίων Πατέρων."
+        _ode_three_match_number = 2
     if _tone == 8:
         # In the plagal-fourth Sunday source, Melodos puts the full
         # resurrectional first ode before the feast-day Canon.  Attach the
@@ -1674,10 +1730,13 @@ for _tone, _context in _ORTHROS_TONE_CONTEXT.items():
         (
             AttachmentRule(
                 "orthros",
-                "Ἐν συνεχεία ψάλλονται τά Ἀναστάσιμα εὐλογητάρια.",
+                _kathismata_anchor,
                 f"tone{_tone}-kathismata",
                 weekly_tone=_tone,
-                insert_before=True,
+                # Use the completed matching text. Tone 2 has a dedicated
+                # final-text boundary above; other tones retain their heading.
+                required_text=("Ἐν συνεχεία ψάλλονται τά Ἀναστάσιμα εὐλογητάρια.",),
+                insert_before=_kathismata_before,
             ),
             AttachmentRule(
                 "orthros",
@@ -1696,6 +1755,7 @@ for _tone, _context in _ORTHROS_TONE_CONTEXT.items():
                 f"tone{_tone}-canon-ode-1",
                 weekly_tone=_tone,
                 required_text=("Κανὼν Ἀναστάσιμος",),
+                match_number=_ode_one_match_number,
                 insert_before=_ode_one_before,
             ),
             AttachmentRule(
@@ -1704,6 +1764,7 @@ for _tone, _context in _ORTHROS_TONE_CONTEXT.items():
                 f"tone{_tone}-canon-ode-3",
                 weekly_tone=_tone,
                 required_text=("Κανὼν Ἀναστάσιμος",),
+                match_number=_ode_three_match_number,
                 insert_before=_ode_three_before,
             ),
         )

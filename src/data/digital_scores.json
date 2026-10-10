@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "scores": [
+    {
+      "id": "lithou-sfragisthentos-tone1",
+      "title": "Ἀναστάσιμον Ἀπολυτίκιον · ἦχος α΄",
+      "incipit": "Τοῦ λίθου σφραγισθέντος",
+      "tone_label": "Ἦχος α΄",
+      "source_description": "Επίσημο ελληνικό δείγμα Neanes · εισαγωγή μορφής για το πιλοτικό εργαστήριο Kihem.",
+      "source_reference": "Ἀναστασιματάριον Ἰωάννου Πρωτοψάλτου (1905) · έντυπες σελ. 13–14",
+      "source_url": "https://github.com/neanes/neanes/blob/master/examples/Greek%20-%20Resurrectional%20Apolytikion%20-%20First%20Mode.byzx",
+      "transcription_by": "Neanes project · εξωτερικό δείγμα",
+      "review_state": "verified",
+      "reviewed_by": "vfilip",
+      "notes": "Το αρχείο είναι ελληνική ψηφιακή παρτιτούρα α΄ ήχου με 110 μουσικές θέσεις. Το πλήρες λεκτικό, ο τίτλος, τα νεύματα και ο χρόνος ελέγχθηκαν οπτικά έναντι του Αναστασιματαρίου Ιωάννου Πρωτοψάλτου (1905), έντυπες σελ. 13–14. Ο ονομασμένος ελεγκτής vfilip ολοκλήρωσε και τον τεχνικό/ακουστικό έλεγχο στον ενσωματωμένο Neanes player. Η προεπισκόπηση και το MusicXML εξήχθησαν από το ίδιο το Neanes. Το τεκμήριο παραμένει εξωτερικό δείγμα Neanes και όχι αυτόματη μεταγραφή της σάρωσης του Kihem.",
+      "byzx_filename": "lithou-sfragisthentos-tone1.byzx",
+      "musicxml_filename": "lithou-sfragisthentos-tone1.musicxml",
+      "preview_filename": "lithou-sfragisthentos-tone1-preview.png",
+      "source_scan_filenames": [
+        "lithou-sfragisthentos-tone1-source-1.png",
+        "lithou-sfragisthentos-tone1-source-2.png"
+      ]
+    },
+    {
+      "id": "ote-katilthes-tone2",
+      "title": "Ἀναστάσιμον Ἀπολυτίκιον · ἦχος β΄",
+      "incipit": "Ὅτε κατῆλθες πρὸς τὸν θάνατον",
+      "tone_label": "Ἦχος β΄",
+      "source_description": "Επίσημο ελληνικό δείγμα Neanes · δεύτερο ιδιωτικό δελτίο ελέγχου για το πιλοτικό εργαστήριο Kihem.",
+      "source_reference": "Ἀναστασιματάριον Ἰωάννου Πρωτοψάλτου (1905) · έντυπες σελ. 65–66",
+      "source_url": "https://github.com/neanes/neanes/blob/ecd4bee1fa91ece1c0d05ca5f21e6f3652263baf/examples/Greek%20-%20Resurrectional%20Apolytikion%20-%20Second%20Mode.byzx",
+      "transcription_by": "Neanes project · εξωτερικό δείγμα",
+      "review_state": "needs_review",
+      "notes": "Εισήχθη από το επίσημο ελληνικό παράδειγμα Neanes ως υποψήφιο δεύτερο τεκμήριο. Οι πλήρεις έντυπες σελ. 65–66 εγκαταστάθηκαν στον ιδιωτικό χώρο μόνο για οπτική αντιπαραβολή, επειδή το Απολυτίκιο αρχίζει στο τέλος της 65 και συνεχίζει στην 66. Δεν έχει ακόμη ολοκληρωθεί έλεγχος τίτλου, λεκτικού, νευμάτων και χρόνου ούτε τεχνικός/ακουστικός έλεγχος από ονομασμένο ψάλτη· δεν δημοσιεύεται.",
+      "byzx_filename": "ote-katilthes-tone2.byzx",
+      "source_scan_filenames": [
+        "ote-katilthes-tone2-source-1.png",
+        "ote-katilthes-tone2-source-2.png"
+      ]
+    },
+    {
+      "id": "ote-katilthes-tone2-ocr-draft",
+      "title": "Ἀναστάσιμον Ἀπολυτίκιον · ἦχος β΄ · πρόχειρο OCR",
+      "incipit": "Ὅτε κατῆλθες πρὸς τὸν θάνατον",
+      "tone_label": "Ἦχος β΄",
+      "source_description": "Πρώτη μηχανική αναγνώριση νευμάτων με το Byzantine Chant OCR v0.0.4, χωριστή ελληνική OCR λεκτικού και εισαγωγή στο Neanes.",
+      "source_reference": "Ἀναστασιματάριον Ἰωάννου Πρωτοψάλτου (1905) · έντυπες σελ. 65–66 · ενιαία περικοπή μόνο του Απολυτικίου",
+      "transcription_by": "Kihem OCR pipeline · Byzantine Chant OCR v0.0.4 / Tesseract Ελληνικά / Neanes importer",
+      "review_state": "draft",
+      "notes": "Η OCR ανάλυση της ενιαίας, καθαρής περικοπής αναγνώρισε 86 ομάδες και παρήγαγε 82 μουσικές θέσεις, με 5 ανιχνευμένες αλλαγές γραμμής. Το πλήρες λεκτικό ανακτήθηκε χωριστά με ελληνική OCR, διορθώθηκε έναντι της σάρωσης και εισήχθη στις μουσικές θέσεις με προσωρινή αντιστοίχιση ανά γραμμή. Απαιτείται ψαλτικός έλεγχος κάθε συλλαβής και νεύματος. Το αρχείο είναι αποκλειστικά τεχνικό πρόχειρο και δεν δημοσιεύεται.",
+      "byzx_filename": "ote-katilthes-tone2-ocr-draft.byzx",
+      "ocr_filename": "ote-katilthes-tone2-ocr.byzocr",
+      "source_scan_filenames": [
+        "ote-katilthes-tone2-ocr-draft-source-1.png",
+        "ote-katilthes-tone2-ocr-draft-source-2.png"
+      ]
+    },
+    {
+      "id": "formula1p-ez-word-short-pilot",
+      "title": "Σύντομη φόρμουλα EZ Word · τεχνικό pilot",
+      "incipit": "Ὀλίγον · Ἴσον · Ἀπόστροφος ×3",
+      "tone_label": "Δεν δηλώνεται μαρτυρία/ήχος στην απομονωμένη φόρμουλα",
+      "source_description": "Άμεση, ιδιωτική εισαγωγή μιας μικρής συνεχόμενης φόρμουλας από το Formula1p.doc της συλλογής EZ της Μονής Αγίου Αντωνίου.",
+      "source_reference": "Formula1p.doc · Word run 3322 · PUA εμφανίσεις 2395–2402 · χωρίς λεκτικό ή μαρτυρία",
+      "transcription_by": "Kihem Apache POI/HWPF → επιβεβαιωμένα EZ symbols → Neanes serializer",
+      "review_state": "needs_review",
+      "notes": "Αυστηρά τεχνικό pilot οπτικής/ακουστικής εισαγωγής: περιέχει μόνο πέντε ποσοτικά νεύματα που καταγράφονται συνεχόμενα στο Word. Δεν είναι ύμνος, δεν αποδίδει λεκτικό, ήχο, μαρτυρία ή πλήρη μουσική φράση και δεν δημοσιεύεται.",
+      "byzx_filename": "formula1p-ez-word-short-pilot.byzx"
+    },
+    {
+      "id": "formula1p-ez-word-varys-ga-diatonic-pilot",
+      "title": "Σύντομη φόρμουλα EZ Word · βαρύς εκ του Γα · ιδιωτικό pilot",
+      "incipit": "Ὀλίγον · Ἴσον · Ἀπόστροφος ×3",
+      "tone_label": "Βαρύς εκ του Γα · διατονικός",
+      "source_description": "Άμεση, ιδιωτική εισαγωγή της ίδιας μικρής συνεχόμενης φόρμουλας από το Formula1p.doc. Η αρχική μαρτυρία καταχωρίστηκε χωριστά, μόνο μετά από επιβεβαίωση ψάλτη.",
+      "source_reference": "Φόρμουλα: Formula1p.doc · Word run 3322 · PUA εμφανίσεις 2395–2402. Μαρτυρία: AnastaOTheos.pdf, σελ. 1, ορατή επικεφαλίδα «Ἦχος βαρὺς · Γα» · ψαλτική επιβεβαίωση «βαρύς εκ του Γα διατονικός».",
+      "transcription_by": "Kihem Apache POI/HWPF → επιβεβαιωμένα EZ symbols → Neanes serializer",
+      "review_state": "needs_review",
+      "notes": "Ιδιωτικό τεχνικό pilot. Η αρχική μαρτυρία Γα / βαρύς / διατονικός τεκμηριώνεται από χωριστή επιβεβαιωμένη πηγή και δεν συνάγεται από τον Word run. Η ακολουθία των πέντε ποσοτικών νευμάτων αντιγράφεται μόνο από τις συγκεκριμένες Word PUA εμφανίσεις. Δεν περιλαμβάνει λεκτικό ή πλήρη μουσική φράση και απαιτεί νέο οπτικό και ακουστικό έλεγχο· δεν δημοσιεύεται.",
+      "byzx_filename": "formula1p-ez-word-varys-ga-diatonic-pilot.byzx"
+    }
+  ]
+}
