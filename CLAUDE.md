@@ -25,8 +25,9 @@ feature or an implementation decision changes.
   `formula1p-ez-word-varys-ga-diatonic-pilot`: five confirmed events
   `Oligon → Ison → Apostrophos ×3`, with a separately confirmed opening
   `Ga / Nana / Diatonic` (the two small η below the Γ, glyph U+E154). It is not
-  a complete chant and remains `needs_review`. The user confirmed the visible
-  initial martyria against the source; auditory review is still outstanding.
+  a complete chant. It is `verified` by the named reviewer `vfilip` (visual and
+  auditory checks) and is published in the public catalogue as a short technical
+  formula, not a complete chant.
 - Its protected player is
   `/kihem/review/digital-scores/formula1p-ez-word-varys-ga-diatonic-pilot/playback`.
   Earlier `Varys` (wavy dash) and `DeltaDotted` (dotted) renderings were
