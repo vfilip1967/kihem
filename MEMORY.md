@@ -457,6 +457,29 @@ This file records only durable implementation decisions.
   as training data, never writes a `.byzx`, and never treats visual similarity
   as musical fact. Any future mapping remains edition-specific and needs
   several independently confirmed pairs.
+- A second private, **verified** score `ananas-line7-pdf-private-draft` covers
+  line 7 of page 1 of the public `AnastaOTheos.pdf` sample (16 events, `Ga /
+  Nana / Diatonic`, text, isokrata Γ/Ν/Δ and the release Μ). It was confirmed
+  visually and auditorily by `vfilip`, and is published without PNG/MusicXML.
+  Lessons from building it, which are durable:
+  - Neanes accepts only its own enum values. The gorgon is `Gorgon_Top` or
+    `Gorgon_Bottom`; the plain `Gorgon` makes the whole document fail to load
+    and the player shows an empty "Title" staff. Klasma is `Klasma_Top` or
+    `Klasma_Bottom`; the klasma under a `PetastiPlusApostrophos` must be
+    `Klasma_Bottom`, and the top form was not drawn there.
+  - Isokrata are note attributes: `ison` = `Ison.Ga`, `Ison.Ni`, `Ison.Thi`;
+    the release Μ is `Ison.Unison` on the note where the chanter joins the
+    main reader. Pauses have no bridge path yet.
+  - A sign written before a note belongs to that following note, except where
+    the psaltis places it otherwise. The bridge only reads quantitative notes,
+    their attachment fields and `lyrics`; the timing rules (gorgon halves the
+    next note, hapli extends the previous one) are Neanes' own and must not be
+    reimplemented in Kihem.
+  - A Neanes note holds one `timeNeume`. Two time signs on the same note cannot
+    both be represented, so the psaltis decides which note carries the klasma.
+  - When the player shows "Title" and "Ἦχος · Πα" on an empty staff, the file
+    did not load. Check the served JSON first; the title and first `Martyria`
+    tell whether the current version is being served.
 
 ## Isokratis
 
