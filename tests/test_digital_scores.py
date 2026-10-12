@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from src.digital_scores import DigitalScoreCatalog, DigitalScoreReviewStore
+from src.digital_scores import DigitalScoreCatalog, DigitalScoreReviewStore, parallage_label
 
 
 class DigitalScoreCatalogTests(unittest.TestCase):
@@ -52,6 +52,28 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         self.assertEqual(catalog.asset_path(score, "byzx"), self.storage / "lithou-sfragisthentos-tone1.byzx")
         self.assertEqual(catalog.asset_path(score, "ocr"), self.storage / "lithou-sfragisthentos-tone1.byzocr")
         self.assertIsNone(catalog.asset_path(score, "musicxml"))
+
+    def test_parallage_labels_name_the_note_and_its_octave(self):
+        self.assertEqual(parallage_label("Pa"), "Πα")
+        self.assertEqual(parallage_label("Thi"), "Δι")
+        self.assertEqual(parallage_label("ZoLow"), "Ζω κάτω")
+        self.assertEqual(parallage_label("KeHigh"), "Κε άνω")
+        self.assertIsNone(parallage_label("Unknown"))
+
+    def test_note_labels_come_from_the_optional_private_sidecar(self):
+        self.write_catalog([self.score()])
+        (self.storage / "lithou-sfragisthentos-tone1.byzx").write_text("{}", encoding="utf-8")
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        score = catalog.get("lithou-sfragisthentos-tone1")
+        self.assertIsNone(catalog.note_labels(score))
+        sidecar = self.storage / "lithou-sfragisthentos-tone1.notes.json"
+        sidecar.write_text(
+            json.dumps({"schema": 1, "elements": {"1": ["Pa"], "2": ["Ni", "Pa"], "x": ["Pa"], "3": ["Bogus"]}}),
+            encoding="utf-8",
+        )
+        self.assertEqual(catalog.note_labels(score), {"1": ["Πα"], "2": ["Νη", "Πα"]})
+        sidecar.write_text("not json", encoding="utf-8")
+        self.assertIsNone(catalog.note_labels(score))
 
     def test_source_scan_paths_are_catalogued_and_cannot_escape_storage(self):
         self.write_catalog([self.score()])

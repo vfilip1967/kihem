@@ -19,6 +19,28 @@ from typing import Final, Literal, Mapping
 REVIEW_STATES: Final[frozenset[str]] = frozenset({"draft", "needs_review", "verified"})
 ReviewState = Literal["draft", "needs_review", "verified"]
 
+# Parallage (note names) shown while a score plays.  The raw values are
+# Neanes ``ScaleNote`` names recorded by ``write_note_names``.
+_PARALLAGE_NAMES: Final[Mapping[str, str]] = {
+    "Zo": "Ζω",
+    "Ni": "Νη",
+    "Pa": "Πα",
+    "Vou": "Βου",
+    "Ga": "Γα",
+    "Thi": "Δι",
+    "Ke": "Κε",
+}
+
+
+def parallage_label(scale_note: str) -> str | None:
+    """Return the Greek note name for a Neanes ScaleNote, with its octave."""
+
+    for suffix, octave in (("Low", " κάτω"), ("High", " άνω"), ("", "")):
+        base = scale_note[: -len(suffix)] if suffix else scale_note
+        if (not suffix or scale_note.endswith(suffix)) and base in _PARALLAGE_NAMES:
+            return _PARALLAGE_NAMES[base] + octave
+    return None
+
 
 @dataclass(frozen=True)
 class DigitalScore:
@@ -94,6 +116,33 @@ class DigitalScoreCatalog:
         except ValueError:
             return None
         return candidate if candidate.is_file() else None
+
+    def note_labels(self, score: DigitalScore) -> dict[str, list[str]] | None:
+        """Return ``{element index: [Greek note names]}`` from the private sidecar.
+
+        The sidecar ``<score>.notes.json`` is optional; without it the player
+        simply shows no parallage.  Unknown or malformed data is ignored.
+        """
+
+        byzx = self.asset_path(score, "byzx")
+        if byzx is None:
+            return None
+        sidecar = byzx.with_suffix(".notes.json")
+        try:
+            payload = json.loads(sidecar.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+        elements = payload.get("elements") if isinstance(payload, dict) and payload.get("schema") == 1 else None
+        if not isinstance(elements, dict):
+            return None
+        labels: dict[str, list[str]] = {}
+        for index, notes in elements.items():
+            if not (isinstance(index, str) and index.isdigit() and isinstance(notes, list)):
+                continue
+            names = [name for note in notes if isinstance(note, str) and (name := parallage_label(note))]
+            if names:
+                labels[index] = names
+        return labels or None
 
     def source_scan_path(self, score: DigitalScore, position: int) -> Path | None:
         """Return one reviewed-source image without permitting path traversal."""

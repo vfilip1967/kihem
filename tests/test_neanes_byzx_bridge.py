@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from src.neanes_byzx_bridge import NeanesByzxBridgeError, _typescript_worker, write_private_byzx
+from src.neanes_byzx_bridge import NeanesByzxBridgeError, _note_names_worker, _typescript_worker, write_note_names, write_private_byzx
 
 
 def event_draft():
@@ -36,3 +36,17 @@ class NeanesByzxBridgeTests(unittest.TestCase):
         self.assertIn("expect(reopenedMartyria!.auto).toBe(false)", worker)
         self.assertIn("expect(reopenedMartyria!.note).toBe(martyria.note)", worker)
         self.assertNotIn("ModeKeyElement.createFromTemplate", worker)
+
+
+class NoteNamesWorkerTests(unittest.TestCase):
+    def test_worker_records_neanes_own_scale_notes_per_element(self):
+        worker = _note_names_worker(Path("/tmp/score.byzx"), Path("/tmp/score.notes.json"))
+        self.assertIn("class RecordingPlaybackService extends PlaybackService", worker)
+        self.assertIn("args[0].physicalNote", worker)
+        self.assertIn("event.elementIndex", worker)
+        self.assertIn("/tmp/score.notes.json", worker)
+
+    def test_requires_a_real_byzx_and_neanes_checkout(self):
+        with self.assertRaises(NeanesByzxBridgeError):
+            write_note_names("/nonexistent/score.byzx", output_path="/tmp/x.json", neanes_source="/nonexistent")
+

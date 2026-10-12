@@ -321,6 +321,7 @@ def create_app(config: dict | None = None) -> Flask:
                 player_available=player_available,
                 neanes_url=f"{base_url}/digital-scores/neanes/app/",
                 score_url=asset_urls.get("byzx"),
+                note_labels=digital_score_catalog.note_labels(score),
             ),
             mimetype="text/html",
         )
@@ -479,6 +480,7 @@ def create_app(config: dict | None = None) -> Flask:
             # a new private draft look like the old tab, even after the score
             # URL is cache-busted.  Tie it to the asset version as well.
             score_filename=f"{score.score_id}-{asset_version}.byzx",
+            note_labels=digital_score_catalog.note_labels(score),
         ))
         response.headers["Cache-Control"] = "no-store, max-age=0"
         return response

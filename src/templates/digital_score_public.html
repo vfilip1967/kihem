@@ -37,6 +37,32 @@
         <p>Η παρτιτούρα φορτώνεται αυτόματα. Πάτησε το ▶ μέσα στο Neanes για να αρχίσει η συνθετική ακρόαση, χωρίς λήψη ή μεταφόρτωση αρχείου.</p>
         <p id="neanes-load-status" class="playback-status" role="status">Φορτώνεται η παρτιτούρα στο Neanes…</p>
         <button id="neanes-retry" class="quiet-button playback-retry" type="button" hidden>Επανάληψη φόρτωσης παρτιτούρας</button>
+        <button id="ison-toggle" class="quiet-button ison-toggle" type="button" aria-pressed="true" title="Άκουσμα με ή χωρίς ισοκράτημα">Ισοκράτημα: ναι</button>
+        <script>
+          /* The ison drone is a separate Neanes synth.  A melody note on the drone's
+             pitch merges with it, so students can switch the drone off.  Neanes reads
+             its saved audio options only when it starts; the player is same-origin, so
+             the choice is written to its storage before the iframe loads. */
+          (() => {
+            const key = 'kihem-ison-drone';
+            let off = false;
+            try {
+              off = localStorage.getItem(key) === 'off';
+              const saved = JSON.parse(localStorage.getItem('audioOptionsDefault') || '{}') || {};
+              if (off) saved.volumeIson = null;
+              else if (typeof saved.volumeIson !== 'number') saved.volumeIson = -8;
+              localStorage.setItem('audioOptionsDefault', JSON.stringify(saved));
+            } catch (error) { /* storage unavailable: Neanes keeps its defaults */ }
+            const button = document.getElementById('ison-toggle');
+            if (!button) return;
+            button.textContent = off ? 'Ισοκράτημα: όχι' : 'Ισοκράτημα: ναι';
+            button.setAttribute('aria-pressed', off ? 'false' : 'true');
+            button.addEventListener('click', () => {
+              try { localStorage.setItem(key, off ? 'on' : 'off'); } catch (error) { return; }
+              window.location.reload();
+            });
+          })();
+        </script>
         <iframe id="neanes-player" class="neanes-player" src="{{ neanes_url }}" title="Neanes player για {{ score.incipit }}" allow="autoplay"></iframe>
       </section>
     {% endif %}
@@ -133,6 +159,53 @@
         }
       };
 
+
+      const noteLabels = {{ note_labels|tojson }};
+      let parallageObserver = null;
+      const watchParallage = () => {
+        const frameDocument = player.contentDocument;
+        if (!noteLabels || !frameDocument || !frameDocument.body || parallageObserver) return;
+        // A small tag floats just above the neume being played, so the eye
+        // follows one point.  It lives in the frame as a fixed overlay and is
+        // repositioned from the live bounding box, so scrolling and zoom work.
+        const tipStyle = frameDocument.createElement('style');
+        tipStyle.textContent = `
+          #kihem-parallage-tip {
+            position: fixed; z-index: 2147483000; pointer-events: none; display: none;
+            transform: translateX(-50%); padding: 0 .5em; line-height: 1.5;
+            font: 600 .95rem/1.5 "DejaVu Sans", system-ui, sans-serif; color: #5b3a06;
+            background: rgba(255, 247, 224, .96); border: 1px solid #d9822b; border-radius: 999px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.18); white-space: nowrap;
+          }
+        `;
+        frameDocument.head.append(tipStyle);
+        const tip = frameDocument.createElement('div');
+        tip.id = 'kihem-parallage-tip';
+        tip.setAttribute('aria-live', 'polite');
+        frameDocument.body.append(tip);
+        let lastNames = '';
+        let frameRequest = 0;
+        const place = () => {
+          frameRequest = 0;
+          const playing = frameDocument.querySelector('.audio-selected');
+          const box = playing && playing.closest('.element-box');
+          if (!box) { tip.style.display = 'none'; return; }
+          const index = Array.from(frameDocument.querySelectorAll('.element-box')).indexOf(box);
+          const names = noteLabels[String(index)];
+          if (!names) { tip.style.display = 'none'; return; }
+          const text = names.join(' → ');
+          if (text !== lastNames) { tip.textContent = text; lastNames = text; }
+          const rect = playing.getBoundingClientRect();
+          tip.style.display = 'block';
+          tip.style.left = `${rect.left + rect.width / 2}px`;
+          tip.style.top = `${Math.max(2, rect.top - tip.offsetHeight - 4)}px`;
+          frameRequest = frameDocument.defaultView.requestAnimationFrame(place);
+        };
+        const kick = () => { if (!frameRequest) frameRequest = frameDocument.defaultView.requestAnimationFrame(place); };
+        parallageObserver = new MutationObserver(kick);
+        parallageObserver.observe(frameDocument.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+      };
+
       const applyReaderMode = () => {
         const frameDocument = player.contentDocument;
         if (!frameDocument || frameDocument.getElementById('kihem-neanes-reader-mode')) return;
@@ -151,6 +224,12 @@
           .toolbar-playback-section { flex: 0 1 auto !important; }
           /* A reader has no use for the surrounding editor canvas. */
           .page-background { padding: 0 !important; }
+          /* Make the note being played easy to follow. */
+          .neume-box .audio-selected {
+            background-color: rgba(255, 196, 0, 0.55) !important;
+            outline: 2px solid #d9822b !important;
+            border-radius: 4px !important;
+          }
         `;
         frameDocument.head.append(style);
       };
@@ -168,6 +247,7 @@
           if (!response.ok) throw new Error(`Δεν ήταν δυνατή η φόρτωση του αρχείου (${response.status}).`);
           const input = await waitForFileInput();
           applyReaderMode();
+          watchParallage();
           const transfer = new DataTransfer();
           transfer.items.add(new File([await response.text()], filename, { type: 'application/json' }));
           input.files = transfer.files;

@@ -95,6 +95,21 @@
         "ananas-line7-source-1.png"
       ],
       "reviewed_by": "vfilip"
+    },
+    {
+      "id": "papline-cherubikon-lambadarios-line1-private-draft",
+      "title": "Χερουβικό Πέτρου Λαμπαδαρίου ήχος α΄ · γραμμή 1 · ιδιωτικό αυτόματο draft",
+      "incipit": "Οἱ τὰ Χερουβὶμ · γραμμή 1",
+      "tone_label": "Ἦχος α΄ · Πα · διατονικός",
+      "source_description": "Γραμμή 1 της σελίδας 1 του χερουβικού του Πέτρου Λαμπαδαρίου από τη συλλογή Χερουβικών (papline.gr). Ιδιωτική έρευνα αυτόματης μετατροπής γραμματοσειρών BZ → Neanes· δεν έχει ζητηθεί ή δοθεί άδεια δημοσίευσης.",
+      "source_reference": "papline.gr, Χερουβικά (A4), σελ. 1 συλλογής, γραμμή 1.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (ιδιωτικό draft)",
+      "review_state": "needs_review",
+      "notes": "Αυτόματο draft 15 γεγονότων. Δεν έχει επιβεβαιωθεί ψαλτικά και δεν επιτρέπεται δημοσίευση χωρίς άδεια του κατόχου του υλικού.",
+      "byzx_filename": "papline-cherub-p1-l1.byzx",
+      "source_scan_filenames": [
+        "papline-cherub-p1-l1-source.png"
+      ]
     }
   ]
 }

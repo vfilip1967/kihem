@@ -162,3 +162,106 @@ def write_private_byzx(
     if not destination.is_file() or destination.stat().st_size == 0:
         raise NeanesByzxBridgeError("Το Neanes ολοκλήρωσε χωρίς να δημιουργήσει .byzx.")
     return destination
+
+
+def _note_names_worker(byzx_path: Path, output_path: Path) -> str:
+    """Return a one-test Neanes worker that records each played ScaleNote.
+
+    Neanes' own ``PlaybackService`` decides which scale note every playback
+    event sounds.  Recording it per element gives the parallage (the note names
+    Πα, Βου, Γα ...) without re-implementing Neanes' analysis in Kihem.
+    """
+
+    source = json.dumps(str(byzx_path))
+    output = json.dumps(str(output_path))
+    return f"""import {{ readFileSync, writeFileSync }} from 'node:fs';
+
+import {{ PlaybackService }} from '@/services/audio/PlaybackService';
+import {{ SaveService }} from '@/services/SaveService';
+
+(globalThis as {{ APP_VERSION?: string }}).APP_VERSION = 'kihem-note-names';
+
+class RecordingPlaybackService extends PlaybackService {{
+  public played: string[] = [];
+
+  handleNoteAtom(...args: Parameters<PlaybackService['handleNoteAtom']>) {{
+    super.handleNoteAtom(...args);
+    this.played.push(args[0].physicalNote);
+  }}
+}}
+
+describe('Kihem note names', () => {{
+  it('records the scale note of every played event', () => {{
+    const score = SaveService.LoadScoreFromJson(JSON.parse(readFileSync({source}, 'utf8')));
+    const elements = score.staff.elements;
+    elements.forEach((element, index) => {{
+      (element as {{ index?: number }}).index = index;
+    }});
+    const service = new RecordingPlaybackService();
+    const events = service.computePlaybackSequence(
+      elements,
+      {{
+        useLegetos: false, useDefaultAttractionZo: true, frequencyDi: 196, speed: 1,
+        diatonicIntervals: [12, 10, 8], hardChromaticIntervals: [6, 20, 4],
+        softChromaticIntervals: [8, 14, 8], legetosIntervals: [8, 10, 12],
+        zygosIntervals: [18, 4, 16, 4], zygosLegetosIntervals: [18, 4, 20, 4],
+        spathiIntervals: [20, 4, 4, 14], klitonIntervals: [14, 12, 4],
+        defaultAttractionZoMoria: -4, defaultAttractionKeMoria: 5,
+        volumeIson: -4, volumeMelody: 0, alterationMultipliers: [0.5, 0.25, 0.75],
+        alterationMoriaMap: {{}},
+      }},
+      false,
+    );
+    const noteEvents = events.filter((event) => event.type === 'note');
+    expect(noteEvents).toHaveLength(service.played.length);
+    const byElement: Record<string, string[]> = {{}};
+    noteEvents.forEach((event, position) => {{
+      (byElement[String(event.elementIndex)] ??= []).push(service.played[position]);
+    }});
+    writeFileSync({output}, JSON.stringify({{ schema: 1, elements: byElement }}, null, 2) + '\\n', 'utf8');
+  }});
+}});
+"""
+
+
+def write_note_names(
+    byzx_path: str | Path,
+    *,
+    output_path: str | Path,
+    neanes_source: str | Path,
+) -> Path:
+    """Write ``{elementIndex: [ScaleNote, ...]}`` for a ``.byzx`` via Neanes."""
+
+    source_root = Path(neanes_source).resolve()
+    if not (source_root / "package.json").is_file() or not (source_root / "vitest.config.mts").is_file():
+        raise NeanesByzxBridgeError(f"Δεν βρέθηκε έγκυρο local checkout Neanes: {source_root}")
+    byzx = Path(byzx_path).resolve()
+    if byzx.suffix != ".byzx" or not byzx.is_file():
+        raise NeanesByzxBridgeError("Χρειάζεται υπαρκτό αρχείο .byzx.")
+    destination = Path(output_path).resolve()
+    destination.parent.mkdir(parents=True, exist_ok=True)
+
+    worker_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", suffix=".test.ts", prefix=".kihem-note-names-", dir=source_root, delete=False
+        ) as worker:
+            worker.write(_note_names_worker(byzx, destination))
+            worker_path = Path(worker.name)
+        result = subprocess.run(
+            ["npm", "exec", "vitest", "--", "run", worker_path.name, "--config", "vitest.config.mts"],
+            cwd=source_root, check=False, text=True, capture_output=True, timeout=90,
+        )
+        if result.returncode != 0:
+            details = (result.stdout + "\n" + result.stderr).strip()
+            raise NeanesByzxBridgeError(f"Ο υπολογισμός νοτών του Neanes απέτυχε:\n{details[-4000:]}")
+    except FileNotFoundError as error:
+        raise NeanesByzxBridgeError("Δεν βρέθηκε npm/Vitest για την τοπική εγκατάσταση Neanes.") from error
+    except subprocess.TimeoutExpired as error:
+        raise NeanesByzxBridgeError("Ο υπολογισμός νοτών δεν ολοκληρώθηκε σε 90 δευτερόλεπτα.") from error
+    finally:
+        if worker_path is not None:
+            worker_path.unlink(missing_ok=True)
+    if not destination.is_file() or destination.stat().st_size == 0:
+        raise NeanesByzxBridgeError("Το Neanes ολοκλήρωσε χωρίς να δημιουργήσει αρχείο νοτών.")
+    return destination

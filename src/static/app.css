@@ -668,3 +668,7 @@ button:hover { background: var(--wine-dark); }
   .service-card, .music-attachment { box-shadow: none; }
   .music-page { break-inside: avoid; }
 }
+
+/* Switch for the ison drone above the Neanes player. */
+.ison-toggle { margin: 0 0 8px; }
+.ison-toggle[aria-pressed="false"] { opacity: .75; }

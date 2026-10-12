@@ -480,6 +480,50 @@ This file records only durable implementation decisions.
   - When the player shows "Title" and "Ἦχος · Πα" on an empty staff, the file
     did not load. Check the served JSON first; the title and first `Martyria`
     tell whether the current version is being served.
+- A third, private **needs_review** entry `papline-cherubikon-lambadarios-line1-private-draft`
+  (line 1 of the Lambadarios Cherubikon, mode 1, from papline.gr's public
+  Cherubika collection) is the first **automatic** PDF→`.byzx` test. It is for
+  private research only: no permission to republish papline material has been
+  asked or given, and it is not in the public catalogue. Durable findings:
+  - papline's PDFs (Word 2016/365, vector text, ~1 decorative image per page)
+    use the open BZ fonts (`BZByzantina`, `BZIson`, `BZLoipa`, `BZFthores`,
+    `BZPalaia`, `BZXronos`; OFL) published with the CTAN `byzantinemusic`
+    package. The package's `byzantinemusic.sty` names ~494 (font, code) pairs
+    and its fonts are glyph-identical to the PDF-embedded ones. BZ codes are
+    **not** EZ codes: the same `U+F0xx` is a different sign.
+  - **Key every mapping by (font, code).** `U+F066` is "oligon with kentima"
+    in `BZByzantina` but the blue ΠΑ isokrata label in `BZIson`; ignoring the
+    font produced a phantom note. `BZIson` holds the isokrata labels
+    (ΠΑ, ΝΗ, ΓΑ, ΔΙ, ΚΕ, ΖΩ, ΒΟΥ, ΜΕΛ = release, ΔΙ↓/ΚΕ↓ = lower octave) and
+    maps to Neanes `Ison.*`.
+  - Martyria are two glyphs: a letter (`BZByzantina` `U+F031…F037` = Πα, Βου,
+    Γα, Δι, Κε, Ζω, Νη, confirmed from the psaltis' book table) plus a root
+    sign. Red `U+F0F9` is έτερον/σύνδεσμος.
+  - The PDF text stream is already in reading order and carries glyph origins:
+    attachments are assigned to the base whose ink x-range overlaps them
+    (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows
+    the glyph's vertical position; syllables go to the nearest base by x.
+  - Glyph confirmations (≈70 BZ glyphs, covering ~96% of occurrences in the
+    papline Cherubika/Koinonika PDFs) live in the private, gitignored
+    `debug/bz-answers.json`; the extractor/converter prototype is in
+    `digital_scores/bz_papline_prototype/` (hard-coded paths, not a supported
+    importer).
+  - The ison drone is a separate Neanes synth. A melody note on the drone's
+    pitch merges with it and sounds missing (the "Χε" report); it was not a bug.
+- Player (private and public templates): the playing neume gets a strong
+  yellow highlight and a small floating **parallage** tag (Πα, Βου → Γα …)
+  above it. Note names come from Neanes' own `PlaybackService` via
+  `write_note_names` / `digital_scores/build_neanes_note_names.py`, stored as
+  the optional private sidecar `<score>.notes.json` next to the `.byzx`
+  (loaded by `DigitalScoreCatalog.note_labels`). The tag is positioned from the
+  highlighted box in the same-origin iframe; it maps the `.element-box` DOM
+  order to Neanes' element index. A switch "Ισοκράτημα: ναι/όχι" writes
+  `volumeIson` into the shared `audioOptionsDefault` localStorage before the
+  iframe loads (`null` = mute, Neanes' own serialisation of -Infinity) and
+  reloads the page; the default drone volume is -8 dB.
+- Deployment reminder: the auto-mode classifier blocks production writes by
+  Claude even with the user's consent; the user ran the first deploy with `!`,
+  and later identical deploys were allowed.
 
 ## Isokratis
 
