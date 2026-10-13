@@ -518,6 +518,16 @@ This file records only durable implementation decisions.
     CTAN ink bounds; it now falls back to the PDF char box; (2) `F05F` is
     `OligonPlusIsonPlusKentemata` (net +1). With both fixes all 9 martyria of
     the Lambadarios Cherubikon match and the piece ends on Πα.
+    The Sunday Koinonikon «Αἰνεῖτε» (Petros Lambadarios, `koinonika_sundays_a4.pdf`
+    PDF pp. 12–14) needed more glyphs: BZLoipa bases (`F03F`, `F070`, `F061` =
+    `OligonPlusKentemataPlusHypsiliRight`), BZByzantina `F067` (υψηλή right),
+    `F07A` (+antikenoma), `F03B` (χαμηλή) and fthores. Fthores (BZFthores) are
+    mapped by package name to Neanes `Fthora` (`padia`→DiatonicPa …, `nhdia`/
+    `Nhdia`→NiLow/NiHigh, `paplab`/`diplagb`→HardChromaticPa/Thi, `dib`/`nhb`→
+    SoftChromaticThi/Pa), checked against the psaltis' theory book; Top/Bottom
+    from position, fthora next to a martyria goes on the martyria. The note-name
+    sidecar records Neanes `virtualNote` (the sung name after a fthora). All 12
+    martyria then match. Martyria letters ignore the octave when compared.
   - The PDF text stream is already in reading order and carries glyph origins:
     attachments are assigned to the base whose ink x-range overlaps them
     (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows

@@ -42,7 +42,7 @@ class NoteNamesWorkerTests(unittest.TestCase):
     def test_worker_records_neanes_own_scale_notes_per_element(self):
         worker = _note_names_worker(Path("/tmp/score.byzx"), Path("/tmp/score.notes.json"))
         self.assertIn("class RecordingPlaybackService extends PlaybackService", worker)
-        self.assertIn("args[0].physicalNote", worker)
+        self.assertIn("args[0].virtualNote", worker)
         self.assertIn("event.elementIndex", worker)
         self.assertIn("/tmp/score.notes.json", worker)
 

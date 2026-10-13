@@ -126,6 +126,23 @@
         "papline-cherub-lambadarios-full-source-1.png",
         "papline-cherub-lambadarios-full-source-2.png"
       ]
+    },
+    {
+      "id": "papline-koinonikon-aineite-lambadarios-full-private-draft",
+      "title": "Κοινωνικό «Αἰνεῖτε τὸν Κύριον» Πέτρου Λαμπαδαρίου ήχος α΄ · ιδιωτικό αυτόματο draft",
+      "incipit": "Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν",
+      "tone_label": "Ἦχος α΄ · Πα · διατονικός",
+      "source_description": "Κοινωνικό των Κυριακών του Πέτρου Λαμπαδαρίου (σελ. 12–14 του PDF Κοινωνικά Κυριακών, papline.gr). Ιδιωτική αυτόματη μετατροπή BZ → Neanes· ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό· πρέπει να αναφέρεται η πηγή.",
+      "source_reference": "papline.gr, Κοινωνικά Κυριακών (A4), Πέτρου Λαμπαδαρίου (1730–1777), Πανδέκτη 1851 σ. 476.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (ιδιωτικό draft)",
+      "review_state": "needs_review",
+      "notes": "Αυτόματο draft 390 νευμάτων και 12 ενδιάμεσων μαρτυριών, με φθορές (BZFthores → Neanes). Και οι 12 μαρτυρίες ταιριάζουν με την πηγή. Δεν έχει επιβεβαιωθεί ψαλτικά· δημοσίευση μόνο μετά από έλεγχο και χωρίς εμπορική χρήση.",
+      "byzx_filename": "papline-koin-aineite-lambadarios.byzx",
+      "source_scan_filenames": [
+        "papline-koin-aineite-lambadarios-source-1.png",
+        "papline-koin-aineite-lambadarios-source-2.png",
+        "papline-koin-aineite-lambadarios-source-3.png"
+      ]
     }
   ]
 }

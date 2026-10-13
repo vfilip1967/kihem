@@ -68,7 +68,11 @@ describe('Kihem private EZ .byzx bridge', () => {{
       if (saved.elementType === 'Martyria') {{
         // Intermediate Martyria are automatic: Neanes derives them from the
         // notes before them, so a wrong note shows up as a wrong Martyria.
-        return new MartyriaElement();
+        const automatic = new MartyriaElement();
+        if (typeof fields.fthora === 'string') {{
+          Object.assign(automatic, {{ fthora: fields.fthora }});
+        }}
+        return automatic;
       }}
       const note = new NoteElement();
       Object.assign(note, fields);
@@ -191,7 +195,9 @@ class RecordingPlaybackService extends PlaybackService {{
 
   handleNoteAtom(...args: Parameters<PlaybackService['handleNoteAtom']>) {{
     super.handleNoteAtom(...args);
-    this.played.push(args[0].physicalNote);
+    // virtualNote is the sung name after any fthora (equal to the written
+    // physicalNote in a purely diatonic passage); students follow this name.
+    this.played.push(args[0].virtualNote);
   }}
 }}
 
