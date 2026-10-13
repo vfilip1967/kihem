@@ -21,7 +21,11 @@ def page_glyphs(pg):
                     ch=c['c']; x,y=c['origin']
                     if f in ('BZByzantina','BZLoipa','BZFthores','BZIson','BZPalaia','BZXronos') and ch.strip():
                         bb=ink(f,ord(ch))
-                        if bb is None: continue
+                        if bb is None:
+                            # glyph newer than the CTAN font: fall back to the PDF char box
+                            cb=c['bbox']
+                            out.append(dict(font=f,code=f'{ord(ch):04X}',x=x,y=y,size=size,x0=cb[0],x1=cb[2],y0=cb[1],y1=cb[3],noink=True))
+                            continue
                         out.append(dict(font=f,code=f'{ord(ch):04X}',x=x,y=y,size=size,x0=x+bb[0]*size,x1=x+bb[2]*size,y0=y-bb[3]*size,y1=y-bb[1]*size))
                     elif f.startswith(('GFS','TimesNew')) and ch.strip():
                         lyr.append(dict(c=ch,x=x,y=y,x1=c['bbox'][2]))

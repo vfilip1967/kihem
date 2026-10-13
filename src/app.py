@@ -481,6 +481,11 @@ def create_app(config: dict | None = None) -> Flask:
             # URL is cache-busted.  Tie it to the asset version as well.
             score_filename=f"{score.score_id}-{asset_version}.byzx",
             note_labels=digital_score_catalog.note_labels(score),
+            source_urls=tuple(
+                f"{review_url}/asset/source?position={position}"
+                for position in range(len(score.source_scan_filenames))
+                if digital_score_catalog.source_scan_path(score, position) is not None
+            ),
         ))
         response.headers["Cache-Control"] = "no-store, max-age=0"
         return response

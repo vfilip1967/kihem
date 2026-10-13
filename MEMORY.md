@@ -483,8 +483,17 @@ This file records only durable implementation decisions.
 - A third, private **needs_review** entry `papline-cherubikon-lambadarios-line1-private-draft`
   (line 1 of the Lambadarios Cherubikon, mode 1, from papline.gr's public
   Cherubika collection) is the first **automatic** PDF→`.byzx` test. It is for
-  private research only: no permission to republish papline material has been
-  asked or given, and it is not in the public catalogue. Durable findings:
+  private until psaltis-reviewed. **Permission (email reply from papline.gr,
+  2026-10-13, answering the user's message of 2026-10-12):** the texts may be
+  used freely if not for commercial use; credit papline and keep it
+  non-commercial. This is an email, not a formal licence. The full Lambadarios
+  Cherubikon (255 events, pages 7–8 of `cherubika_a4.pdf`) is a second private
+  entry `papline-cherubikon-lambadarios-full-private-draft`; martyria,
+  fthores and glyphs F06F/F077/F0A5/F04F/F0FA are not converted yet.
+  papline also sent the original BZ Palaia/Xronos keyboard charts (private
+  PDF, not in Git): Palaia = diastoles, isaki, gorgon, tsakismata, hyporoe/
+  kentemata with oxeia, kataváseis/anaváseis, quality signs; Xronos = tempo
+  "χ" marks (χρονική αγωγή), not neumes. Durable findings:
   - papline's PDFs (Word 2016/365, vector text, ~1 decorative image per page)
     use the open BZ fonts (`BZByzantina`, `BZIson`, `BZLoipa`, `BZFthores`,
     `BZPalaia`, `BZXronos`; OFL) published with the CTAN `byzantinemusic`
@@ -499,6 +508,16 @@ This file records only durable implementation decisions.
   - Martyria are two glyphs: a letter (`BZByzantina` `U+F031…F037` = Πα, Βου,
     Γα, Δι, Κε, Ζω, Νη, confirmed from the psaltis' book table) plus a root
     sign. Red `U+F0F9` is έτερον/σύνδεσμος.
+    **Psaltis corrections (2026-10-13):** the martyria *letter* names the note;
+    the sign below only sets scale/mode. Mid-piece martyria are converted as
+    *automatic* Neanes martyria (they show what our notes produce) and
+    compared by script with the source letters: this localises errors between
+    two martyria. Two real conversion bugs were found that way: (1) the PDF
+    embeds BZ glyphs newer than the CTAN fonts (e.g. `BZByzantina F0A2` =
+    oligon+kentima below, +2) — the extractor used to *drop* glyphs without
+    CTAN ink bounds; it now falls back to the PDF char box; (2) `F05F` is
+    `OligonPlusIsonPlusKentemata` (net +1). With both fixes all 9 martyria of
+    the Lambadarios Cherubikon match and the piece ends on Πα.
   - The PDF text stream is already in reading order and carries glyph origins:
     attachments are assigned to the base whose ink x-range overlaps them
     (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows

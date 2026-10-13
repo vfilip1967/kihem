@@ -45,6 +45,12 @@
       })();
     </script>
     <iframe id="neanes-player" class="neanes-player" src="{{ neanes_url }}" title="Neanes player για {{ score.incipit }}" allow="autoplay"></iframe>
+    {% if source_urls and not embedded %}
+    <section aria-label="Αυθεντική πηγή" style="margin-top:1rem">
+      <h2>Αυθεντική πηγή (για σύγκριση)</h2>
+      {% for source_url in source_urls %}<img src="{{ source_url }}" alt="Πηγή, τμήμα {{ loop.index }}" style="max-width:100%;height:auto;display:block;margin:0 0 1rem;border:1px solid #ccc">{% endfor %}
+    </section>
+    {% endif %}
   </main>
   <script>
     (() => {

@@ -32,7 +32,7 @@ def _require_private_event_draft(event_draft: Mapping[str, Any]) -> list[Mapping
     events = event_draft.get("events")
     if not isinstance(events, list) or not events:
         raise NeanesByzxBridgeError("Το event draft δεν έχει γεγονότα Note.")
-    if any(not isinstance(event, Mapping) or event.get("elementType") != "Note" for event in events):
+    if any(not isinstance(event, Mapping) or event.get("elementType") not in ("Note", "Martyria") for event in events):
         raise NeanesByzxBridgeError("Το event draft περιέχει μη έγκυρο στοιχείο Neanes Note.")
     controls = event_draft.get("ison_controls", [])
     if not isinstance(controls, list) or any(not isinstance(control, Mapping) or control.get("kind") != "pause" for control in controls):
@@ -64,7 +64,12 @@ describe('Kihem private EZ .byzx bridge', () => {{
     score.documentProperties.title = scoreTitle;
     score.documentProperties.author = 'Kihem · ιδιωτικό EZ draft · απαιτεί μουσικό έλεγχο';
     const elements = eventDraft.events.map((saved: Record<string, unknown>) => {{
-      const {{ elementType: _elementType, ...fields }} = saved;
+      const {{ elementType: _elementType, source_note: _sourceNote, ...fields }} = saved;
+      if (saved.elementType === 'Martyria') {{
+        // Intermediate Martyria are automatic: Neanes derives them from the
+        // notes before them, so a wrong note shows up as a wrong Martyria.
+        return new MartyriaElement();
+      }}
       const note = new NoteElement();
       Object.assign(note, fields);
       return note;

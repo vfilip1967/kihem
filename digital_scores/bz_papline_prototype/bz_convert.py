@@ -2,7 +2,7 @@ import sys, json; sys.path.insert(0,'.')
 import pymupdf, bz_extract as bx
 BASE={'F073':'Oligon','F06A':'Apostrophos','F061':'Ison','F063':'KentemataPlusOligon','F0CE':'KentemataPlusOligon',
  'F066':'OligonPlusKentimaAbove','F064':'OligonPlusKentimaBelow','F053':'Petasti','F04A':'PetastiPlusApostrophos',
- 'F044':'PetastiPlusOligon','F046':'PetastiPlusKentimaAbove','F06C':'ElaphronPlusApostrophos','F02D':'OligonPlusApostrophosPlusKentemata','F076':'OligonPlusKentemata','F078':'Kentemata',
+ 'F044':'PetastiPlusOligon','F046':'PetastiPlusKentimaAbove','F06C':'ElaphronPlusApostrophos','F02D':'OligonPlusApostrophosPlusKentemata','F05F':'OligonPlusIsonPlusKentemata','F0A2':'OligonPlusKentimaBelow','F076':'OligonPlusKentemata','F078':'Kentemata',
  'F027':'Hyporoe','F043':'Hyporoe','F06B':'Elaphron','F068':'RunningElaphron','F041':'PetastiPlusIson?','F03D':'DoubleApostrophos','F02B':'IsonPlusApostrophos'}
 GORGON={'F072','F065','F0D8','F0D0','F045','F052'}
 KLASMA={'F075','F069','F091','F049'}
@@ -12,7 +12,9 @@ VAREIA={'F05C'}
 ISOKR={}
 for names,val in (('F066 F046 F052','Ison.Pa'),('F064 F045','Ison.Ni'),('F073 F053 F04C F04F F06C','Ison.Zo'),('F067 F047 F054','Ison.Vou'),('F068 F048 F059','Ison.Ga'),('F06A F055 F04A','Ison.Thi'),('F06B F049 F04B','Ison.Ke'),('F027 F022','Ison.KeLow'),('F03B F03A','Ison.ThiLow'),('F061 F041','Ison.Unison')):
     for c in names.split(): ISOKR[c]=val
-IGNORE={'F04F','F0FA','F07E'}
+MART={'F031':'Pa','F032':'Vou','F033':'Ga','F034':'Thi','F035':'Ke','F036':'Zo','F037':'Ni'}
+MARTSIGN={'F021','F023','F026','F040','F05E'}
+IGNORE={'F020','F04F','F0FA','F07E'}
 def convert(page, line_index):
     ry,gg,ll=bx.lines(page)[line_index]
     gg=[a for a in gg if a['font'] in ('BZByzantina','BZLoipa','BZIson')]
@@ -21,9 +23,11 @@ def convert(page, line_index):
     notes=[dict(base=b,att=[]) for b in bases]
     warn=[]
     pending_vareia=False
+    marts=[a for a in gg if a['font']=='BZByzantina' and a['code'] in MART]
     for a in sorted(gg,key=lambda a:a['x0']):
         c=a['code']
         if c in BASE and a['font']=='BZByzantina': continue
+        if a['font']=='BZByzantina' and (c in MART or (c in MARTSIGN and any(abs((m['x0']+m['x1'])/2-(a['x0']+a['x1'])/2)<25 for m in marts))): continue
         if a['font']=='BZIson' and c not in ISOKR: warn.append(('bzison-unmapped',c,round(a['x0'])));continue
         if c in IGNORE: warn.append(('ignored',c,round(a['x0'])));continue
         # best base by x overlap
@@ -62,8 +66,11 @@ def convert(page, line_index):
             elif c in VAREIA: e['vareia']=True
             else: warn.append(('unmapped',a['font'],c,round(a['x0'])))
         if i in assign: e['lyrics']=''.join(assign[i])
-        events.append((e,[b['code']]+[a['code'] for a in n['att']]))
-    return events,warn
+        events.append((e,[b['code']]+[a['code'] for a in n['att']],b['x0']))
+    for m in marts:
+        events.append(({'elementType':'Martyria','source_note':MART[m['code']]},['MART '+m['code']],m['x0']))
+    events.sort(key=lambda t:t[2])
+    return [(e,c) for e,c,_ in events],warn
 if __name__=='__main__':
     d=pymupdf.open(sys.argv[1]); ev,w=convert(d[int(sys.argv[2])],int(sys.argv[3]))
     for e,codes in ev: print(codes, json.dumps({k:v for k,v in e.items() if k!='elementType'},ensure_ascii=False))
