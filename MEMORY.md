@@ -550,6 +550,12 @@ This file records only durable implementation decisions.
   `volumeIson` into the shared `audioOptionsDefault` localStorage before the
   iframe loads (`null` = mute, Neanes' own serialisation of -Infinity) and
   reloads the page; the default drone volume is -8 dB.
+- Playback speed (2026-10-14, user: "στα κοινωνικά παίζει πιο αργά"): the
+  shared partial `_neanes_speed.html` adds a "Ταχύτητα" select (40–125%) the
+  same way, writing Neanes' `audioOptions.speed` (tempo multiplier, 0.1–3)
+  before the iframe loads. The default comes from the optional catalogue field
+  `playback_speed` (Koinonikon «Αἰνεῖτε» = 0.6); a student's choice is kept
+  per score under `kihem-speed-<id>`.
 - Deployment reminder: the auto-mode classifier blocks production writes by
   Claude even with the user's consent; the user ran the first deploy with `!`,
   and later identical deploys were allowed.

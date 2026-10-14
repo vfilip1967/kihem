@@ -99,6 +99,15 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "απαιτεί όνομα ελεγκτή"):
             DigitalScoreCatalog(self.catalog_path, self.storage).scores()
 
+    def test_playback_speed_defaults_to_normal_and_is_bounded(self):
+        self.write_catalog([self.score(), self.score(id="slow", playback_speed=0.6)])
+        scores = DigitalScoreCatalog(self.catalog_path, self.storage).scores()
+        self.assertEqual([score.playback_speed for score in scores], [1.0, 0.6])
+        for invalid in (0, 5, "0.6", True):
+            self.write_catalog([self.score(playback_speed=invalid)])
+            with self.assertRaisesRegex(ValueError, "playback_speed"):
+                DigitalScoreCatalog(self.catalog_path, self.storage).scores()
+
     def test_catalog_rejects_traversal_in_asset_names(self):
         self.write_catalog([self.score(byzx_filename="../outside.byzx")])
         with self.assertRaisesRegex(ValueError, "Μη ασφαλές"):

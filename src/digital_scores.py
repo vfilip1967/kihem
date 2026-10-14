@@ -62,6 +62,8 @@ class DigitalScore:
     musicxml_filename: str | None
     preview_filename: str | None
     source_scan_filenames: tuple[str, ...]
+    # Neanes speed multiplier (0.1–3); slow genres such as koinonika use < 1.
+    playback_speed: float = 1.0
 
     @property
     def is_verified(self) -> bool:
@@ -207,6 +209,10 @@ class DigitalScoreCatalog:
                 filenames.append(filename)
             return tuple(filenames)
 
+        playback_speed = item.get("playback_speed", 1.0)
+        if isinstance(playback_speed, bool) or not isinstance(playback_speed, (int, float)) or not 0.1 <= playback_speed <= 3:
+            raise ValueError("Το πεδίο playback_speed πρέπει να είναι αριθμός από 0.1 έως 3.")
+
         reviewed_by = optional_text("reviewed_by")
         if review_state == "verified" and not reviewed_by:
             raise ValueError("Επαληθευμένη ψηφιακή παρτιτούρα απαιτεί όνομα ελεγκτή ψάλτη.")
@@ -227,6 +233,7 @@ class DigitalScoreCatalog:
             musicxml_filename=optional_filename("musicxml_filename", (".musicxml", ".xml")),
             preview_filename=optional_filename("preview_filename", (".png", ".jpg", ".jpeg", ".webp")),
             source_scan_filenames=optional_filenames("source_scan_filenames", (".png", ".jpg", ".jpeg", ".webp")),
+            playback_speed=float(playback_speed),
         )
 
 

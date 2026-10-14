@@ -1,0 +1,33 @@
+    <label class="speed-select" for="speed-select">Ταχύτητα:
+      <select id="speed-select">
+        {% for value in (0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25) %}<option value="{{ value }}">{{ (value * 100)|round|int }}%</option>{% endfor %}
+      </select>
+    </label>
+    <script>
+      /* Neanes multiplies the score's tempo by audioOptions.speed and, like the
+         ison volume, reads it only when it starts.  Each score has a catalogue
+         default (koinonika are sung slowly); a student's own choice is kept per
+         score and written to the player's storage before the iframe loads. */
+      (() => {
+        const key = {{ ('kihem-speed-' ~ score.score_id)|tojson }};
+        const fallback = {{ score.playback_speed|tojson }};
+        let speed = fallback;
+        try {
+          const chosen = Number.parseFloat(localStorage.getItem(key));
+          if (chosen >= 0.1 && chosen <= 3) speed = chosen;
+          const saved = JSON.parse(localStorage.getItem('audioOptionsDefault') || '{}') || {};
+          saved.speed = speed;
+          localStorage.setItem('audioOptionsDefault', JSON.stringify(saved));
+        } catch (error) { /* storage unavailable: Neanes keeps its defaults */ }
+        const select = document.getElementById('speed-select');
+        if (!select) return;
+        if (![...select.options].some((option) => Number(option.value) === speed)) {
+          select.add(new Option(`${Math.round(speed * 100)}%`, String(speed)));
+        }
+        select.value = [...select.options].find((option) => Number(option.value) === speed).value;
+        select.addEventListener('change', () => {
+          try { localStorage.setItem(key, select.value); } catch (error) { return; }
+          window.location.reload();
+        });
+      })();
+    </script>

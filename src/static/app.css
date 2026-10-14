@@ -672,3 +672,4 @@ button:hover { background: var(--wine-dark); }
 /* Switch for the ison drone above the Neanes player. */
 .ison-toggle { margin: 0 0 8px; }
 .ison-toggle[aria-pressed="false"] { opacity: .75; }
+.speed-select { display: inline-block; margin: 0 0 8px 8px; }
