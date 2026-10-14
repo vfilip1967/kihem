@@ -531,7 +531,9 @@ This file records only durable implementation decisions.
     modulo 4 (right for pitch), so hard-chromatic Pa on Ke still read "Ke, Zo…".
     User report 2026-10-14. The worker now keeps its own shift: the chromatic
     fthora renames its note to Pa/Thi (or `chromaticFthoraNote`) at the
-    nearest octave; other fthores use Neanes' virtualNote. All 12 martyria
+    nearest octave (kept by user decision 2026-10-14: the άνω/κάτω suffix
+    shows roughly where the pitch lies, even after renaming; do not strip
+    it); other fthores use Neanes' virtualNote. All 12 martyria
     then match. Martyria letters ignore the octave when compared.
   - 2026-10-14 user: "after the Ke→Pa fthora the transcription is wrong"
     (their screenshots never reached this server). Found silently dropped
