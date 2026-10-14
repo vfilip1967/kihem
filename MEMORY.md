@@ -553,6 +553,15 @@ This file records only durable implementation decisions.
     F043 is not hyporoe here but a slanted kentima at the oligon's right end,
     read as OligonPlusKentimaBelow (+2) — both chosen so the martyria agree,
     psaltis must confirm. BZFthores F06E (`\dieshMD`) → Sharp_2_Left.
+  - Third Koinonikon «Αἰνεῖτε» (Lambadarios, ήχος α΄, PDF pp. 17–20, Pandekti
+    p. 506): 597 neumes, 25/26 martyria with octave. New BZLoipa bases:
+    F029 `\apooli` OligonPlusApostrophos, F064 `\kypsoli` OligonPlusHypsiliPlus-
+    KentimaHorizontal (+6), F073 `\ypsAoli` OligonPlusHypsiliLeft (+5), F03D
+    `\elaapooli` OligonPlusElaphronPlusApostrophos. BZFthores F061 = martyria
+    letter Di; F029/F06F `\zwanwyfesh` → GeneralFlat; BZLoipa F0A8 Trigorgon;
+    BZByzantina F03F syndesmos → HeteronConnecting. Open: martyria Ga on p. 19
+    line 10 (after spathi + kliton F050) is sung Zo' — kliton/spathi naming or
+    a neume, for the psaltis.
   - The PDF text stream is already in reading order and carries glyph origins:
     attachments are assigned to the base whose ink x-range overlaps them
     (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows

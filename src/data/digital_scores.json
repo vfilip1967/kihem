@@ -161,6 +161,25 @@
         "papline-koin-aineite-2-lambadarios-source-1.png",
         "papline-koin-aineite-2-lambadarios-source-2.png"
       ]
+    },
+    {
+      "id": "papline-koinonikon-aineite-3-lambadarios-full-private-draft",
+      "playback_speed": 0.6,
+      "title": "Κοινωνικό «Αἰνεῖτε τὸν Κύριον» Πέτρου Λαμπαδαρίου ήχος α΄ (3ο μέλος) · ιδιωτικό αυτόματο draft",
+      "incipit": "Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν",
+      "tone_label": "Ἦχος α΄ · Πα · διατονικός",
+      "source_description": "Τρίτο κοινωνικό των Κυριακών του Πέτρου Λαμπαδαρίου (σελ. 17–20 του PDF Κοινωνικά Κυριακών, papline.gr). Ιδιωτική αυτόματη μετατροπή BZ → Neanes· ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό· πρέπει να αναφέρεται η πηγή.",
+      "source_reference": "papline.gr, Κοινωνικά Κυριακών (A4), Πέτρου Λαμπαδαρίου (1730–1777), Πανδέκτη 1851 σ. 506.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (ιδιωτικό draft)",
+      "review_state": "needs_review",
+      "notes": "Αυτόματο draft 597 νευμάτων και 26 ενδιάμεσων μαρτυριών, με πολλές φθορές (χρωματικές, σπάθη, κλιτόν, ύφεση Ζω) και υφέσεις. Ταιριάζουν 25 από τις 26 μαρτυρίες, και στην οκτάβα. Η μαρτυρία Γα της σελ. 19 (10η γραμμή, μετά το τμήμα με σπάθη και κλιτόν) δεν ταιριάζει: η μεταγραφή δίνει Ζω άνω. Η επόμενη μαρτυρία ταιριάζει ξανά. Δεν έχει επιβεβαιωθεί ψαλτικά· δημοσίευση μόνο μετά από έλεγχο και χωρίς εμπορική χρήση.",
+      "byzx_filename": "papline-koin-aineite-3-lambadarios.byzx",
+      "source_scan_filenames": [
+        "papline-koin-aineite-3-lambadarios-source-1.png",
+        "papline-koin-aineite-3-lambadarios-source-2.png",
+        "papline-koin-aineite-3-lambadarios-source-3.png",
+        "papline-koin-aineite-3-lambadarios-source-4.png"
+      ]
     }
   ]
 }

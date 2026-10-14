@@ -4,7 +4,7 @@ BASE={'F047':'PetastiPlusHypsiliRight','F073':'Oligon','F06A':'Apostrophos','F06
  'F066':'OligonPlusKentimaAbove','F064':'OligonPlusKentimaBelow','F053':'Petasti','F04A':'PetastiPlusApostrophos',
  'F044':'PetastiPlusOligon','F046':'PetastiPlusKentimaAbove','F06C':'ElaphronPlusApostrophos','F02D':'OligonPlusApostrophosPlusKentemata','F05F':'OligonPlusIsonPlusKentemata','F0A2':'OligonPlusKentimaBelow','F067':'OligonPlusHypsiliRight','F07A':'OligonPlusKentemata','F03B':'Hamili','F076':'OligonPlusKentemata','F078':'Kentemata',
  'F027':'Hyporoe','F06B':'Elaphron','F068':'RunningElaphron','F041':'PetastiPlusIson?','F03D':'DoubleApostrophos','F02B':'IsonPlusApostrophos'}
-BASEL={'F061':'OligonPlusKentemataPlusHypsiliRight','F03F':'OligonPlusKentimaBelow','F070':'OligonPlusElaphronPlusKentemata'}  # BZLoipa bases
+BASEL={'F073':'OligonPlusHypsiliLeft','F03D':'OligonPlusElaphronPlusApostrophos','F029':'OligonPlusApostrophos','F064':'OligonPlusHypsiliPlusKentimaHorizontal','F061':'OligonPlusKentemataPlusHypsiliRight','F03F':'OligonPlusKentimaBelow','F070':'OligonPlusElaphronPlusKentemata'}  # BZLoipa bases
 LOIPA_VOCAL={'F07D':'Heteron','F03F':'Antikenoma'}
 # BZFthores (font, code) -> Neanes Fthora stem; names from the CTAN package,
 # shapes checked against the psaltis' theory book (Μέθοδος, pp. 101-103).
@@ -16,7 +16,8 @@ for codes,name in (('F066 F046 F056 F076 F087','DiatonicPa'),('F067 F047','Diato
     ('F032 F040 F057 F077 F085','SoftChromaticThi'),('F033 F023 F045 F065','SoftChromaticPa'),
     ('F039 F028 F049 F069','Zygos'),('F02D F05F F050 F070','Kliton'),('F060 F07E','Spathi')):
     for c in codes.split(): FTHORA[c]=name
-FTH_MART={'F073':'Ke','F07A':'Ga'}          # martyria letters drawn in BZFthores
+for c in ('F029','F06F'): FTHORA[c]='GeneralFlat'   # \zwanwyfesh: flat of Zo
+FTH_MART={'F073':'Ke','F07A':'Ga','F061':'Thi'}          # martyria letters drawn in BZFthores
 FTH_MARTSIGN={'F053','F05A','F041','F058','F078','F07C'}
 GORGON={'F072','F065','F0D8','F0D0','F045','F052'}
 KLASMA={'F055','F075','F069','F091','F049'}
@@ -101,6 +102,8 @@ def convert(page, line_index):
             elif a['font']=='BZLoipa' and c=='F0A5': e['gorgonNeume']='Digorgon'
             elif a['font']=='BZLoipa' and c=='F060': e['gorgonNeume']='GorgonDottedLeft'  # \pg
             elif a['font']=='BZLoipa' and c=='F021': e['gorgonNeume']='GorgonDottedRight'  # \gpPD
+            elif a['font']=='BZLoipa' and c=='F0A8': e['gorgonNeume']='Trigorgon'
+            elif a['font']=='BZByzantina' and c=='F03F': e['vocalExpressionNeume']='HeteronConnecting'  # syndesmos
             elif a['font']=='BZByzantina' and c=='F077': e['gorgonNeume']='Argon'
             elif c in GORGON: e['gorgonNeume']='Gorgon_Top' if top else 'Gorgon_Bottom'
             elif c in KLASMA: e['timeNeume']='Klasma_Top' if top else 'Klasma_Bottom'
