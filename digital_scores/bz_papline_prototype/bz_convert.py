@@ -1,9 +1,9 @@
 import sys, json; sys.path.insert(0,'.')
 import pymupdf, bz_extract as bx
-BASE={'F073':'Oligon','F06A':'Apostrophos','F061':'Ison','F063':'KentemataPlusOligon','F0CE':'KentemataPlusOligon',
+BASE={'F047':'PetastiPlusHypsiliRight','F073':'Oligon','F06A':'Apostrophos','F061':'Ison','F063':'KentemataPlusOligon','F0CE':'KentemataPlusOligon',
  'F066':'OligonPlusKentimaAbove','F064':'OligonPlusKentimaBelow','F053':'Petasti','F04A':'PetastiPlusApostrophos',
  'F044':'PetastiPlusOligon','F046':'PetastiPlusKentimaAbove','F06C':'ElaphronPlusApostrophos','F02D':'OligonPlusApostrophosPlusKentemata','F05F':'OligonPlusIsonPlusKentemata','F0A2':'OligonPlusKentimaBelow','F067':'OligonPlusHypsiliRight','F07A':'OligonPlusKentemata','F03B':'Hamili','F076':'OligonPlusKentemata','F078':'Kentemata',
- 'F027':'Hyporoe','F043':'Hyporoe','F06B':'Elaphron','F068':'RunningElaphron','F041':'PetastiPlusIson?','F03D':'DoubleApostrophos','F02B':'IsonPlusApostrophos'}
+ 'F027':'Hyporoe','F06B':'Elaphron','F068':'RunningElaphron','F041':'PetastiPlusIson?','F03D':'DoubleApostrophos','F02B':'IsonPlusApostrophos'}
 BASEL={'F061':'OligonPlusKentemataPlusHypsiliRight','F03F':'OligonPlusKentimaBelow','F070':'OligonPlusElaphronPlusKentemata'}  # BZLoipa bases
 LOIPA_VOCAL={'F07D':'Heteron','F03F':'Antikenoma'}
 # BZFthores (font, code) -> Neanes Fthora stem; names from the CTAN package,
@@ -32,7 +32,8 @@ IGNORE={'F020','F04F','F0FA','F07E','F06F'}  # F06F: diastole (bar line)
 # Yfesis (flat), drawn in red right of or over the neume: plain (\yfesh,
 # \yfeshD in BZByzantina) and digrammos (\digryfesh in BZFthores).
 YFESIS={('BZByzantina','F074'):'Flat_2_Right',('BZByzantina','F079'):'Flat_2_Right',
-        ('BZFthores','F074'):'Flat_6_Right',('BZFthores','F079'):'Flat_6_Right'}
+        ('BZFthores','F074'):'Flat_6_Right',('BZFthores','F079'):'Flat_6_Right',
+        ('BZFthores','F06E'):'Sharp_2_Left'}  # \dieshMD: plain diesis (sharp)
 def isbase(a): return (a['font']=='BZByzantina' and a['code'] in BASE) or (a['font']=='BZLoipa' and a['code'] in BASEL)
 def basename(a): return BASE[a['code']] if a['font']=='BZByzantina' else BASEL[a['code']]
 def convert(page, line_index):
@@ -65,7 +66,7 @@ def convert(page, line_index):
             # vareia precedes its base: next base to the right
             nxt=[n for n in notes if n['base']['x0']>=a['x0']-1]
             best=nxt[0] if nxt else None
-        if best is None and (a['font'],c) in YFESIS:
+        if best is None and ((a['font'],c) in YFESIS or (a['font'],c)==('BZByzantina','F043')):
             # a flat right of its neume: the nearest base ending just before it
             left=[n for n in notes if n['base']['x1']<=a['x0']+3 and a['x0']-n['base']['x1']<15]
             best=max(left,key=lambda n:n['base']['x1']) if left else None
@@ -90,6 +91,11 @@ def convert(page, line_index):
         for a in n['att']:
             c=a['code']; ay=(a['y0']+a['y1'])/2; top=ay<by
             if (a['font'],c) in YFESIS: e['accidental']=YFESIS[(a['font'],c)]
+            elif (a['font'],c)==('BZByzantina','F043') and e['quantitativeNeume']=='Oligon':
+                # a separate kentima at the right end of the oligon (up two),
+                # the slanted stroke of F064; read from the martyria, unconfirmed.
+                # vfilip once read the bare glyph as hyporoe; in context it is not.
+                e['quantitativeNeume']='OligonPlusKentimaBelow'
             elif a['font']=='BZFthores': e['fthora']=FTHORA[c]+('_Top' if top else '_Bottom')
             elif a['font']=='BZIson': e['ison']=ISOKR[c]
             elif a['font']=='BZLoipa' and c=='F0A5': e['gorgonNeume']='Digorgon'

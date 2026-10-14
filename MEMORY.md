@@ -544,6 +544,15 @@ This file records only durable implementation decisions.
     GorgonDottedRight). Koinonikon now has flats at 148/243/348, all on Di;
     martyria still 12/12. Triargon (BZLoipa F071) has no Neanes equivalent
     and stays a warning.
+  - Second Koinonikon «Αἰνεῖτε» (Lambadarios, ήχος α΄, PDF pp. 15–16,
+    Pandekti 1851 p. 492): 336 neumes, 13/13 martyria **including the octave**.
+    Lesson: the octave-blind martyria check hid a −4 +7 error: two dropped
+    glyphs cancelled modulo 7. Always also look at the octave (e.g. a mode-1
+    martyria sung PaLow, or note names out of Neanes range, are red flags).
+    Fixes: BZByzantina F047 (`\ypspet`) is a base, PetastiPlusHypsiliRight (+4);
+    F043 is not hyporoe here but a slanted kentima at the oligon's right end,
+    read as OligonPlusKentimaBelow (+2) — both chosen so the martyria agree,
+    psaltis must confirm. BZFthores F06E (`\dieshMD`) → Sharp_2_Left.
   - The PDF text stream is already in reading order and carries glyph origins:
     attachments are assigned to the base whose ink x-range overlaps them
     (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows
