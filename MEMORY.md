@@ -533,6 +533,15 @@ This file records only durable implementation decisions.
     fthora renames its note to Pa/Thi (or `chromaticFthoraNote`) at the
     nearest octave; other fthores use Neanes' virtualNote. All 12 martyria
     then match. Martyria letters ignore the octave when compared.
+  - 2026-10-14 user: "after the Ke→Pa fthora the transcription is wrong"
+    (their screenshots never reached this server). Found silently dropped
+    signs: the red yfesis (BZByzantina F074/F079 `\yfesh`/`\yfeshD` →
+    Neanes `Flat_2_Right`, which with chrysanthineAccidentals is half the
+    interval; BZFthores digrammos → Flat_6_Right, unverified) and the dotted
+    gorgon (BZLoipa F060 `\pg` → GorgonDottedLeft; F021 `\gpPD` →
+    GorgonDottedRight). Koinonikon now has flats at 148/243/348, all on Di;
+    martyria still 12/12. Triargon (BZLoipa F071) has no Neanes equivalent
+    and stays a warning.
   - The PDF text stream is already in reading order and carries glyph origins:
     attachments are assigned to the base whose ink x-range overlaps them
     (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows
