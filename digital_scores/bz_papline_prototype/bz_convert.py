@@ -27,8 +27,12 @@ ISOKR={}
 for names,val in (('F066 F046 F052','Ison.Pa'),('F064 F045','Ison.Ni'),('F073 F053 F04C F04F F06C','Ison.Zo'),('F067 F047 F054','Ison.Vou'),('F068 F048 F059','Ison.Ga'),('F06A F055 F04A','Ison.Thi'),('F06B F049 F04B','Ison.Ke'),('F027 F022','Ison.KeLow'),('F03B F03A','Ison.ThiLow'),('F061 F041','Ison.Unison')):
     for c in names.split(): ISOKR[c]=val
 MART={'F031':'Pa','F032':'Vou','F033':'Ga','F034':'Thi','F035':'Ke','F036':'Zo','F037':'Ni'}
-MARTSIGN={'F021','F023','F026','F040','F05E'}
-IGNORE={'F020','F04F','F0FA','F07E'}
+MARTSIGN={'F021','F023','F026','F040','F05E','F060'}  # F060: two red dots of a martyria
+IGNORE={'F020','F04F','F0FA','F07E','F06F'}  # F06F: diastole (bar line)
+# Yfesis (flat), drawn in red right of or over the neume: plain (\yfesh,
+# \yfeshD in BZByzantina) and digrammos (\digryfesh in BZFthores).
+YFESIS={('BZByzantina','F074'):'Flat_2_Right',('BZByzantina','F079'):'Flat_2_Right',
+        ('BZFthores','F074'):'Flat_6_Right',('BZFthores','F079'):'Flat_6_Right'}
 def isbase(a): return (a['font']=='BZByzantina' and a['code'] in BASE) or (a['font']=='BZLoipa' and a['code'] in BASEL)
 def basename(a): return BASE[a['code']] if a['font']=='BZByzantina' else BASEL[a['code']]
 def convert(page, line_index):
@@ -44,7 +48,7 @@ def convert(page, line_index):
         c=a['code']
         if isbase(a): continue
         if a['font']=='BZByzantina' and (c in MART or (c in MARTSIGN and any(abs((m['x0']+m['x1'])/2-(a['x0']+a['x1'])/2)<25 for m in marts))): continue
-        if a['font']=='BZFthores':
+        if a['font']=='BZFthores' and (a['font'],c) not in YFESIS:
             if c in FTH_MART or c in FTH_MARTSIGN: continue
             if c not in FTHORA: warn.append(('fthora-unmapped',c,round(a['x0'])));continue
             cx=(a['x0']+a['x1'])/2
@@ -61,6 +65,10 @@ def convert(page, line_index):
             # vareia precedes its base: next base to the right
             nxt=[n for n in notes if n['base']['x0']>=a['x0']-1]
             best=nxt[0] if nxt else None
+        if best is None and (a['font'],c) in YFESIS:
+            # a flat right of its neume: the nearest base ending just before it
+            left=[n for n in notes if n['base']['x1']<=a['x0']+3 and a['x0']-n['base']['x1']<15]
+            best=max(left,key=lambda n:n['base']['x1']) if left else None
         if best is None: warn.append(('no-base',c,round(a['x0'])));continue
         best['att'].append(a)
     # lyric syllables
@@ -81,9 +89,12 @@ def convert(page, line_index):
         by=(b['y0']+b['y1'])/2
         for a in n['att']:
             c=a['code']; ay=(a['y0']+a['y1'])/2; top=ay<by
-            if a['font']=='BZFthores': e['fthora']=FTHORA[c]+('_Top' if top else '_Bottom')
+            if (a['font'],c) in YFESIS: e['accidental']=YFESIS[(a['font'],c)]
+            elif a['font']=='BZFthores': e['fthora']=FTHORA[c]+('_Top' if top else '_Bottom')
             elif a['font']=='BZIson': e['ison']=ISOKR[c]
             elif a['font']=='BZLoipa' and c=='F0A5': e['gorgonNeume']='Digorgon'
+            elif a['font']=='BZLoipa' and c=='F060': e['gorgonNeume']='GorgonDottedLeft'  # \pg
+            elif a['font']=='BZLoipa' and c=='F021': e['gorgonNeume']='GorgonDottedRight'  # \gpPD
             elif a['font']=='BZByzantina' and c=='F077': e['gorgonNeume']='Argon'
             elif c in GORGON: e['gorgonNeume']='Gorgon_Top' if top else 'Gorgon_Bottom'
             elif c in KLASMA: e['timeNeume']='Klasma_Top' if top else 'Klasma_Bottom'
