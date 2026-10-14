@@ -241,6 +241,8 @@ class AppTests(unittest.TestCase):
         self.assertIn('id="speed-select"', public_score.get_data(as_text=True))
         self.assertIn('"kihem-speed-verified-score"', public_score.get_data(as_text=True))
         self.assertIn("const fallback = 1.0;", public_score.get_data(as_text=True))
+        self.assertIn('id="practice-play"', public_score.get_data(as_text=True))
+        self.assertIn(".contextual-toolbar-panel", public_score.get_data(as_text=True))
         public_neanes = client.get("/digital-scores/neanes/app/")
         self.assertEqual(public_neanes.status_code, 200)
         self.assertIn("Neanes", public_neanes.get_data(as_text=True))

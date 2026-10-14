@@ -673,3 +673,7 @@ button:hover { background: var(--wine-dark); }
 .ison-toggle { margin: 0 0 8px; }
 .ison-toggle[aria-pressed="false"] { opacity: .75; }
 .speed-select { display: inline-block; margin: 0 0 8px 8px; }
+.practice-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 8px 0; }
+.practice-status { color: #5b3a06; font-weight: 600; }
+.practice-bar label { display: inline-flex; align-items: center; gap: 4px; }
+.practice-bar input[type="checkbox"] { width: auto; height: auto; margin: 0; }

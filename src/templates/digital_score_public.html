@@ -65,6 +65,7 @@
         </script>
 {% include "_neanes_speed.html" %}
         <iframe id="neanes-player" class="neanes-player" src="{{ neanes_url }}" title="Neanes player για {{ score.incipit }}" allow="autoplay"></iframe>
+{% include "_neanes_practice.html" %}
       </section>
     {% endif %}
   </main>
@@ -223,6 +224,7 @@
           .toolbar-primary-group-zoom { display: flex !important; }
           .toolbar-primary-group-zoom > :not(.zoom-control) { display: none !important; }
           .toolbar-playback-section { flex: 0 1 auto !important; }
+          .contextual-toolbar-panel { display: none !important; }
           /* A reader has no use for the surrounding editor canvas. */
           .page-background { padding: 0 !important; }
           /* Make the note being played easy to follow. */

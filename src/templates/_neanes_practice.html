@@ -1,0 +1,130 @@
+    <div class="practice-bar" role="group" aria-label="Εξάσκηση σε τμήμα">
+      <span><strong>Εξάσκηση:</strong> πάτησε ένα νεύμα στην παρτιτούρα και μετά</span>
+      <button id="practice-start" class="quiet-button" type="button">Αρχή εδώ</button>
+      <button id="practice-end" class="quiet-button" type="button">Τέλος εδώ</button>
+      <button id="practice-play" class="quiet-button" type="button">▶ Παίξε το τμήμα</button>
+      <label><input id="practice-loop" type="checkbox" checked> Επανάληψη</label>
+      <button id="practice-clear" class="quiet-button" type="button">Καθάρισμα</button>
+      <span id="practice-status" class="practice-status" role="status"></span>
+    </div>
+    <script>
+      /* Students replay a difficult passage.  Neanes already plays from the
+         selected neume and treats a click on a neume as selection; the page
+         drives those same controls in the same-origin iframe and watches the
+         highlighted neume to stop or loop after the chosen end. */
+      (() => {
+        const player = document.getElementById('neanes-player');
+        const status = document.getElementById('practice-status');
+        const loop = document.getElementById('practice-loop');
+        let start = null;
+        let end = null;
+        let watcher = 0;
+        let lastSeen = null;
+        let restarting = false;
+        let missing = 0;
+
+        const frame = () => player.contentDocument;
+        const number = (box) => (box ? Number.parseInt(box.id.replace('element-', ''), 10) : null);
+        const selected = () => number(frame()?.querySelector('.element-box .selected')?.closest('.element-box'));
+        const playing = () => number(frame()?.querySelector('.audio-selected')?.closest('.element-box'));
+        // One toolbar button toggles play/pause; its label can stay "Pause"
+        // after a pause, so the yellow highlight is the reliable playing sign.
+        const toggle = () => frame()?.querySelector('button[aria-label="Play audio"], button[aria-label="Pause audio"]');
+        const lastElement = () => {
+          const boxes = frame()?.querySelectorAll('.element-box') || [];
+          return boxes.length ? number(boxes[boxes.length - 1]) : null;
+        };
+        const tick = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+        const mark = () => {
+          const doc = frame();
+          if (!doc) return;
+          if (!doc.getElementById('kihem-practice-style')) {
+            const style = doc.createElement('style');
+            style.id = 'kihem-practice-style';
+            style.textContent = `
+              .kihem-practice-start .neume-box { box-shadow: -4px 0 0 #2e7d32; }
+              .kihem-practice-end .neume-box { box-shadow: 4px 0 0 #c62828; }
+            `;
+            doc.head.append(style);
+          }
+          for (const box of doc.querySelectorAll('.kihem-practice-start, .kihem-practice-end')) {
+            box.classList.remove('kihem-practice-start', 'kihem-practice-end');
+          }
+          if (start != null) doc.getElementById(`element-${start}`)?.classList.add('kihem-practice-start');
+          if (end != null) doc.getElementById(`element-${end}`)?.classList.add('kihem-practice-end');
+          status.textContent = start == null && end == null
+            ? ''
+            : `Τμήμα: νεύμα ${start ?? 'αρχή'} → ${end ?? 'τέλος'}`;
+        };
+
+        const select = (n) => {
+          const box = frame()?.getElementById(`element-${n}`);
+          if (!box) return false;
+          (box.querySelector('.neume') || box).click();
+          return true;
+        };
+
+        const stopWatching = () => { window.clearInterval(watcher); watcher = 0; };
+
+        // While Neanes plays, selecting a neume jumps there.  Otherwise a
+        // selection stops any paused playback and the toggle then starts at
+        // the first playable event at or after the selected neume.
+        const playFromStart = async () => {
+          restarting = true;
+          const wasPlaying = playing() != null;
+          select(start ?? 1);
+          if (!wasPlaying) { await tick(80); toggle()?.click(); }
+          lastSeen = null;
+          await tick(1200);
+          restarting = false;
+        };
+
+        const watch = () => {
+          if (restarting) return;
+          const current = playing();
+          if (current == null) {
+            // Gap between notes, the initial sound loading, or a stop.
+            missing += 1;
+            if (missing < 30) return;
+            const stop = end ?? lastElement();
+            if (loop.checked && lastSeen != null && stop != null && lastSeen >= stop - 2) void playFromStart();
+            else stopWatching();
+            missing = 0;
+            return;
+          }
+          missing = 0;
+          lastSeen = current;
+          if (end != null && current > end) {
+            if (loop.checked) void playFromStart();
+            else { toggle()?.click(); stopWatching(); }
+          }
+        };
+
+        const remember = (which) => {
+          const n = selected();
+          if (n == null) { status.textContent = 'Πρώτα πάτησε ένα νεύμα στην παρτιτούρα.'; return; }
+          if (which === 'start') start = n; else end = n;
+          if (start != null && end != null && end < start) [start, end] = [end, start];
+          mark();
+        };
+
+        document.getElementById('practice-start').addEventListener('click', () => remember('start'));
+        document.getElementById('practice-end').addEventListener('click', () => remember('end'));
+        document.getElementById('practice-clear').addEventListener('click', () => {
+          start = null; end = null; stopWatching(); mark();
+        });
+        document.getElementById('practice-play').addEventListener('click', async () => {
+          if (!toggle()) {
+            status.textContent = 'Η παρτιτούρα δεν έχει φορτωθεί ακόμη.';
+            return;
+          }
+          if (start == null) start = selected();
+          mark();
+          stopWatching();
+          missing = 0;
+          await playFromStart();
+          watcher = window.setInterval(watch, 100);
+        });
+      })();
+    </script>

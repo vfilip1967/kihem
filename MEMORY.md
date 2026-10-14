@@ -556,6 +556,15 @@ This file records only durable implementation decisions.
   before the iframe loads. The default comes from the optional catalogue field
   `playback_speed` (Koinonikon «Αἰνεῖτε» = 0.6); a student's choice is kept
   per score under `kihem-speed-<id>`.
+- Practice bar (2026-10-14, user: replay difficult passages):
+  `_neanes_practice.html` sets a start/end neume from the Neanes selection
+  (`.element-box .selected`, ids `element-N`) and plays/loops that span.
+  Neanes facts verified in headless Chrome: clicking `.neume` selects; while
+  playing, selecting jumps there; when stopped/paused, selecting stops and the
+  single play toggle starts at the first event ≥ the selection. The toggle's
+  aria-label can stay "Pause audio" after a pause, so the page uses the
+  `.audio-selected` highlight as the playing signal. The contextual neume
+  keyboard (`.contextual-toolbar-panel`) is hidden in reader mode.
 - Deployment reminder: the auto-mode classifier blocks production writes by
   Claude even with the user's consent; the user ran the first deploy with `!`,
   and later identical deploys were allowed.
