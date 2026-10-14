@@ -185,6 +185,7 @@ def _note_names_worker(byzx_path: Path, output_path: Path) -> str:
     output = json.dumps(str(output_path))
     return f"""import {{ readFileSync, writeFileSync }} from 'node:fs';
 
+import {{ getScaleNoteFromValue, getScaleNoteValue, ScaleNote }} from '@/models/Scales';
 import {{ PlaybackService }} from '@/services/audio/PlaybackService';
 import {{ SaveService }} from '@/services/SaveService';
 
@@ -192,12 +193,40 @@ import {{ SaveService }} from '@/services/SaveService';
 
 class RecordingPlaybackService extends PlaybackService {{
   public played: string[] = [];
+  // Distance from the written (physical) note to the name sung after the
+  // last fthora; students follow the sung name.
+  private sungShift = 0;
+
+  handleModeKey(...args: Parameters<PlaybackService['handleModeKey']>) {{
+    super.handleModeKey(...args);
+    this.sungShift = 0;
+  }}
+
+  handleFthora(...args: Parameters<PlaybackService['handleFthora']>) {{
+    super.handleFthora(...args);
+    const node = args[0];
+    const physical = getScaleNoteValue(node.physicalNote);
+    const chromatic = /^(?:Hard|Soft)Chromatic(Pa|Thi)/.exec(String(node.fthora));
+    if (!chromatic) {{
+      this.sungShift = getScaleNoteValue(node.virtualNote) - physical;
+      return;
+    }}
+    // Neanes keeps a chromatic shift only modulo one tetrachord: right for the
+    // pitch, but the note under the fthora is sung by the fthora's own name
+    // (e.g. hard-chromatic Pa on Ke is sung Pa).  Take that name's nearest octave.
+    const named = getScaleNoteValue(
+      node.chromaticFthoraNote ?? (chromatic[1] === 'Pa' ? ScaleNote.Pa : ScaleNote.Thi),
+    );
+    const target = [named - 7, named, named + 7].reduce((best, value) =>
+      Math.abs(value - physical) < Math.abs(best - physical) ? value : best,
+    );
+    this.sungShift = target - physical;
+  }}
 
   handleNoteAtom(...args: Parameters<PlaybackService['handleNoteAtom']>) {{
     super.handleNoteAtom(...args);
-    // virtualNote is the sung name after any fthora (equal to the written
-    // physicalNote in a purely diatonic passage); students follow this name.
-    this.played.push(args[0].virtualNote);
+    const sung = getScaleNoteFromValue(getScaleNoteValue(args[0].physicalNote) + this.sungShift);
+    this.played.push(sung ?? args[0].virtualNote);
   }}
 }}
 

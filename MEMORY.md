@@ -526,8 +526,13 @@ This file records only durable implementation decisions.
     `Nhdia`→NiLow/NiHigh, `paplab`/`diplagb`→HardChromaticPa/Thi, `dib`/`nhb`→
     SoftChromaticThi/Pa), checked against the psaltis' theory book; Top/Bottom
     from position, fthora next to a martyria goes on the martyria. The note-name
-    sidecar records Neanes `virtualNote` (the sung name after a fthora). All 12
-    martyria then match. Martyria letters ignore the octave when compared.
+    sidecar records the sung name after a fthora. Neanes' own `virtualNote` is
+    not enough: in hard/soft chromatic `LayoutService.getShift` keeps the shift
+    modulo 4 (right for pitch), so hard-chromatic Pa on Ke still read "Ke, Zo…".
+    User report 2026-10-14. The worker now keeps its own shift: the chromatic
+    fthora renames its note to Pa/Thi (or `chromaticFthoraNote`) at the
+    nearest octave; other fthores use Neanes' virtualNote. All 12 martyria
+    then match. Martyria letters ignore the octave when compared.
   - The PDF text stream is already in reading order and carries glyph origins:
     attachments are assigned to the base whose ink x-range overlaps them
     (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows
