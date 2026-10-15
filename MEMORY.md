@@ -568,6 +568,11 @@ This file records only durable implementation decisions.
     (sungShift = 0). Neanes' own virtualNote re-anchors at them (kliton gave
     +3). 26/26 martyria. The sidecar also stores `physical` (written notes)
     for diagnosis; the catalogue ignores it.
+  - 2026-10-15: vfilip verified (visual + auditory) the Cherubikon and the
+    three Lambadarios Koinonika; they are public. Next: Koinonikon «Αἰνεῖτε»
+    of Daniel Protopsaltis (PDF pp. 21–23, Pandekti p. 456), 450 neumes, 18/18
+    martyria with octave, private draft. BZLoipa F031 `\gpBMusic` →
+    GorgonDottedRight. Next piece starts on PDF p. 24.
   - The PDF text stream is already in reading order and carries glyph origins:
     attachments are assigned to the base whose ink x-range overlaps them
     (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows

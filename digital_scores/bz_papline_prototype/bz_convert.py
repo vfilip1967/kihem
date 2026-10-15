@@ -101,7 +101,7 @@ def convert(page, line_index):
             elif a['font']=='BZIson': e['ison']=ISOKR[c]
             elif a['font']=='BZLoipa' and c=='F0A5': e['gorgonNeume']='Digorgon'
             elif a['font']=='BZLoipa' and c=='F060': e['gorgonNeume']='GorgonDottedLeft'  # \pg
-            elif a['font']=='BZLoipa' and c=='F021': e['gorgonNeume']='GorgonDottedRight'  # \gpPD
+            elif a['font']=='BZLoipa' and c in ('F021','F031'): e['gorgonNeume']='GorgonDottedRight'  # \gpPD, \gpBMusic
             elif a['font']=='BZLoipa' and c=='F0A8': e['gorgonNeume']='Trigorgon'
             elif a['font']=='BZByzantina' and c=='F03F': e['vocalExpressionNeume']='HeteronConnecting'  # syndesmos
             elif a['font']=='BZByzantina' and c=='F077': e['gorgonNeume']='Argon'
