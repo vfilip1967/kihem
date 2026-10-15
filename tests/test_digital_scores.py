@@ -141,7 +141,15 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         self.assertEqual(score.byzx_filename, "lithou-sfragisthentos-tone1.byzx")
         self.assertEqual(
             [published.score_id for published in catalog.verified_scores()],
-            ["lithou-sfragisthentos-tone1", "formula1p-ez-word-varys-ga-diatonic-pilot", "ananas-line7-pdf-private-draft"],
+            [
+                "lithou-sfragisthentos-tone1",
+                "formula1p-ez-word-varys-ga-diatonic-pilot",
+                "ananas-line7-pdf-private-draft",
+                "papline-cherubikon-lambadarios-full-private-draft",
+                "papline-koinonikon-aineite-lambadarios-full-private-draft",
+                "papline-koinonikon-aineite-2-lambadarios-full-private-draft",
+                "papline-koinonikon-aineite-3-lambadarios-full-private-draft",
+            ],
         )
 
     def test_second_tone_candidate_has_its_own_private_source_page(self):
