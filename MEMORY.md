@@ -561,7 +561,13 @@ This file records only durable implementation decisions.
     letter Di; F029/F06F `\zwanwyfesh` → GeneralFlat; BZLoipa F0A8 Trigorgon;
     BZByzantina F03F syndesmos → HeteronConnecting. Open: martyria Ga on p. 19
     line 10 (after spathi + kliton F050) is sung Zo' — kliton/spathi naming or
-    a neume, for the psaltis.
+    a neume, for the psaltis. → Resolved 2026-10-15: the neumes were right
+    (written notes fall to Ni after the 2nd spathi and rise to Ga); the names
+    were wrong. Rule now in the note-name worker: Zygos/Kliton/Spathi are
+    chroai — they do not rename and they end an earlier chromatic renaming
+    (sungShift = 0). Neanes' own virtualNote re-anchors at them (kliton gave
+    +3). 26/26 martyria. The sidecar also stores `physical` (written notes)
+    for diagnosis; the catalogue ignores it.
   - The PDF text stream is already in reading order and carries glyph origins:
     attachments are assigned to the base whose ink x-range overlaps them
     (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows

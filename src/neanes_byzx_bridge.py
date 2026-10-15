@@ -193,6 +193,8 @@ import {{ SaveService }} from '@/services/SaveService';
 
 class RecordingPlaybackService extends PlaybackService {{
   public played: string[] = [];
+  // The written note (counted from the neumes), for diagnosing a name.
+  public physical: string[] = [];
   // Distance from the written (physical) note to the name sung after the
   // last fthora; students follow the sung name.
   private sungShift = 0;
@@ -206,6 +208,14 @@ class RecordingPlaybackService extends PlaybackService {{
     super.handleFthora(...args);
     const node = args[0];
     const physical = getScaleNoteValue(node.physicalNote);
+    // Zygos, Kliton and Spathi are chroai: they alter the intervals but do not
+    // rename the notes (Neanes re-anchors its virtual note for them), and they
+    // end an earlier chromatic renaming: the written names are sung again.
+    // Confirmed by vfilip on the 3rd Koinonikon (after the spathi, down to Ni).
+    if (/^(?:Zygos|Kliton|Spathi)/.test(String(node.fthora))) {{
+      this.sungShift = 0;
+      return;
+    }}
     const chromatic = /^(?:Hard|Soft)Chromatic(Pa|Thi)/.exec(String(node.fthora));
     if (!chromatic) {{
       this.sungShift = getScaleNoteValue(node.virtualNote) - physical;
@@ -227,6 +237,7 @@ class RecordingPlaybackService extends PlaybackService {{
     super.handleNoteAtom(...args);
     const sung = getScaleNoteFromValue(getScaleNoteValue(args[0].physicalNote) + this.sungShift);
     this.played.push(sung ?? args[0].virtualNote);
+    this.physical.push(args[0].physicalNote);
   }}
 }}
 
@@ -255,10 +266,12 @@ describe('Kihem note names', () => {{
     const noteEvents = events.filter((event) => event.type === 'note');
     expect(noteEvents).toHaveLength(service.played.length);
     const byElement: Record<string, string[]> = {{}};
+    const physical: Record<string, string[]> = {{}};
     noteEvents.forEach((event, position) => {{
       (byElement[String(event.elementIndex)] ??= []).push(service.played[position]);
+      (physical[String(event.elementIndex)] ??= []).push(service.physical[position]);
     }});
-    writeFileSync({output}, JSON.stringify({{ schema: 1, elements: byElement }}, null, 2) + '\\n', 'utf8');
+    writeFileSync({output}, JSON.stringify({{ schema: 1, elements: byElement, physical }}, null, 2) + '\\n', 'utf8');
   }});
 }});
 """

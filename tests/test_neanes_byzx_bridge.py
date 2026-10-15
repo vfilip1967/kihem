@@ -44,6 +44,7 @@ class NoteNamesWorkerTests(unittest.TestCase):
         self.assertIn("class RecordingPlaybackService extends PlaybackService", worker)
         self.assertIn("args[0].physicalNote) + this.sungShift", worker)
         self.assertIn("handleFthora", worker)
+        self.assertIn("(?:Zygos|Kliton|Spathi)", worker)
         self.assertIn("event.elementIndex", worker)
         self.assertIn("/tmp/score.notes.json", worker)
 
