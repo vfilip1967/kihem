@@ -584,6 +584,13 @@ This file records only durable implementation decisions.
   `volumeIson` into the shared `audioOptionsDefault` localStorage before the
   iframe loads (`null` = mute, Neanes' own serialisation of -Infinity) and
   reloads the page; the default drone volume is -8 dB.
+- Parallage tag index (fixed 2026-10-15, user: wrong names when playing a span
+  of the 3rd Koinonikon): Neanes virtualises pages, so only visible pages'
+  `.element-box`es exist (top: element-1..302; scrolled: from element-303).
+  The tag used to take the DOM position as the element index, which is wrong
+  once the first page is unrendered. Now index = id number − the id of the
+  first box right after loading (the opening martyria). Verified headless by
+  playing spans from 300 and 440 against the sidecar.
 - Playback speed (2026-10-14, user: "στα κοινωνικά παίζει πιο αργά"): the
   shared partial `_neanes_speed.html` adds a "Ταχύτητα" select (40–125%) the
   same way, writing Neanes' `audioOptions.speed` (tempo multiplier, 0.1–3)

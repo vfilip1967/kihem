@@ -242,6 +242,9 @@ class AppTests(unittest.TestCase):
         self.assertIn('"kihem-speed-verified-score"', public_score.get_data(as_text=True))
         self.assertIn("const fallback = 1.0;", public_score.get_data(as_text=True))
         self.assertIn('id="practice-play"', public_score.get_data(as_text=True))
+        # Neanes renders only visible pages: the tag must use element ids.
+        self.assertIn("const index = n - elementIdBase;", public_score.get_data(as_text=True))
+        self.assertNotIn("querySelectorAll('.element-box')).indexOf(box)", public_score.get_data(as_text=True))
         self.assertIn(".contextual-toolbar-panel", public_score.get_data(as_text=True))
         public_neanes = client.get("/digital-scores/neanes/app/")
         self.assertEqual(public_neanes.status_code, 200)

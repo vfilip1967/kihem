@@ -164,6 +164,17 @@
 
       const noteLabels = {{ note_labels|tojson }};
       let parallageObserver = null;
+      // Neanes renders only the pages in view, so a neume's position among
+      // the rendered boxes is not its element index.  Each box carries
+      // id="element-<n>" from a counter assigned in staff order; the first
+      // box right after loading is element 0, the opening Martyria.
+      let elementIdBase = null;
+      const elementNumber = (box) => Number.parseInt((box && box.id || '').replace('element-', ''), 10);
+      const rememberElementIdBase = () => {
+        const first = player.contentDocument && player.contentDocument.querySelector('.element-box[id^="element-"]');
+        const n = elementNumber(first);
+        if (Number.isFinite(n)) elementIdBase = n;
+      };
       const watchParallage = () => {
         const frameDocument = player.contentDocument;
         if (!noteLabels || !frameDocument || !frameDocument.body || parallageObserver) return;
@@ -192,7 +203,9 @@
           const playing = frameDocument.querySelector('.audio-selected');
           const box = playing && playing.closest('.element-box');
           if (!box) { tip.style.display = 'none'; return; }
-          const index = Array.from(frameDocument.querySelectorAll('.element-box')).indexOf(box);
+          const n = elementNumber(box);
+          if (elementIdBase == null || !Number.isFinite(n)) { tip.style.display = 'none'; return; }
+          const index = n - elementIdBase;
           const names = noteLabels[String(index)];
           if (!names) { tip.style.display = 'none'; return; }
           const text = names.join(' → ');
@@ -256,6 +269,7 @@
           input.files = transfer.files;
           input.dispatchEvent(new Event('change', { bubbles: true }));
           await configureReaderWidth();
+          rememberElementIdBase();
           isLoaded = true;
           status.textContent = 'Η παρτιτούρα φορτώθηκε. Πάτησε ▶ στο Neanes για ακρόαση.';
           status.classList.add('ready');
