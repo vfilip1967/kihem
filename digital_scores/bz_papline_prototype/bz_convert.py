@@ -4,7 +4,7 @@ BASE={'F047':'PetastiPlusHypsiliRight','F073':'Oligon','F06A':'Apostrophos','F06
  'F066':'OligonPlusKentimaAbove','F064':'OligonPlusKentimaBelow','F053':'Petasti','F04A':'PetastiPlusApostrophos',
  'F044':'PetastiPlusOligon','F046':'PetastiPlusKentimaAbove','F06C':'ElaphronPlusApostrophos','F02D':'OligonPlusApostrophosPlusKentemata','F05F':'OligonPlusIsonPlusKentemata','F0A2':'OligonPlusKentimaBelow','F067':'OligonPlusHypsiliRight','F07A':'OligonPlusKentemata','F03B':'Hamili','F076':'OligonPlusKentemata','F078':'Kentemata',
  'F027':'Hyporoe','F06B':'Elaphron','F068':'RunningElaphron','F041':'PetastiWithIson','F03D':'DoubleApostrophos','F02B':'IsonPlusApostrophos'}
-BASEL={'F073':'OligonPlusHypsiliLeft','F03D':'OligonPlusElaphronPlusApostrophos','F029':'OligonPlusApostrophos','F064':'OligonPlusHypsiliPlusKentimaHorizontal','F061':'OligonPlusKentemataPlusHypsiliRight','F03F':'OligonPlusKentimaBelow','F070':'OligonPlusElaphronPlusKentemata'}  # BZLoipa bases
+BASEL={'F073':'OligonPlusHypsiliLeft','F03D':'OligonPlusElaphronPlusApostrophos','F029':'OligonPlusApostrophos','F064':'OligonPlusHypsiliPlusKentimaHorizontal','F061':'OligonPlusKentemataPlusHypsiliRight','F03F':'OligonPlusKentimaBelow','F070':'OligonPlusElaphronPlusKentemata','F053':'PetastiPlusHypsiliLeft'}  # BZLoipa bases; F053 \ypsApet, chosen so the martyria agree
 LOIPA_VOCAL={'F07D':'Heteron','F03F':'Antikenoma'}
 # BZFthores (font, code) -> Neanes Fthora stem; names from the CTAN package,
 # shapes checked against the psaltis' theory book (Μέθοδος, pp. 101-103).

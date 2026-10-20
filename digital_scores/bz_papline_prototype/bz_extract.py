@@ -16,7 +16,7 @@ def page_glyphs(pg):
     for b in pg.get_text('rawdict')['blocks']:
         for l in b.get('lines',[]):
             for s in l['spans']:
-                f=re.sub(r'^[A-Z]{6}\+','',s['font']); size=s['size']
+                f=re.sub(r'^[A-Z]{6}\+','',s['font']).replace(' ',''); size=s['size']  # the Doxologies PDF writes "BZ Byzantina"
                 for c in s['chars']:
                     ch=c['c']; x,y=c['origin']
                     if f in ('BZByzantina','BZLoipa','BZFthores','BZIson','BZPalaia','BZXronos') and ch.strip():

@@ -573,6 +573,32 @@ This file records only durable implementation decisions.
     of Daniel Protopsaltis (PDF pp. 21–23, Pandekti p. 456), 450 neumes, 18/18
     martyria with octave, private draft. BZLoipa F031 `\gpBMusic` →
     GorgonDottedRight. Next piece starts on PDF p. 24.
+  - 2026-10-20: the Sunday Orthros plan is one papline **Great Doxology** per
+    week in the Melodos weekly tone (25 Oct 2026 = tone 4; the Melodos selector
+    says «Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος δ΄»). Source: papline's
+    «Δοξολογίαι» (Tablet) collection, 838-page BZ PDF, tones 1–8 in order
+    (printed pp. 7, 74, 156, 225, 310, 414, 515, 646; first piece of each tone
+    is «Σύντομοι - Ἀργοσύντομοι»). PDF page = printed page + 1. Its BZ font
+    names carry a space («BZ Byzantina»); `bz_extract.py` now strips it. The
+    permission email covered the texts asked for earlier, not explicitly the
+    Doxologies: ask papline before any public release. First piece: Manuel
+    Protopsaltis I, tone 4, PDF pp. 240–245 (printed 239–244, Anastasimatarion
+    1905 p. 200), private `papline-doxologia-manuel1-tone4-private-draft`,
+    `needs_review`: 635 notes, 41/41 martyria (Vou/Thi) with octave. Opening
+    note Vou was found by trying all seven notes (only Vou fits; the page header
+    also reads «Βου»); its `rootSign: Delta` is provisional. BZLoipa `F053`
+    (`\ypsApet`) is a base, `PetastiPlusHypsiliLeft`: dropping it left a −2
+    (≡ +5 mod 7) drift. Not converted: BZFthores `F027`/`F022` (stavros, the
+    «+» signs) and BZLoipa `F0E1`. Always check martyria against the *preceding
+    note*: the note-name sidecar holds notes only, so a martyria at element `i`
+    is compared with element `i-1`. The prototype's working directories under
+    `/tmp` (`/tmp/kihem-ez-pilot/ctan-byz`, `/tmp/kihem-neanes-source`) vanish;
+    rebuild them from CTAN `support/byzantinemusic.zip` and the Neanes v0.5.55
+    tag (`npm ci --ignore-scripts`).
+  - Default tempo (2026-10-20, user: 100 bpm): Neanes plays at 120 bpm times
+    `audioOptions.speed` when no Tempo sign is written, so `playback_speed` is
+    `100/120 = 0.8333333333` rather than a tempo sign that would change the
+    notation.
   - The PDF text stream is already in reading order and carries glyph origins:
     attachments are assigned to the base whose ink x-range overlaps them
     (a vareia belongs to the *next* base); gorgon/klasma Top/Bottom follows
