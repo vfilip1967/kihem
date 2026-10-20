@@ -602,6 +602,23 @@ This file records only durable implementation decisions.
     too, since a line can end on one. Use this for any piece chanted from the
     left stand; the user saw the first draft and found it correct, with no
     remarks (visual look only; not yet recorded as `verified`).
+  - Neanes draws a small icon at every line break (`.line-break`,
+    `.line-break-2`); both readers hide it with CSS, the breaks stay
+    (2026-10-20, user request).
+  - Pause after each Martyria (2026-10-20, user: «μισού χρόνου», then settled
+    on one simple 1-time pause "to see if it is better"). Neanes has no
+    half-time rest: its rests are `Vareia(Dotted)` 1–4 times, so the draft has
+    a `VareiaDotted` note after every Martyria (it carries the line's
+    `lineBreak`, so the line layout is unchanged). It must sound but not be
+    drawn: the sidecar's optional `hidden` list (element indices; written by
+    `write_note_names(..., hidden_elements=)`, read by
+    `DigitalScoreCatalog.hidden_elements`) makes both readers inject
+    `#element-<idBase+index> { visibility: hidden }`. Re-running
+    `build_neanes_note_names.py` without it drops the list. A pause becomes
+    the "previous temporal node" of the next note, so a gorgon on a line's
+    first note halves the pause instead of the last note before it (one case
+    in this piece, element 408); time neumes lengthen their own note and are
+    not affected.
   - Default tempo (2026-10-20, user: 100 bpm): Neanes plays at 120 bpm times
     `audioOptions.speed` when no Tempo sign is written, so `playback_speed` is
     `100/120 = 0.8333333333` rather than a tempo sign that would change the

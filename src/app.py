@@ -322,6 +322,7 @@ def create_app(config: dict | None = None) -> Flask:
                 neanes_url=f"{base_url}/digital-scores/neanes/app/",
                 score_url=asset_urls.get("byzx"),
                 note_labels=digital_score_catalog.note_labels(score),
+                hidden_elements=digital_score_catalog.hidden_elements(score),
             ),
             mimetype="text/html",
         )
@@ -481,6 +482,7 @@ def create_app(config: dict | None = None) -> Flask:
             # URL is cache-busted.  Tie it to the asset version as well.
             score_filename=f"{score.score_id}-{asset_version}.byzx",
             note_labels=digital_score_catalog.note_labels(score),
+            hidden_elements=digital_score_catalog.hidden_elements(score),
             source_urls=tuple(
                 f"{review_url}/asset/source?position={position}"
                 for position in range(len(score.source_scan_filenames))

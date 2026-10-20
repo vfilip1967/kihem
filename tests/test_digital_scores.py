@@ -75,6 +75,18 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         sidecar.write_text("not json", encoding="utf-8")
         self.assertIsNone(catalog.note_labels(score))
 
+    def test_hidden_elements_come_from_the_optional_private_sidecar(self):
+        self.write_catalog([self.score()])
+        (self.storage / "lithou-sfragisthentos-tone1.byzx").write_text("{}", encoding="utf-8")
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        score = catalog.get("lithou-sfragisthentos-tone1")
+        self.assertEqual(catalog.hidden_elements(score), [])
+        sidecar = self.storage / "lithou-sfragisthentos-tone1.notes.json"
+        sidecar.write_text(json.dumps({"schema": 1, "elements": {}, "hidden": [12, 3, 3, -1, "x", True]}), encoding="utf-8")
+        self.assertEqual(catalog.hidden_elements(score), [3, 12])
+        sidecar.write_text("not json", encoding="utf-8")
+        self.assertEqual(catalog.hidden_elements(score), [])
+
     def test_source_scan_paths_are_catalogued_and_cannot_escape_storage(self):
         self.write_catalog([self.score()])
         (self.storage / "source-1.png").write_bytes(b"source")

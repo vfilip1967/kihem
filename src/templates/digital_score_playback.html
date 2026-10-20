@@ -140,6 +140,18 @@
 
 
       const noteLabels = {{ note_labels|tojson }};
+      // Elements that sound but are not source notation (a pause added for the
+      // chanter) are kept in the score and hidden from the reader.
+      const hiddenElements = {{ hidden_elements|tojson }};
+      const hideElements = () => {
+        const frameDocument = player.contentDocument;
+        if (!hiddenElements.length || elementIdBase == null || !frameDocument || !frameDocument.head
+            || frameDocument.getElementById('kihem-hidden-elements')) return;
+        const style = frameDocument.createElement('style');
+        style.id = 'kihem-hidden-elements';
+        style.textContent = hiddenElements.map((index) => `#element-${elementIdBase + index}`).join(',') + ' { visibility: hidden !important; }';
+        frameDocument.head.append(style);
+      };
       let parallageObserver = null;
       // Neanes renders only the pages in view, so a neume's position among
       // the rendered boxes is not its element index.  Each box carries
@@ -255,6 +267,7 @@
           input.dispatchEvent(new Event('change', { bubbles: true }));
           await configureReaderWidth();
           rememberElementIdBase();
+          hideElements();
           isLoaded = true;
           status.textContent = 'Η παρτιτούρα φορτώθηκε. Πάτησε ▶ στο Neanes για ακρόαση.';
           status.classList.add('ready');

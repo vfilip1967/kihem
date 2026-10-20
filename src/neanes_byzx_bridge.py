@@ -17,7 +17,7 @@ import json
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 
 class NeanesByzxBridgeError(RuntimeError):
@@ -286,8 +286,14 @@ def write_note_names(
     *,
     output_path: str | Path,
     neanes_source: str | Path,
+    hidden_elements: Sequence[int] = (),
 ) -> Path:
-    """Write ``{elementIndex: [ScaleNote, ...]}`` for a ``.byzx`` via Neanes."""
+    """Write ``{elementIndex: [ScaleNote, ...]}`` for a ``.byzx`` via Neanes.
+
+    ``hidden_elements`` lists element indices that sound (such as a pause added
+    for the chanter) but that the readers must not draw; they are stored as the
+    optional ``hidden`` list of the sidecar.
+    """
 
     source_root = Path(neanes_source).resolve()
     if not (source_root / "package.json").is_file() or not (source_root / "vitest.config.mts").is_file():
@@ -321,4 +327,8 @@ def write_note_names(
             worker_path.unlink(missing_ok=True)
     if not destination.is_file() or destination.stat().st_size == 0:
         raise NeanesByzxBridgeError("Το Neanes ολοκλήρωσε χωρίς να δημιουργήσει αρχείο νοτών.")
+    if hidden_elements:
+        payload = json.loads(destination.read_text(encoding="utf-8"))
+        payload["hidden"] = sorted({int(index) for index in hidden_elements})
+        destination.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     return destination

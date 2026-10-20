@@ -146,6 +146,26 @@ class DigitalScoreCatalog:
                 labels[index] = names
         return labels or None
 
+    def hidden_elements(self, score: DigitalScore) -> list[int]:
+        """Return the element indices the readers must not draw.
+
+        They are listed in the optional ``hidden`` entry of the same sidecar,
+        for elements that sound without being part of the source notation,
+        such as a pause added for the chanter.  Malformed data is ignored.
+        """
+
+        byzx = self.asset_path(score, "byzx")
+        if byzx is None:
+            return []
+        try:
+            payload = json.loads(byzx.with_suffix(".notes.json").read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return []
+        hidden = payload.get("hidden") if isinstance(payload, dict) and payload.get("schema") == 1 else None
+        if not isinstance(hidden, list):
+            return []
+        return sorted({index for index in hidden if isinstance(index, int) and not isinstance(index, bool) and index >= 0})
+
     def source_scan_path(self, score: DigitalScore, position: int) -> Path | None:
         """Return one reviewed-source image without permitting path traversal."""
         if position < 0 or position >= len(score.source_scan_filenames):
