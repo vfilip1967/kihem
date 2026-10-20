@@ -595,6 +595,13 @@ This file records only durable implementation decisions.
     `/tmp` (`/tmp/kihem-ez-pilot/ctan-byz`, `/tmp/kihem-neanes-source`) vanish;
     rebuild them from CTAN `support/byzantinemusic.zip` and the Neanes v0.5.55
     tag (`npm ci --ignore-scripts`).
+  - Line breaks (2026-10-20, user: the Doxology is sung with the left chanter,
+    so it must read line by line like the source): every music line of the
+    source PDF ends with `lineBreak: true` on its last element (52 breaks for
+    the 53 lines of Manuel I). The bridge copies it onto automatic Martyria
+    too, since a line can end on one. Use this for any piece chanted from the
+    left stand; the user saw the first draft and found it correct, with no
+    remarks (visual look only; not yet recorded as `verified`).
   - Default tempo (2026-10-20, user: 100 bpm): Neanes plays at 120 bpm times
     `audioOptions.speed` when no Tempo sign is written, so `playback_speed` is
     `100/120 = 0.8333333333` rather than a tempo sign that would change the

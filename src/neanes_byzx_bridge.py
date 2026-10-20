@@ -72,6 +72,10 @@ describe('Kihem private EZ .byzx bridge', () => {{
         if (typeof fields.fthora === 'string') {{
           Object.assign(automatic, {{ fthora: fields.fthora }});
         }}
+        // A source line may end on its Martyria; keep the source's line break.
+        if (fields.lineBreak === true) {{
+          automatic.lineBreak = true;
+        }}
         return automatic;
       }}
       const note = new NoteElement();

@@ -37,6 +37,11 @@ class NeanesByzxBridgeTests(unittest.TestCase):
         self.assertIn("expect(reopenedMartyria!.note).toBe(martyria.note)", worker)
         self.assertNotIn("ModeKeyElement.createFromTemplate", worker)
 
+    def test_generated_worker_keeps_a_source_line_break_on_an_automatic_martyria(self):
+        worker = _typescript_worker(event_draft(), Path("/tmp/private.byzx"), "Δοκιμή")
+        self.assertIn("if (fields.lineBreak === true)", worker)
+        self.assertIn("automatic.lineBreak = true", worker)
+
 
 class NoteNamesWorkerTests(unittest.TestCase):
     def test_worker_records_neanes_own_scale_notes_per_element(self):
