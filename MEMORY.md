@@ -619,6 +619,16 @@ This file records only durable implementation decisions.
     martyria, where a hidden `Tempo` element (Moderate, bpm 115) returns to the
     sticheron tempo; `playback_speed` stays 1. The bridge accepts
     `elementType: 'Tempo'` events. Not yet attached to the Orthros.
+  - Live speed (2026-10-21, user: judge the tempo while it sounds):
+    `_neanes_speed.html` (both players) changes speed during playback: Neanes
+    plans a playback at start and disables its speed field while playing, so
+    the wrapper clicks Pause, types the percentage into `#audio-speed-input`,
+    clicks the `.audio-selected` element (the click selects it) and Play, which
+    resumes from that element; `−`/`+` buttons add 5%. Tested in headless
+    Chrome (playwright in a scratchpad venv, `/usr/bin/google-chrome`, the app
+    served under a `/kihem` DispatcherMiddleware because the Neanes bundle is
+    built for that prefix). Ainoi line breaks: only after a martyria that is
+    followed by new text, never before a bare melisma note.
   - Sunday Orthros integration (2026-10-21, user: papline is fine as long as
     use is non-commercial): `AttachmentRule.digital_title` marks a rule whose
     `piece_id` is a *catalogue score id*, not a scanned piece. It is attached
