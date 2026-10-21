@@ -619,6 +619,13 @@ This file records only durable implementation decisions.
     martyria, where a hidden `Tempo` element (Moderate, bpm 115) returns to the
     sticheron tempo; `playback_speed` stays 1. The bridge accepts
     `elementType: 'Tempo'` events. Not yet attached to the Orthros.
+  - Neanes quirk (found 2026-10-21 from the user's report that the later
+    verses started slow and the sticheron kept the verse tempo): `AudioService.play`
+    never resets the transport tempo for an event whose bpm equals the bpm
+    playback *started* with, so a tempo that recurs after another one is
+    ignored. Hence every Tempo element of a score must carry a unique bpm
+    (the Ainoi use 208.00, 168.01, 115.02, 208.03 …, a hundredth apart).
+    Verified in headless Chrome by timing the played elements per section.
   - Live speed (2026-10-21, user: judge the tempo while it sounds):
     `_neanes_speed.html` (both players) changes speed during playback: Neanes
     plans a playback at start and disables its speed field while playing, so
