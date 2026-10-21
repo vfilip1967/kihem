@@ -65,6 +65,18 @@ describe('Kihem private EZ .byzx bridge', () => {{
     score.documentProperties.author = 'Kihem · ιδιωτικό EZ draft · απαιτεί μουσικό έλεγχο';
     const elements = eventDraft.events.map((saved: Record<string, unknown>) => {{
       const {{ elementType: _elementType, source_note: _sourceNote, ...fields }} = saved;
+      if (saved.elementType === 'Martyria' && fields.explicit === true) {{
+        // A Martyria written in the source as a new starting sign (the heading of
+        // a following piece): explicit, like the opening one, so it resets the note.
+        const manual = new MartyriaElement();
+        manual.auto = false;
+        Object.assign(manual, {{ note: fields.note, rootSign: fields.rootSign, scale: fields.scale }});
+        manual.rootSignOverride = manual.rootSign;
+        if (fields.lineBreak === true) {{
+          manual.lineBreak = true;
+        }}
+        return manual;
+      }}
       if (saved.elementType === 'Martyria') {{
         // Intermediate Martyria are automatic: Neanes derives them from the
         // notes before them, so a wrong note shows up as a wrong Martyria.

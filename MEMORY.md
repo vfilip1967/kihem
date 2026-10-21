@@ -619,6 +619,13 @@ This file records only durable implementation decisions.
     martyria, where a hidden `Tempo` element (Moderate, bpm 115) returns to the
     sticheron tempo; `playback_speed` stays 1. The bridge accepts
     `elementType: 'Tempo'` events. Not yet attached to the Orthros.
+  - Pasapnoaria (2026-10-21, user: they belong at the start, before the Ainoi):
+    the Ainoi file now begins with Lambadarios' «Εἰς τοὺς Αἴνους · Πασαπνοάρια»
+    (PDF p.302 lines 6–7, p.303 lines 0–6; the «Στιχολογία» sections that follow
+    on pp.303–317 are other composers' alternative Pasapnoaria, not psalm verses),
+    then an explicit Martyria «Πα» (new `explicit: true` Martyria event of the
+    bridge: manual, resets the note) and the stichera. 1407 notes, 63/63
+    martyria, 24 tempo signs, 71 hidden elements. Scans 12–13 are the new pages.
   - Neanes quirk (found 2026-10-21 from the user's report that the later
     verses started slow and the sticheron kept the verse tempo): `AudioService.play`
     never resets the transport tempo for an event whose bpm equals the bpm

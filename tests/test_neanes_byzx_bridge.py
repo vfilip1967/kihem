@@ -49,6 +49,11 @@ class NeanesByzxBridgeTests(unittest.TestCase):
         self.assertIn("new TempoElement()", worker)
         self.assertIn('"elementType": "Tempo"', worker)
 
+    def test_generated_worker_builds_an_explicit_martyria_in_the_middle(self):
+        worker = _typescript_worker(event_draft(), Path("/tmp/private.byzx"), "Δοκιμή")
+        self.assertIn("fields.explicit === true", worker)
+        self.assertIn("manual.auto = false", worker)
+
 
 class NoteNamesWorkerTests(unittest.TestCase):
     def test_worker_records_neanes_own_scale_notes_per_element(self):
