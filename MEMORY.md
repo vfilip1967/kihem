@@ -583,7 +583,10 @@ This file records only durable implementation decisions.
     permission email covered the texts asked for earlier, not explicitly the
     Doxologies: ask papline before any public release. First piece: Manuel
     Protopsaltis I, tone 4, PDF pp. 240–245 (printed 239–244, Anastasimatarion
-    1905 p. 200), private `papline-doxologia-manuel1-tone4-private-draft`,
+    1905 p. 200), `papline-doxologia-manuel1-tone4-private-draft`,
+    **`verified` by `vfilip` on 2026-10-21** (they heard it with the hidden
+    pauses and said it sounds right; the id keeps its old name so links hold;
+    still ask papline about the Doxologies licence before wide release); it was
     `needs_review`: 635 notes, 41/41 martyria (Vou/Thi) with octave. Opening
     note Vou was found by trying all seven notes (only Vou fits; the page header
     also reads «Βου»); its `rootSign: Delta` is provisional. BZLoipa `F053`

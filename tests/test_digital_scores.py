@@ -161,6 +161,7 @@ class DigitalScoreCatalogTests(unittest.TestCase):
                 "papline-koinonikon-aineite-lambadarios-full-private-draft",
                 "papline-koinonikon-aineite-2-lambadarios-full-private-draft",
                 "papline-koinonikon-aineite-3-lambadarios-full-private-draft",
+                "papline-doxologia-manuel1-tone4-private-draft",
             ],
         )
 
