@@ -598,6 +598,17 @@ This file records only durable implementation decisions.
     `/tmp` (`/tmp/kihem-ez-pilot/ctan-byz`, `/tmp/kihem-neanes-source`) vanish;
     rebuild them from CTAN `support/byzantinemusic.zip` and the Neanes v0.5.55
     tag (`npm ci --ignore-scripts`).
+  - Sunday Orthros integration (2026-10-21, user: papline is fine as long as
+    use is non-commercial): `AttachmentRule.digital_title` marks a rule whose
+    `piece_id` is a *catalogue score id*, not a scanned piece. It is attached
+    only if `enrich_service_html(..., verified_digital_scores=)` (app.py passes
+    `verified_scores()` ids) contains it, so a score that is not `verified`
+    never appears. Markup is a `music-attachment` aside with a lazy iframe of
+    the public `digital-scores/<id>/` page, after «Παράτεινον τὸ ἔλεός σου…»
+    and before «Σήμερον σωτηρία», with its own bookmark. The tone-4 rule needs
+    Melodos' selector «Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος δ΄» and a
+    Sunday. Next weeks: convert the next tone's Doxology (papline PDF
+    offsets above), verify it, and add a rule alike; keep non-commercial.
   - Line breaks (2026-10-20, user: the Doxology is sung with the left chanter,
     so it must read line by line like the source): every music line of the
     source PDF ends with `lineBreak: true` on its last element (52 breaks for

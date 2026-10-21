@@ -302,6 +302,32 @@ class AnastasimatarionTests(unittest.TestCase):
             (MusicBookmark("music-tone1-great-doxology-1", "Μεγάλη Δοξολογία, ἦχος α΄ · Μανουὴλ Πρωτοψάλτου"),),
         )
 
+    def test_fourth_tone_sunday_doxology_uses_the_verified_digital_score(self):
+        source = (
+            '<span class="melodos-audio-context">Μουσικό απόσπασμα Μεγάλης Δοξολογίας · '
+            'Ἦχος δ΄</span><select class="melodos-audio-picker"><option>Χορός</option></select><br>'
+            '<span class="ep">ΜΕΓΑΛΗ ΔΟΞΟΛΟΓΙΑ</span><br>Δόξα σοι τῷ δείξαντι τὸ φῶς.<br>'
+            '<span class="ar">Π</span>αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.<br>'
+            '<span class="ar">Ἅ</span>γιος ὁ Θεός.<br>Σήμερον σωτηρία τῷ κόσμῳ γέγονεν.'
+        )
+        score_id = "papline-doxologia-manuel1-tone4-private-draft"
+        # Never attached until the catalogue reports the score as verified,
+        # and never on a weekday.
+        self.assertEqual(enrich_service_html(date(2026, 10, 25), "orthros", source).attachment_count, 0)
+        verified = {score_id}
+        weekday = enrich_service_html(date(2026, 10, 26), "orthros", source, verified_digital_scores=verified)
+        self.assertEqual(weekday.attachment_count, 0)
+        result = enrich_service_html(date(2026, 10, 25), "orthros", source, verified_digital_scores=verified)
+
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn(f'src="digital-scores/{score_id}/"', result.html)
+        self.assertLess(
+            result.html.index("αράτεινον τὸ ἔλεός σου"), result.html.index(f'data-music-piece="{score_id}"')
+        )
+        self.assertLess(result.html.index(f'data-music-piece="{score_id}"'), result.html.index("Σήμερον σωτηρία"))
+        self.assertEqual(len(result.bookmarks), 1)
+        self.assertEqual(result.bookmarks[0].anchor_id, f"music-{score_id}-1")
+
     def test_plagal_fourth_ainoi_follow_their_final_sticheron(self):
         source = (
             "Ήχος εβδομάδος πλ δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄<br>"

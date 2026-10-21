@@ -8,6 +8,7 @@ import unicodedata
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+from collections.abc import Collection
 from typing import TYPE_CHECKING, Final, Literal
 
 import pymupdf
@@ -184,6 +185,11 @@ class AttachmentRule:
     # never choose a scan region which is not in this catalogue.
     expected_reviewer_choice: str | None = None
     insert_before: bool = False
+    # A verified digital (Neanes) score from the catalogue instead of a scanned
+    # piece: ``piece_id`` is then the catalogue id.  It is attached only when
+    # the caller reports that score as verified, and ``digital_title`` is the
+    # bookmark label.
+    digital_title: str | None = None
 
 
 @dataclass(frozen=True)
@@ -1193,6 +1199,17 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         required_text=("Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος β΄",),
         preceding_text="Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος β΄",
     ),
+    AttachmentRule(
+        "orthros",
+        "αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.",
+        "papline-doxologia-manuel1-tone4-private-draft",
+        # Sunday only; the tone comes from Melodos' own Doxology selector,
+        # exactly as for the scanned first- and second-tone settings.
+        required_text=("Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος δ΄",),
+        preceding_text="Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος δ΄",
+        weekdays=(6,),
+        digital_title="Μεγάλη Δοξολογία, ἦχος δ΄ · Μανουὴλ Πρωτοψάλτου (ψηφιακή)",
+    ),
     # Compatibility for a shortened source extract which contains the
     # Doxology but not its following resurrectional dismissal hymn.
     AttachmentRule(
@@ -1774,7 +1791,7 @@ PILOT_RULES += tuple(_TONE_ATTACHMENT_RULES + _ORTHROS_TONE_ATTACHMENT_RULES)
 
 
 def catalog_pieces() -> tuple[MusicPiece, ...]:
-    piece_ids = dict.fromkeys(rule.piece_id for rule in PILOT_RULES)
+    piece_ids = dict.fromkeys(rule.piece_id for rule in PILOT_RULES if rule.digital_title is None)
     return tuple(PIECES[piece_id] for piece_id in piece_ids)
 
 
@@ -1924,6 +1941,35 @@ def _music_markup(piece: MusicPiece, instance: int) -> str:
     )
 
 
+def _digital_music_markup(rule: AttachmentRule, instance: int) -> str:
+    score_id = rule.piece_id
+    title = rule.digital_title or score_id
+    bookmark_id = f"music-{score_id}-{instance}"
+    # Relative, like the scanned excerpts, so it works below the /kihem/ prefix.
+    url = f"digital-scores/{score_id}/"
+    return (
+        f'<aside id="{bookmark_id}" class="music-attachment" '
+        f'data-music-piece="{html.escape(score_id)}" '
+        f'data-music-instance="{instance}">'
+        '<div class="music-attachment-heading">'
+        f'<a class="music-bookmark" href="#{bookmark_id}" '
+        'title="Μόνιμος σύνδεσμος προς αυτό το μουσικό απόσπασμα">'
+        f'🔖 Σελιδοδείκτης · {html.escape(title)}</a>'
+        '<span class="music-match-label">Ψηφιακή παρτιτούρα με αναπαραγωγή · ελεγμένη</span>'
+        f"<h3>{html.escape(title)}</h3>"
+        "</div>"
+        f'<iframe class="digital-score-frame" src="{url}" loading="lazy" '
+        f'title="{html.escape(title)}" '
+        'style="width:100%;height:640px;border:1px solid #ccc;border-radius:6px"></iframe>'
+        '<p class="music-source">'
+        f'<a href="{url}" target="_blank" rel="noreferrer">Άνοιγμα σε νέα καρτέλα</a>'
+        " · Πηγή: papline.gr · χρήση χωρίς εμπορικό σκοπό · έλεγχος vfilip. "
+        "Ο ήχος είναι συνθετική αναπαραγωγή, όχι ερμηνεία."
+        "</p>"
+        "</aside>"
+    )
+
+
 def _insertion_point(text_node: NavigableString) -> NavigableString | Tag:
     point: NavigableString | Tag = text_node
     # Melodos places the complete service in one #div1.  Lifting a text node
@@ -1961,6 +2007,7 @@ def enrich_service_html(
     *,
     instance_offset: int = 0,
     semantic_reviewer: "TypesafeDecisionService | None" = None,
+    verified_digital_scores: Collection[str] = (),
 ) -> EnrichmentResult:
     """Attach verified book matches based on the actual text returned by Melodos."""
     rules = tuple(rule for rule in PILOT_RULES if rule.service == service)
@@ -1972,12 +2019,17 @@ def enrich_service_html(
     weekly_tone = _weekly_tone_from_document(normalized_document)
 
     for rule in rules:
-        piece = PIECES[rule.piece_id]
+        if rule.digital_title is not None:
+            if rule.piece_id not in verified_digital_scores:
+                continue
+            piece = None
+        else:
+            piece = PIECES[rule.piece_id]
         # Date-scoped books (currently the Menaia) are intentionally strict:
         # every attachment must carry an exact month/day entry. This keeps a
         # feast's musical pages from leaking into an ordinary weekday or from
         # being guessed from the preceding/following day.
-        if piece.book_id in DATE_SCOPED_BOOK_IDS and not rule.month_days:
+        if piece is not None and piece.book_id in DATE_SCOPED_BOOK_IDS and not rule.month_days:
             continue
         if rule.month_days and (selected_date.month, selected_date.day) not in rule.month_days:
             continue
@@ -2101,14 +2153,18 @@ def enrich_service_html(
         for text_node in matches:
             attachment_count += 1
             instance = instance_offset + attachment_count
-            fragment = BeautifulSoup(_music_markup(piece, instance), "html.parser").aside
+            markup = _digital_music_markup(rule, instance) if piece is None else _music_markup(piece, instance)
+            fragment = BeautifulSoup(markup, "html.parser").aside
             if fragment is None:
                 continue
             if rule.insert_before:
                 _insertion_point_before(text_node).insert_before(fragment)
             else:
                 _insertion_point(text_node).insert_after(fragment)
-            bookmarks.append(MusicBookmark(_bookmark_id(piece, instance), piece.title))
+            if piece is None:
+                bookmarks.append(MusicBookmark(f"music-{rule.piece_id}-{instance}", rule.digital_title or rule.piece_id))
+            else:
+                bookmarks.append(MusicBookmark(_bookmark_id(piece, instance), piece.title))
 
     # Rules are maintained by source/matching concerns, not by the order in
     # which a particular service prints its hymns.  Re-read the inserted

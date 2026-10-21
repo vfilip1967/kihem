@@ -144,6 +144,11 @@ def create_app(config: dict | None = None) -> Flask:
 
         documents = []
         if composition:
+            try:
+                verified_digital_ids = {score.score_id for score in digital_score_catalog.verified_scores()}
+            except ValueError as exc:
+                app.logger.error("Could not load digital-score catalogue: %s", exc)
+                verified_digital_ids = set()
             for item in composition.documents:
                 enriched = enrich_service_html(
                     composition.selected_date,
@@ -151,6 +156,7 @@ def create_app(config: dict | None = None) -> Flask:
                     item.service_html,
                     instance_offset=attachment_count,
                     semantic_reviewer=typesafe_decisions,
+                    verified_digital_scores=verified_digital_ids,
                 )
                 service_html = enriched.html
                 service_html = interpretation_service.enrich_service_html(
