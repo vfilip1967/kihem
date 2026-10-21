@@ -607,7 +607,9 @@ This file records only durable implementation decisions.
     Αἰνεῖτε verses; the verses on p.318 and the Eothinon doxastikon from
     p.328 line 2 belong to other pieces). Private
     `papline-ainoi-lambadarios-tone4-private-draft`, `needs_review`: 1348
-    notes, 56/56 martyria with opening Pa (header «Πα»), source line breaks.
+    notes, 56/56 martyria with opening Pa (header «Πα»). Line breaks only after each
+    martyria (user 2026-10-21: the source's own line ends left orphan syllables
+    such as a lone «α» or «δυ» in the narrower Neanes page; let the text flow).
     A BZLoipa `F030` standing alone between bases is an Ison with Tripli
     (`bz_convert.py`, unconfirmed). Stavros `F027` still unconverted. Like the
     Doxology: 100 bpm (speed 0.8333) and a hidden 1-time pause after each of
