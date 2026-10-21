@@ -32,7 +32,7 @@ def _require_private_event_draft(event_draft: Mapping[str, Any]) -> list[Mapping
     events = event_draft.get("events")
     if not isinstance(events, list) or not events:
         raise NeanesByzxBridgeError("Το event draft δεν έχει γεγονότα Note.")
-    if any(not isinstance(event, Mapping) or event.get("elementType") not in ("Note", "Martyria") for event in events):
+    if any(not isinstance(event, Mapping) or event.get("elementType") not in ("Note", "Martyria", "Tempo") for event in events):
         raise NeanesByzxBridgeError("Το event draft περιέχει μη έγκυρο στοιχείο Neanes Note.")
     controls = event_draft.get("ison_controls", [])
     if not isinstance(controls, list) or any(not isinstance(control, Mapping) or control.get("kind") != "pause" for control in controls):
@@ -48,7 +48,7 @@ def _typescript_worker(event_draft: Mapping[str, Any], output_path: Path, title:
     score_title = json.dumps(title)
     return f"""import {{ readFileSync, writeFileSync }} from 'node:fs';
 
-import {{ EmptyElement, MartyriaElement, NoteElement }} from '@/models/Element';
+import {{ EmptyElement, MartyriaElement, NoteElement, TempoElement }} from '@/models/Element';
 import {{ Score }} from '@/models/Score';
 import {{ SaveService }} from '@/services/SaveService';
 
@@ -77,6 +77,12 @@ describe('Kihem private EZ .byzx bridge', () => {{
           automatic.lineBreak = true;
         }}
         return automatic;
+      }}
+      if (saved.elementType === 'Tempo') {{
+        // A tempo sign (χρονική αγωγή): its neume and the bpm it sets.
+        const tempo = new TempoElement();
+        Object.assign(tempo, fields);
+        return tempo;
       }}
       const note = new NoteElement();
       Object.assign(note, fields);

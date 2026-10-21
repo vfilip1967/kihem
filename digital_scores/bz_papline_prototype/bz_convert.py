@@ -131,6 +131,7 @@ def convert(page, line_index):
         if id(m) in mfth: me['fthora']=mfth[id(m)]
         events.append((me,['MART '+m['code']],m['x0']))
     events.sort(key=lambda t:t[2])
+    convert.last_x=[x for _,_,x in events]  # x of each returned event, for tempo signs
     return [(e,c) for e,c,_ in events],warn
 if __name__=='__main__':
     d=pymupdf.open(sys.argv[1]); ev,w=convert(d[int(sys.argv[2])],int(sys.argv[3]))

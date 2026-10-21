@@ -42,6 +42,13 @@ class NeanesByzxBridgeTests(unittest.TestCase):
         self.assertIn("if (fields.lineBreak === true)", worker)
         self.assertIn("automatic.lineBreak = true", worker)
 
+    def test_generated_worker_builds_tempo_elements_from_tempo_events(self):
+        draft = event_draft()
+        draft["events"] = [{"elementType": "Tempo", "neume": "Quicker", "bpm": 208}, *draft["events"]]
+        worker = _typescript_worker(draft, Path("/tmp/private.byzx"), "Δοκιμή")
+        self.assertIn("new TempoElement()", worker)
+        self.assertIn('"elementType": "Tempo"', worker)
+
 
 class NoteNamesWorkerTests(unittest.TestCase):
     def test_worker_records_neanes_own_scale_notes_per_element(self):

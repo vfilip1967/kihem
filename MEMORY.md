@@ -611,9 +611,14 @@ This file records only durable implementation decisions.
     martyria (user 2026-10-21: the source's own line ends left orphan syllables
     such as a lone «α» or «δυ» in the narrower Neanes page; let the text flow).
     A BZLoipa `F030` standing alone between bases is an Ison with Tripli
-    (`bz_convert.py`, unconfirmed). Stavros `F027` still unconverted. Like the
-    Doxology: 100 bpm (speed 0.8333) and a hidden 1-time pause after each of
-    the 56 martyria (user, 2026-10-21). Not yet attached to the Orthros.
+    (`bz_convert.py`, unconfirmed). Stavros `F027` still unconverted. A hidden 1-time pause
+    after each of the 56 martyria. Tempo (user 2026-10-21: 115 bpm; the verses
+    «Αἰνεῖτε…» start very fast and slow down): papline's tempo signs are the
+    font `MKXronos2016` (not BZXronos): `F06C` = Neanes `Quicker` (208 bpm),
+    `F066` = `Quick` (168 bpm); each verse has Quicker then Quick, ends at a
+    martyria, where a hidden `Tempo` element (Moderate, bpm 115) returns to the
+    sticheron tempo; `playback_speed` stays 1. The bridge accepts
+    `elementType: 'Tempo'` events. Not yet attached to the Orthros.
   - Sunday Orthros integration (2026-10-21, user: papline is fine as long as
     use is non-commercial): `AttachmentRule.digital_title` marks a rule whose
     `piece_id` is a *catalogue score id*, not a scanned piece. It is attached
