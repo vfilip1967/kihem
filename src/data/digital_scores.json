@@ -224,6 +224,31 @@
         "papline-doxologia-manuel1-tone4-source-6.png"
       ],
       "reviewed_by": "vfilip"
+    },
+    {
+      "id": "papline-ainoi-lambadarios-tone4-private-draft",
+      "title": "Αἶνοι · Στιχηρὰ Ἀναστάσιμα καὶ Ἀνατολικά Πέτρου Λαμπαδαρίου ήχος δ΄ · ιδιωτικό αυτόματο draft",
+      "incipit": "Τοῦ ποιῆσαι ἐν αὐτοῖς κρῖμα ἔγγραπτον",
+      "tone_label": "Ἦχος δ΄ · Πα · διατονικός",
+      "source_description": "Στιχηρά των Αίνων Κυριακής ήχου δ΄ (τέσσερα αναστάσιμα και τέσσερα ανατολικά, με τους στίχους Αἰνεῖτε…) από το βιβλίο του papline.gr «Εσπερινός, Όρθρος και Θεία Λειτουργία 25-10-2026, Κυριακή ΚΑ΄ Λουκά, ἦχος δ΄», σελ. 319–328 του PDF. Ιδιωτική αυτόματη μετατροπή BZ → Neanes· ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής.",
+      "source_reference": "papline.gr, Εσπερινός-Όρθρος-Θεία Λειτουργία 25-10-2026, Πέτρου Λαμπαδαρίου (1730–1777), Αναστασιματάριον Πέτρου Εφεσίου 1820 σ. 110.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (ιδιωτικό draft)",
+      "review_state": "needs_review",
+      "notes": "Αυτόματο draft 1348 νευμάτων και 56 ενδιάμεσων μαρτυριών, όλες ίδιες με την πηγή και στην οκτάβα. Η αρχική νότα Πα είναι αυτή της επικεφαλίδας και δίνει 56/56 μαρτυρίες· το σημείο ρίζας (rootSign) Delta είναι προσωρινό. Τρία BZLoipa F030 (Tripli) στέκονται μόνα τους στην πρώτη γραμμή (ποιῆ-, αὐτοῖς, ἔγγραπτον) και μετατράπηκαν σε Ίσον με Tripli, ανεπιβεβαίωτο. Δεν μετατράπηκε ο σταυρός (BZFthores F027, 7 σημεία). Οι αλλαγές γραμμής ακολουθούν την πηγή. Δεν περιλαμβάνεται το Εωθινό Δοξαστικό. Ρυθμός Neanes προεπιλεγμένος. Δεν έχει επιβεβαιωθεί ψαλτικά· δημοσίευση μόνο μετά από έλεγχο και χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-ainoi-lambadarios-tone4.byzx",
+      "source_scan_filenames": [
+        "papline-ainoi-lambadarios-tone4-source-1.png",
+        "papline-ainoi-lambadarios-tone4-source-2.png",
+        "papline-ainoi-lambadarios-tone4-source-3.png",
+        "papline-ainoi-lambadarios-tone4-source-4.png",
+        "papline-ainoi-lambadarios-tone4-source-5.png",
+        "papline-ainoi-lambadarios-tone4-source-6.png",
+        "papline-ainoi-lambadarios-tone4-source-7.png",
+        "papline-ainoi-lambadarios-tone4-source-8.png",
+        "papline-ainoi-lambadarios-tone4-source-9.png",
+        "papline-ainoi-lambadarios-tone4-source-10.png",
+        "papline-ainoi-lambadarios-tone4-source-11.png"
+      ]
     }
   ]
 }

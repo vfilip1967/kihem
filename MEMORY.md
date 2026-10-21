@@ -598,6 +598,20 @@ This file records only durable implementation decisions.
     `/tmp` (`/tmp/kihem-ez-pilot/ctan-byz`, `/tmp/kihem-neanes-source`) vanish;
     rebuild them from CTAN `support/byzantinemusic.zip` and the Neanes v0.5.55
     tag (`npm ci --ignore-scripts`).
+  - Ainoi tone 4 (2026-10-21, user asked for next Sunday's Ainoi): papline
+    publishes a day book per Sunday (e.g. `Εσπερινός, Όρθρος και Θεία Λειτουργία
+    25-10-2026 …` on the front page, 804 pp., public download; the first ~64
+    pp. are text, music follows, section headings sit at the *bottom* of the
+    page that precedes the section). Ainoi stichera of Lambadarios (Ephesios
+    1820 p.110) = PDF pp. 319–328 line 1 (4 anastasima + 4 anatolika with their
+    Αἰνεῖτε verses; the verses on p.318 and the Eothinon doxastikon from
+    p.328 line 2 belong to other pieces). Private
+    `papline-ainoi-lambadarios-tone4-private-draft`, `needs_review`: 1348
+    notes, 56/56 martyria with opening Pa (header «Πα»), source line breaks.
+    A BZLoipa `F030` standing alone between bases is an Ison with Tripli
+    (`bz_convert.py`, unconfirmed). Stavros `F027` still unconverted. No
+    hidden pauses and default tempo (only the Doxology has those). Not yet
+    attached to the Orthros.
   - Sunday Orthros integration (2026-10-21, user: papline is fine as long as
     use is non-commercial): `AttachmentRule.digital_title` marks a rule whose
     `piece_id` is a *catalogue score id*, not a scanned piece. It is attached

@@ -42,13 +42,25 @@ def convert(page, line_index):
     gg=[a for a in gg if a['font'] in ('BZByzantina','BZLoipa','BZIson','BZFthores')]
     bases=[a for a in gg if isbase(a)]
     bases.sort(key=lambda a:a['x0'])
+    # A time glyph drawn alone, between two bases, takes the place of its own
+    # Ison (papline's Lambadarios Ainoi, tone 4): keep it as an Ison with that
+    # time sign.  Unconfirmed by a psaltis.
+    alone={id(a):a for a in gg if a['font']=='BZLoipa' and a['code']=='F030'
+           and not any(min(a['x1'],b['x1'])-max(a['x0'],b['x0'])>0 for b in bases)}
+    for a in alone.values():
+        bases.append(dict(a,font='BZByzantina',code='F061'))
+    bases.sort(key=lambda a:a['x0'])
     notes=[dict(base=b,att=[]) for b in bases]
+    for n in notes:
+        for a in alone.values():
+            if n['base']['x0']==a['x0'] and n['base']['code']=='F061' and n['base']['font']=='BZByzantina' and not n['att']:
+                n['att'].append(a)
     warn=[]
     pending_vareia=False; mfth={}
     marts=[a for a in gg if (a['font']=='BZByzantina' and a['code'] in MART) or (a['font']=='BZFthores' and a['code'] in FTH_MART)]
     for a in sorted(gg,key=lambda a:a['x0']):
         c=a['code']
-        if isbase(a): continue
+        if isbase(a) or id(a) in alone: continue
         if a['font']=='BZByzantina' and (c in MART or (c in MARTSIGN and any(abs((m['x0']+m['x1'])/2-(a['x0']+a['x1'])/2)<25 for m in marts))): continue
         if a['font']=='BZFthores' and (a['font'],c) not in YFESIS:
             if c in FTH_MART or c in FTH_MARTSIGN: continue
