@@ -609,9 +609,9 @@ This file records only durable implementation decisions.
     `papline-ainoi-lambadarios-tone4-private-draft`, `needs_review`: 1348
     notes, 56/56 martyria with opening Pa (header «Πα»), source line breaks.
     A BZLoipa `F030` standing alone between bases is an Ison with Tripli
-    (`bz_convert.py`, unconfirmed). Stavros `F027` still unconverted. No
-    hidden pauses and default tempo (only the Doxology has those). Not yet
-    attached to the Orthros.
+    (`bz_convert.py`, unconfirmed). Stavros `F027` still unconverted. Like the
+    Doxology: 100 bpm (speed 0.8333) and a hidden 1-time pause after each of
+    the 56 martyria (user, 2026-10-21). Not yet attached to the Orthros.
   - Sunday Orthros integration (2026-10-21, user: papline is fine as long as
     use is non-commercial): `AttachmentRule.digital_title` marks a rule whose
     `piece_id` is a *catalogue score id*, not a scanned piece. It is attached
