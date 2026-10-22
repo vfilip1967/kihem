@@ -1025,6 +1025,16 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     AttachmentRule(
         "orthros",
         "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
+        "papline-ainoi-lambadarios-tone4-private-draft",
+        weekly_tone=4,
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        weekdays=(6,),
+        insert_before=True,
+        digital_title="Αἶνοι · Πασαπνοάρια και στιχηρὰ ἦχος δ΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "orthros",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
         "tone4-ainoi",
         weekly_tone=4,
         required_text=("Στιχηρὰ Ἀναστάσιμα",),

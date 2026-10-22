@@ -328,6 +328,27 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertEqual(len(result.bookmarks), 1)
         self.assertEqual(result.bookmarks[0].anchor_id, f"music-{score_id}-1")
 
+    def test_fourth_tone_sunday_ainoi_use_the_verified_digital_score(self):
+        source = (
+            "Ήχος εβδομάδος δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος δ΄<br>"
+            "Πᾶσα πνοὴ αἰνεσάτω τὸν Κύριον. Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν.<br>"
+            "Ὁ σταυρὸν ὑπομεῖνας καὶ θάνατον.<br>Σωτὴρ ἡμῶν δόξα σοί.<br>"
+            "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ Ι'"
+        )
+        score_id = "papline-ainoi-lambadarios-tone4-private-draft"
+        self.assertNotIn(score_id, enrich_service_html(date(2026, 10, 25), "orthros", source).html)
+        weekday = enrich_service_html(date(2026, 10, 26), "orthros", source, verified_digital_scores={score_id})
+        self.assertNotIn(score_id, weekday.html)
+        result = enrich_service_html(date(2026, 10, 25), "orthros", source, verified_digital_scores={score_id})
+
+        self.assertIn(f'src="digital-scores/{score_id}/"', result.html)
+        self.assertLess(result.html.index("Σωτὴρ ἡμῶν δόξα σοί."), result.html.index(f'data-music-piece="{score_id}"'))
+        self.assertLess(result.html.index(f'data-music-piece="{score_id}"'), result.html.index("ΔΟΞΑΣΤΙΚΟΝ"))
+        # the scanned Ioannis Protopsaltis setting stays as the alternative, after it
+        self.assertLess(
+            result.html.index(f'data-music-piece="{score_id}"'), result.html.index('data-music-piece="tone4-ainoi"')
+        )
+
     def test_plagal_fourth_ainoi_follow_their_final_sticheron(self):
         source = (
             "Ήχος εβδομάδος πλ δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄<br>"
