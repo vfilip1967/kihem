@@ -626,6 +626,8 @@ This file records only durable implementation decisions.
     then an explicit Martyria «Πα» (new `explicit: true` Martyria event of the
     bridge: manual, resets the note) and the stichera. 1407 notes, 63/63
     martyria, 24 tempo signs, 71 hidden elements. Scans 12–13 are the new pages.
+    User 2026-10-22: no forced line break after the Pasapnoaria's martyria (they
+    flow on); only the explicit «Πα» starts a new line for the stichera.
   - Neanes quirk (found 2026-10-21 from the user's report that the later
     verses started slow and the sticheron kept the verse tempo): `AudioService.play`
     never resets the transport tempo for an event whose bpm equals the bpm
