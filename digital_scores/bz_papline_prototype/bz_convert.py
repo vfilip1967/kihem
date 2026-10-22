@@ -34,7 +34,10 @@ IGNORE={'F020','F04F','F0FA','F07E','F06F'}  # F06F: diastole (bar line)
 # \yfeshD in BZByzantina) and digrammos (\digryfesh in BZFthores).
 YFESIS={('BZByzantina','F074'):'Flat_2_Right',('BZByzantina','F079'):'Flat_2_Right',
         ('BZFthores','F074'):'Flat_6_Right',('BZFthores','F079'):'Flat_6_Right',
-        ('BZFthores','F06E'):'Sharp_2_Left'}  # \dieshMD: plain diesis (sharp)
+        ('BZFthores','F06E'):'Sharp_2_Left',  # \dieshMD: plain diesis (sharp)
+        # red circle with a slash (compared with Neanes' diesis2 / yfesis2 glyphs):
+        # Lambadarios' soft-chromatic Doxastikon, papline 25-10-2026 pp. 351-353
+        ('BZByzantina','F025'):'Flat_2_Right',('BZByzantina','F024'):'Sharp_2_Left'}
 def isbase(a): return (a['font']=='BZByzantina' and a['code'] in BASE) or (a['font']=='BZLoipa' and a['code'] in BASEL)
 def basename(a): return BASE[a['code']] if a['font']=='BZByzantina' else BASEL[a['code']]
 def convert(page, line_index):
@@ -104,6 +107,11 @@ def convert(page, line_index):
         for a in n['att']:
             c=a['code']; ay=(a['y0']+a['y1'])/2; top=ay<by
             if (a['font'],c) in YFESIS: e['accidental']=YFESIS[(a['font'],c)]
+            elif (a['font'],c)==('BZByzantina','F043') and e['quantitativeNeume']=='OligonPlusKentemata':
+                # the same extra kentima on an oligon with kentemata: three steps up
+                # (Neanes' OligonKentimaMiddleKentimata); fixes the first Martyria
+                # of the Eothinon Doxastikon 10 (Lambadarios, p.351).
+                e['quantitativeNeume']='OligonKentimaMiddleKentimata'
             elif (a['font'],c)==('BZByzantina','F043') and e['quantitativeNeume']=='Oligon':
                 # a separate kentima at the right end of the oligon (up two),
                 # the slanted stroke of F064; read from the martyria, unconfirmed.

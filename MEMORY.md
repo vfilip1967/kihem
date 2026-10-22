@@ -628,6 +628,16 @@ This file records only durable implementation decisions.
     martyria, 24 tempo signs, 71 hidden elements. Scans 12–13 are the new pages.
     User 2026-10-22: no forced line break after the Pasapnoaria's martyria (they
     flow on); only the explicit «Πα» starts a new line for the stichera.
+  - Tone-4 Ainoi verified by vfilip and attached to the Sunday Orthros
+    (2026-10-22, rule before «ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ», ahead of the scanned I. Protopsaltis setting).
+  - Eothinon Doxastikon 10 (pl. 2, «Μετὰ τὴν εἰς ᾍδου κάθοδον», Lambadarios, PDF pp. 351–353
+    of the 25-10 book; nav bars sit at the END of a block) is `papline-doxastikon-eothinon10-lambadarios-private-draft`,
+    needs_review, 272 notes, not attached to the Orthros. Glyphs identified by comparing with Neanes'
+    own glyphs: BZByzantina F025 = yfesis2 (Flat_2_Right), F024 = diesis2 (Sharp_2_Left); F043 on
+    OligonPlusKentemata = OligonKentimaMiddleKentimata (+3). 11/12 martyria; the last differs because
+    Neanes renames notes after a hard-chromatic Thi fthora (the source does not). A diatonic Ke fthora
+    over a Pa martyria (p.352 l.8) is left unapplied (Neanes would rename later notes by it).
+    Checking martyria in a scratch script: element index = event index + 1 (opening martyria is 0).
   - Neanes quirk (found 2026-10-21 from the user's report that the later
     verses started slow and the sticheron kept the verse tempo): `AudioService.play`
     never resets the transport tempo for an event whose bpm equals the bpm
