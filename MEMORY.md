@@ -638,6 +638,22 @@ This file records only durable implementation decisions.
     Neanes renames notes after a hard-chromatic Thi fthora (the source does not). A diatonic Ke fthora
     over a Pa martyria (p.352 l.8) is left unapplied (Neanes would rename later notes by it).
     Checking martyria in a scratch script: element index = event index + 1 (opening martyria is 0).
+    The Doxastikon was verified by vfilip on 2026-10-24 ("είναι") and attached to the Sunday Orthros after
+    «ἐντρυφῆσαι φιλάνθρωπε Κύριε.» (`required_text` «τὴν εἰς ᾍδου κάθοδον»: Melodos splits the drop-cap «Μ ετὰ»).
+  - Embedded digital scores (2026-10-24, user: unreadable on the phone, too much text): the service-page
+    embed no longer shows the "ελεγμένη"/vfilip/synthetic-playback lines (only «Πηγή: papline.gr»); inside an
+    iframe (`html.embedded`) the public page hides its header, card and intro text. On screens < 700px the
+    loader patches the fetched `.byzx` in memory (pageSize Custom, width 520, 12px margins) so Neanes' Page
+    Width zoom shows readable notation; a Letter page with 1-inch margins zoomed to ~40%. Flask caches templates:
+    restart the local test server after editing them.
+  - Theotokos Katavasies (Lambadarios, Papagiannis' version, Ἦχος βαρύς, PDF pp. 266–271 of the 25-10 book;
+    `papline-katavasies-theotokos-lambadarios-private-draft`, needs_review, not attached). Seven odes
+    (α γ δ ε ς ζ η), each its own line; opening martyria Vou/Varys; ode δ needs an explicit Pa martyria (each
+    ode is a separate piece, the source frames differ by one step); 36/36 martyria; fthoras dropped; the
+    boxed short alternative endings and label-only duplicate lines are skipped. Neanes `lineBreak` means a
+    break AFTER the element. MKXronos F064 = Moderate (115), F066 = Quick (168), F06C = Quicker (208).
+    Unresolved: BZLoipa F050 (p.268 l.1) and F032 (p.269 l.9). Other Katavasia settings: Protopsaltis
+    pp. 259–261, Kountiadis 262–265 and 271–275.
   - Neanes quirk (found 2026-10-21 from the user's report that the later
     verses started slow and the sticheron kept the verse tempo): `AudioService.play`
     never resets the transport tempo for an event whose bpm equals the bpm
