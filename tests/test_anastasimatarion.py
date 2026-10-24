@@ -349,6 +349,19 @@ class AnastasimatarionTests(unittest.TestCase):
             result.html.index(f'data-music-piece="{score_id}"'), result.html.index('data-music-piece="tone4-ainoi"')
         )
 
+    def test_sunday_eothinon_doxastikon_uses_the_verified_digital_score(self):
+        source = (
+            "Ήχος εβδομάδος δ΄.<br>ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ Ι'<br>Ἦχος πλ β' Ἰδιόμελον<br>"
+            "Μετὰ τὴν εἰς ᾍδου κάθοδον, ἐντρυφῆσαι φιλάνθρωπε Κύριε.<br>Μεγάλη Δοξολογία"
+        )
+        score_id = "papline-doxastikon-eothinon10-lambadarios-private-draft"
+        self.assertNotIn(score_id, enrich_service_html(date(2026, 10, 25), "orthros", source).html)
+        weekday = enrich_service_html(date(2026, 10, 26), "orthros", source, verified_digital_scores={score_id})
+        self.assertNotIn(score_id, weekday.html)
+        result = enrich_service_html(date(2026, 10, 25), "orthros", source, verified_digital_scores={score_id})
+        self.assertIn(f'src="digital-scores/{score_id}/"', result.html)
+        self.assertLess(result.html.index("φιλάνθρωπε Κύριε."), result.html.index(f'data-music-piece="{score_id}"'))
+
     def test_plagal_fourth_ainoi_follow_their_final_sticheron(self):
         source = (
             "Ήχος εβδομάδος πλ δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄<br>"

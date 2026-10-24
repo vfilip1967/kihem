@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ score.incipit }} · ψηφιακή παρτιτούρα</title>
   <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261008-digital-public">
+  <style>
+    /* Inside the service page the score is only a player: no headings or notes. */
+    html.embedded .public-score-header, html.embedded .public-score-card,
+    html.embedded .public-score-figure, html.embedded .public-score-player > h2,
+    html.embedded .public-score-player > p:not(.playback-status),
+    html.embedded .playback-status:not(.error) { display: none; }
+    html.embedded .review-main { padding-top: 0; margin-top: 0; }
+  </style>
+  <script>try { if (window.self !== window.top) document.documentElement.classList.add('embedded'); } catch (error) { document.documentElement.classList.add('embedded'); }</script>
 </head>
 <body class="review-body">
   <header class="review-header public-score-header">
@@ -155,7 +164,16 @@
             // native Page Width command can still see the former center width.
             await new Promise((resolve) => window.setTimeout(resolve, 150));
             reclaimReaderWidth();
-            if (await useNeanesPageWidth()) return;
+            if (await useNeanesPageWidth()) {
+              // Neanes lays the score out asynchronously; fit the width again once
+              // the page size is final, otherwise the zoom keeps the empty-score fit.
+              for (const delay of [700, 1500]) {
+                await new Promise((resolve) => window.setTimeout(resolve, delay));
+                reclaimReaderWidth();
+                await useNeanesPageWidth();
+              }
+              return;
+            }
           }
           await new Promise((resolve) => window.setTimeout(resolve, 100));
         }
@@ -279,7 +297,21 @@
           applyReaderMode();
           watchParallage();
           const transfer = new DataTransfer();
-          transfer.items.add(new File([await response.text()], filename, { type: 'application/json' }));
+          let scoreText = await response.text();
+          // A Letter page with 1-inch margins shrinks to about 40% on a phone and
+          // the notation cannot be read.  On a narrow screen the score is laid out
+          // on a narrow page instead, so Neanes' Page Width zoom stays near 100%.
+          if (window.innerWidth < 700) {
+            try {
+              const doc = JSON.parse(scoreText);
+              Object.assign(doc.pageSetup, {
+                pageSize: 'Custom', pageWidth: 520, pageWidthCustom: 520, pageHeight: 1056, pageHeightCustom: 1056,
+                topMargin: 12, bottomMargin: 12, leftMargin: 12, rightMargin: 12,
+              });
+              scoreText = JSON.stringify(doc);
+            } catch (error) { /* keep the stored page layout */ }
+          }
+          transfer.items.add(new File([scoreText], filename, { type: 'application/json' }));
           input.files = transfer.files;
           input.dispatchEvent(new Event('change', { bubbles: true }));
           await configureReaderWidth();

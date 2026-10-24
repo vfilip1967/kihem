@@ -1034,6 +1034,14 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     ),
     AttachmentRule(
         "orthros",
+        "ἐντρυφῆσαι φιλάνθρωπε Κύριε.",
+        "papline-doxastikon-eothinon10-lambadarios-private-draft",
+        required_text=("τὴν εἰς ᾍδου κάθοδον",),
+        weekdays=(6,),
+        digital_title="Ἑωθινὸν Δοξαστικὸν ι΄ · Μετὰ τὴν εἰς ᾍδου κάθοδον · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "orthros",
         "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
         "tone4-ainoi",
         weekly_tone=4,
@@ -1965,7 +1973,6 @@ def _digital_music_markup(rule: AttachmentRule, instance: int) -> str:
         f'<a class="music-bookmark" href="#{bookmark_id}" '
         'title="Μόνιμος σύνδεσμος προς αυτό το μουσικό απόσπασμα">'
         f'🔖 Σελιδοδείκτης · {html.escape(title)}</a>'
-        '<span class="music-match-label">Ψηφιακή παρτιτούρα με αναπαραγωγή · ελεγμένη</span>'
         f"<h3>{html.escape(title)}</h3>"
         "</div>"
         f'<iframe class="digital-score-frame" src="{url}" loading="lazy" '
@@ -1973,8 +1980,7 @@ def _digital_music_markup(rule: AttachmentRule, instance: int) -> str:
         'style="width:100%;height:640px;border:1px solid #ccc;border-radius:6px"></iframe>'
         '<p class="music-source">'
         f'<a href="{url}" target="_blank" rel="noreferrer">Άνοιγμα σε νέα καρτέλα</a>'
-        " · Πηγή: papline.gr · χρήση χωρίς εμπορικό σκοπό · έλεγχος vfilip. "
-        "Ο ήχος είναι συνθετική αναπαραγωγή, όχι ερμηνεία."
+        " · Πηγή: papline.gr"
         "</p>"
         "</aside>"
     )
