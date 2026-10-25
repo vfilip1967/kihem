@@ -1,8 +1,9 @@
     <div class="practice-bar" role="group" aria-label="Εξάσκηση σε τμήμα">
-      <span><strong>Εξάσκηση:</strong> πάτησε ένα νεύμα στην παρτιτούρα και μετά</span>
+      <span><strong>Εξάσκηση:</strong> διπλό κλικ σε νεύμα = παίξε από εδώ· πλήκτρο ← = πίσω μία γραμμή· ή πάτησε ένα νεύμα και μετά</span>
       <button id="practice-start" class="quiet-button" type="button">Αρχή εδώ</button>
       <button id="practice-end" class="quiet-button" type="button">Τέλος εδώ</button>
       <button id="practice-play" class="quiet-button" type="button">▶ Παίξε το τμήμα</button>
+      <button id="practice-back" class="quiet-button" type="button" title="Πλήκτρο ← · ξανά πάτημα: προηγούμενη γραμμή">↩ Πίσω μία γραμμή</button>
       <label><input id="practice-loop" type="checkbox" checked> Επανάληψη</label>
       <button id="practice-clear" class="quiet-button" type="button">Καθάρισμα</button>
       <span id="practice-status" class="practice-status" role="status"></span>
@@ -79,6 +80,65 @@
           await tick(1200);
           restarting = false;
         };
+
+        // Jump to element n and keep playing (or start playing when stopped).
+        const playFrom = async (n) => {
+          if (n == null) return;
+          restarting = true;
+          const wasPlaying = playing() != null;
+          select(n);
+          if (!wasPlaying) { await tick(80); toggle()?.click(); }
+          lastSeen = null;
+          missing = 0;
+          await tick(600);
+          restarting = false;
+          if (!watcher && end != null) watcher = window.setInterval(watch, 100);
+        };
+
+        // First element of every printed line, in order.
+        const lineStarts = () => {
+          const out = [];
+          for (const line of frame()?.querySelectorAll('.line') || []) {
+            const box = line.querySelector('.element-box');
+            if (box) out.push(number(box));
+          }
+          return out;
+        };
+
+        // Back to the start of the current line; pressed again right away
+        // (or when already near the line start) it goes one line further.
+        let lastBack = { n: null, at: 0 };
+        const back = () => {
+          const starts = lineStarts();
+          if (!starts.length) { status.textContent = 'Η παρτιτούρα δεν έχει φορτωθεί ακόμη.'; return; }
+          const recent = Date.now() - lastBack.at < 2500;
+          const cur = recent && lastBack.n != null ? lastBack.n : (playing() ?? selected() ?? starts[0]);
+          let i = starts.findIndex((s, k) => cur >= s && (k + 1 === starts.length || cur < starts[k + 1]));
+          if (i < 0) i = 0;
+          if (cur - starts[i] <= 2 && i > 0) i -= 1;
+          lastBack = { n: starts[i], at: Date.now() };
+          void playFrom(starts[i]);
+        };
+
+        document.getElementById('practice-back').addEventListener('click', back);
+        const wire = () => {
+          const doc = frame();
+          if (!doc || doc.kihemPracticeWired) return;
+          doc.kihemPracticeWired = true;
+          doc.addEventListener('dblclick', (event) => {
+            const box = event.target.closest?.('.element-box');
+            if (box) void playFrom(number(box));
+          });
+          doc.addEventListener('keydown', onKey);
+        };
+        const onKey = (event) => {
+          if (event.key !== 'ArrowLeft' || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+          if (/^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName) || event.target.isContentEditable) return;
+          event.preventDefault();
+          back();
+        };
+        document.addEventListener('keydown', onKey);
+        window.setInterval(wire, 500);
 
         const watch = () => {
           if (restarting) return;

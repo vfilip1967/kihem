@@ -745,6 +745,15 @@ This file records only durable implementation decisions.
   before the iframe loads. The default comes from the optional catalogue field
   `playback_speed` (Koinonikon «Αἰνεῖτε» = 0.6); a student's choice is kept
   per score under `kihem-speed-<id>`.
+- Rewind (2026-10-25, user: teaching tool, go back a line after a wrong
+  variation): `_neanes_practice.html` has «↩ Πίσω μία γραμμή» and the ←
+  key (top page and iframe): jump to the start of the current printed line
+  (`.line` > first `.element-box`), or the previous one if already within 2
+  elements of it or pressed again within 2.5 s; double-click a neume = play
+  from there. Plays on when stopped. Right-click was rejected (no touch,
+  browser menu). Verified in headless Chrome with a dispatched dblclick; a
+  real mouse hit on the narrow `.element-box` centre misses (hits `.page`),
+  and iPhone is untested.
 - Practice bar (2026-10-14, user: replay difficult passages):
   `_neanes_practice.html` sets a start/end neume from the Neanes selection
   (`.element-box .selected`, ids `element-N`) and plays/loops that span.
