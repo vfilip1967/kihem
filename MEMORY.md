@@ -779,3 +779,19 @@ This file records only durable implementation decisions.
   uploaded tracks appear—do not delete source MP3s to change a menu.
 - Workspace media is in `byz/isokratis` and `byz/prosomia`; never stage those
   binaries or `oldapp/` in Git.
+  - Next-Sunday batch (2026-10-25, user: transcribe next Sunday's Cherubikon, Koinonikon, Doxology, Katavasies,
+    Doxastikon and show them in the Orthros/Liturgy even if unreviewed and public). Source: papline book
+    `01-11-2026` (Κυριακή ΚΒ΄ Λουκά, πλ. α΄, Εωθινὸν ΙΑ΄; 817 pp.; its PDF bookmarks give the page of every
+    piece, section headings sit at the bottom of the previous page). New catalogue flag `public_draft: true`
+    (only on `needs_review`): `DigitalScore.is_public`, `public_scores()`; the service pages and the public
+    player accept it (404 otherwise), label it «αυτόματη μεταγραφή, δεν έχει ελεγχθεί από ψάλτη», and the
+    public catalogue still lists verified scores only. Drafts: Cherubikon Lambadarios pl.1 (PDF pp. 562–566,
+    Pa, 20/20 martyria), Koinonikon Lambadarios I (746–748, Pa, 11/11, speed 0.6), Doxology Manuel I pl.1
+    (419–424, opening Ke, 38/38, 20 Pa/Ke fthoras dropped because Neanes renames notes; line break per source
+    line; speed 0.8333), Eothinon Doxastikon 11 Lambadarios pl.4 (378–380, Ni, root Legetos, 9/9). The
+    Theotokos Katavasies are the same piece as the 25-10 draft (now `public_draft`). Glyphs resolved by martyria
+    brute force: BZByzantina F022 `\ypopet` = PetastiPlusHyporoe; BZLoipa F07B = OligonPlusHamiliPlusKentemata;
+    BZLoipa F041 = OligonPlusKentemataPlusHypsiliLeft; BZLoipa F071 (triargon) = Diargon. Unmapped: BZIson F044,
+    BZLoipa F0A3. Rules: digital Orthros rules (Katavasies before the scanned one, Doxastikon after «ἐκ λύκων
+    λυμαινομένων αὐτήν.», Doxology after «Παράτεινον…») and Liturgy rules appended after the tone rules so the
+    digital score sits above the scanned setting. The converter used was a scratchpad `gen_run.py` (config-driven).

@@ -53,6 +53,20 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         self.assertEqual(catalog.asset_path(score, "ocr"), self.storage / "lithou-sfragisthentos-tone1.byzocr")
         self.assertIsNone(catalog.asset_path(score, "musicxml"))
 
+    def test_public_draft_is_public_but_never_verified(self):
+        self.write_catalog([self.score(public_draft=True), self.score(id="other-score")])
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        draft = catalog.get("lithou-sfragisthentos-tone1")
+        self.assertTrue(draft.is_public)
+        self.assertFalse(draft.is_verified)
+        self.assertEqual([s.score_id for s in catalog.public_scores()], ["lithou-sfragisthentos-tone1"])
+        self.assertEqual(catalog.verified_scores(), ())
+
+    def test_public_draft_must_be_needs_review(self):
+        self.write_catalog([self.score(public_draft=True, review_state="draft")])
+        with self.assertRaises(ValueError):
+            DigitalScoreCatalog(self.catalog_path, self.storage).scores()
+
     def test_parallage_labels_name_the_note_and_its_octave(self):
         self.assertEqual(parallage_label("Pa"), "Πα")
         self.assertEqual(parallage_label("Thi"), "Δι")

@@ -362,6 +362,21 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn(f'src="digital-scores/{score_id}/"', result.html)
         self.assertLess(result.html.index("φιλάνθρωπε Κύριε."), result.html.index(f'data-music-piece="{score_id}"'))
 
+    def test_unreviewed_public_draft_is_labelled_in_the_service(self):
+        source = (
+            "Ήχος εβδομάδος δ΄.<br>ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ Ι'<br>Ἦχος πλ β' Ἰδιόμελον<br>"
+            "Μετὰ τὴν εἰς ᾍδου κάθοδον, ἐντρυφῆσαι φιλάνθρωπε Κύριε.<br>Μεγάλη Δοξολογία"
+        )
+        score_id = "papline-doxastikon-eothinon10-lambadarios-private-draft"
+        label = "δεν έχει ελεγχθεί από ψάλτη"
+        plain = enrich_service_html(date(2026, 10, 25), "orthros", source, verified_digital_scores={score_id})
+        self.assertNotIn(label, plain.html)
+        draft = enrich_service_html(
+            date(2026, 10, 25), "orthros", source,
+            verified_digital_scores={score_id}, unreviewed_digital_scores={score_id},
+        )
+        self.assertIn(label, draft.html)
+
     def test_plagal_fourth_ainoi_follow_their_final_sticheron(self):
         source = (
             "Ήχος εβδομάδος πλ δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄<br>"

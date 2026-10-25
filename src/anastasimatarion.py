@@ -1096,6 +1096,34 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         expected_context_tone=4,
         match_number=6,
     ),
+    # Owner-approved public drafts (25 Oct 2026): unreviewed digital scores that
+    # the service page labels as automatic transcriptions.  They come before the
+    # scanned setting of the same piece.
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-katavasies-theotokos-lambadarios-private-draft",
+        required_text=("Καταβασίες Τῆς Θεοτόκου", "νοίξω τὸ στόμα μου"),
+        weekdays=(6,),
+        insert_before=True,
+        digital_title="Καταβασίες Θεοτόκου · Ἀνοίξω τὸ στόμα μου · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "orthros",
+        "ἐκ λύκων λυμαινομένων αὐτήν.",
+        "papline-doxastikon-eothinon11-lambadarios-private-draft",
+        required_text=("Σίμωνι δέδωκας τὴν τῶν προβάτων νομήν",),
+        weekdays=(6,),
+        digital_title="Ἑωθινὸν Δοξαστικὸν ια΄ · Φανερῶν σεαυτὸν · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "orthros",
+        "αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.",
+        "papline-doxologia-manuel1-pl1-private-draft",
+        weekly_tone=5,
+        weekdays=(6,),
+        digital_title="Μεγάλη Δοξολογία, ἦχος πλ. α΄ · Μανουὴλ Πρωτοψάλτου (ψηφιακή)",
+    ),
     AttachmentRule(
         "orthros",
         "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
@@ -1807,6 +1835,28 @@ for _tone, _context in _ORTHROS_TONE_CONTEXT.items():
 
 PILOT_RULES += tuple(_TONE_ATTACHMENT_RULES + _ORTHROS_TONE_ATTACHMENT_RULES)
 
+# Sunday Liturgy digital drafts (25 Oct 2026).  They are applied after the scanned
+# tone rules, so each digital score sits above the scanned setting of its piece.
+PILOT_RULES += (
+    AttachmentRule(
+        "litourgia",
+        "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+        "papline-cherubikon-lambadarios-pl1-private-draft",
+        weekly_tone=5,
+        weekdays=(6,),
+        digital_title="Χερουβικόν, ἦχος πλ. α΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν",
+        "papline-koinonikon-aineite-lambadarios1-pl1-private-draft",
+        weekly_tone=5,
+        weekdays=(6,),
+        preceding_text="Τῇ Κυριακῇ ψάλλεται το Κοινωνικόν",
+        digital_title="Κοινωνικόν «Αἰνεῖτε», ἦχος πλ. α΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+)
+
 
 def catalog_pieces() -> tuple[MusicPiece, ...]:
     piece_ids = dict.fromkeys(rule.piece_id for rule in PILOT_RULES if rule.digital_title is None)
@@ -1959,7 +2009,7 @@ def _music_markup(piece: MusicPiece, instance: int) -> str:
     )
 
 
-def _digital_music_markup(rule: AttachmentRule, instance: int) -> str:
+def _digital_music_markup(rule: AttachmentRule, instance: int, *, unreviewed: bool = False) -> str:
     score_id = rule.piece_id
     title = rule.digital_title or score_id
     bookmark_id = f"music-{score_id}-{instance}"
@@ -1981,7 +2031,8 @@ def _digital_music_markup(rule: AttachmentRule, instance: int) -> str:
         '<p class="music-source">'
         f'<a href="{url}" target="_blank" rel="noreferrer">Άνοιγμα σε νέα καρτέλα</a>'
         " · Πηγή: papline.gr"
-        "</p>"
+        + (" · αυτόματη μεταγραφή, δεν έχει ελεγχθεί από ψάλτη" if unreviewed else "")
+        + "</p>"
         "</aside>"
     )
 
@@ -2024,8 +2075,14 @@ def enrich_service_html(
     instance_offset: int = 0,
     semantic_reviewer: "TypesafeDecisionService | None" = None,
     verified_digital_scores: Collection[str] = (),
+    unreviewed_digital_scores: Collection[str] = (),
 ) -> EnrichmentResult:
-    """Attach verified book matches based on the actual text returned by Melodos."""
+    """Attach verified book matches based on the actual text returned by Melodos.
+
+    ``verified_digital_scores`` lists every digital score that may be shown (verified
+    ones and owner-approved public drafts); ``unreviewed_digital_scores`` is the subset
+    that has no psaltis review and gets a label.
+    """
     rules = tuple(rule for rule in PILOT_RULES if rule.service == service)
     soup = BeautifulSoup(service_html, "html.parser")
     attachment_count = 0
@@ -2169,7 +2226,11 @@ def enrich_service_html(
         for text_node in matches:
             attachment_count += 1
             instance = instance_offset + attachment_count
-            markup = _digital_music_markup(rule, instance) if piece is None else _music_markup(piece, instance)
+            markup = (
+                _digital_music_markup(rule, instance, unreviewed=rule.piece_id in unreviewed_digital_scores)
+                if piece is None
+                else _music_markup(piece, instance)
+            )
             fragment = BeautifulSoup(markup, "html.parser").aside
             if fragment is None:
                 continue

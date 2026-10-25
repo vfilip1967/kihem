@@ -17,14 +17,14 @@
 </head>
 <body class="review-body">
   <header class="review-header public-score-header">
-    <p class="eyebrow">Kihem · επαληθευμένο ψηφιακό τεκμήριο</p>
+    <p class="eyebrow">{% if score.is_verified %}Kihem · επαληθευμένο ψηφιακό τεκμήριο{% else %}Kihem · πρόχειρη αυτόματη μεταγραφή · δεν έχει ελεγχθεί από ψάλτη{% endif %}</p>
     <h1>{{ score.title }}</h1>
     <p>{{ score.incipit }} · {{ score.tone_label }}</p>
     <p><a href="{{ catalogue_url }}">← Όλες οι ψηφιακές παρτιτούρες</a></p>
   </header>
   <main class="review-main public-score-main">
     <section class="public-score-card">
-      <p><strong>Ελεγκτής:</strong> {{ score.reviewed_by }}</p>
+      {% if score.is_verified %}<p><strong>Ελεγκτής:</strong> {{ score.reviewed_by }}</p>{% endif %}
       <p>{{ score.source_description }}</p>
       {% if score.notes %}<p>{{ score.notes }}</p>{% endif %}
       <p class="public-score-warning">Η προεπισκόπηση και το MusicXML παράγονται από το υπάρχον αρχείο Neanes. Δεν αποτελούν αυτόματη μεταγραφή της έντυπης σάρωσης του Kihem.</p>

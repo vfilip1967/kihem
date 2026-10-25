@@ -64,10 +64,21 @@ class DigitalScore:
     source_scan_filenames: tuple[str, ...]
     # Neanes speed multiplier (0.1–3); slow genres such as koinonika use < 1.
     playback_speed: float = 1.0
+    # The owner may let an unreviewed ``needs_review`` draft appear in the
+    # service pages and the public player; the pages then label it as an
+    # automatic draft.  It never counts as verified and is not listed in the
+    # public catalogue.
+    public_draft: bool = False
 
     @property
     def is_verified(self) -> bool:
         return self.review_state == "verified"
+
+    @property
+    def is_public(self) -> bool:
+        """True for a verified score or an owner-approved public draft."""
+
+        return self.is_verified or self.public_draft
 
 
 class DigitalScoreCatalog:
@@ -102,6 +113,11 @@ class DigitalScoreCatalog:
 
     def verified_scores(self) -> tuple[DigitalScore, ...]:
         return tuple(score for score in self.scores() if score.is_verified)
+
+    def public_scores(self) -> tuple[DigitalScore, ...]:
+        """Scores that may be shown in a service page: verified or public drafts."""
+
+        return tuple(score for score in self.scores() if score.is_public)
 
     def asset_path(self, score: DigitalScore, kind: Literal["byzx", "ocr", "musicxml", "preview"]) -> Path | None:
         filename = {
@@ -233,6 +249,12 @@ class DigitalScoreCatalog:
         if isinstance(playback_speed, bool) or not isinstance(playback_speed, (int, float)) or not 0.1 <= playback_speed <= 3:
             raise ValueError("Το πεδίο playback_speed πρέπει να είναι αριθμός από 0.1 έως 3.")
 
+        public_draft = item.get("public_draft", False)
+        if not isinstance(public_draft, bool):
+            raise ValueError("Το πεδίο public_draft πρέπει να είναι true ή false.")
+        if public_draft and review_state != "needs_review":
+            raise ValueError("Δημόσιο draft πρέπει να έχει κατάσταση needs_review.")
+
         reviewed_by = optional_text("reviewed_by")
         if review_state == "verified" and not reviewed_by:
             raise ValueError("Επαληθευμένη ψηφιακή παρτιτούρα απαιτεί όνομα ελεγκτή ψάλτη.")
@@ -254,6 +276,7 @@ class DigitalScoreCatalog:
             preview_filename=optional_filename("preview_filename", (".png", ".jpg", ".jpeg", ".webp")),
             source_scan_filenames=optional_filenames("source_scan_filenames", (".png", ".jpg", ".jpeg", ".webp")),
             playback_speed=float(playback_speed),
+            public_draft=public_draft,
         )
 
 

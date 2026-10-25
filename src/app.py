@@ -145,10 +145,13 @@ def create_app(config: dict | None = None) -> Flask:
         documents = []
         if composition:
             try:
-                verified_digital_ids = {score.score_id for score in digital_score_catalog.verified_scores()}
+                public_digital = digital_score_catalog.public_scores()
+                verified_digital_ids = {score.score_id for score in public_digital}
+                unreviewed_digital_ids = {score.score_id for score in public_digital if not score.is_verified}
             except ValueError as exc:
                 app.logger.error("Could not load digital-score catalogue: %s", exc)
                 verified_digital_ids = set()
+                unreviewed_digital_ids = set()
             for item in composition.documents:
                 enriched = enrich_service_html(
                     composition.selected_date,
@@ -157,6 +160,7 @@ def create_app(config: dict | None = None) -> Flask:
                     instance_offset=attachment_count,
                     semantic_reviewer=typesafe_decisions,
                     verified_digital_scores=verified_digital_ids,
+                    unreviewed_digital_scores=unreviewed_digital_ids,
                 )
                 service_html = enriched.html
                 service_html = interpretation_service.enrich_service_html(
@@ -308,7 +312,7 @@ def create_app(config: dict | None = None) -> Flask:
         except ValueError as exc:
             app.logger.error("Could not load digital-score catalogue: %s", exc)
             abort(503, description="Ο κατάλογος ψηφιακών παρτιτούρων δεν είναι διαθέσιμος.")
-        if score is None or not score.is_verified:
+        if score is None or not score.is_public:
             abort(404)
         base_url = request.script_root.rstrip("/")
         asset_urls = {
@@ -344,7 +348,7 @@ def create_app(config: dict | None = None) -> Flask:
         except ValueError as exc:
             app.logger.error("Could not load digital-score catalogue: %s", exc)
             abort(503, description="Ο κατάλογος ψηφιακών παρτιτούρων δεν είναι διαθέσιμος.")
-        if score is None or not score.is_verified:
+        if score is None or not score.is_public:
             abort(404)
         path = digital_score_catalog.asset_path(score, kind)
         if path is None:
