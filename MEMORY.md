@@ -766,6 +766,11 @@ This file records only durable implementation decisions.
   with a martyria duplicating the opening one). Not done: Saturday nekrosimon Kontakion (Stanitsas pl.4, p. 131
   of the Kontakia PDF: 2/4 martyria, chromatic fthora), Tue Kontakion of the Prodromos, Thursday Apostles'
   Kontakion, Apolytikia, Alleluia, Leitourgika, Trisagion. Not heard by a psaltis.
+  Follow-up (2026-10-26): Thursday Apostles Kontakion «Τοὺς ἀσφαλεῖς» (tone 2, same text as the Peter & Paul
+  Kontakion, kont.pdf p.110, Papachristou) added as `papline-kontakion-apostolon-papachristou-tone2-private-draft`
+  (martyria 3/3, root Beta, Δι=Thi); rule weekdays=(3,). Papline has NO Kontakion «Προφῆτα Θεοῦ» (Tuesday Prodromos,
+  tone 2 «Τὰ ἄνω ζητῶν») and the Saturday nekrosimon failed (see above). Leitourgika (Trisagion, Axion, Patera...) already
+  exist as pandekti scores and attach on weekdays.
 - Rewind (2026-10-25, user: teaching tool, go back a line after a wrong
   variation): `_neanes_practice.html` has «↩ Πίσω μία γραμμή» and the ←
   key (top page and iframe): jump to the start of the current printed line

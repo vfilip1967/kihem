@@ -401,6 +401,18 @@ class AnastasimatarionTests(unittest.TestCase):
             self.assertNotIn(koinonikon, result.html)
         self.assertNotIn(cherubikon, enrich_service_html(date(2026, 10, 27), "litourgia", source).html)
 
+    def test_apostles_kontakion_draft_attaches_only_on_plain_thursday(self):
+        source = (
+            "Σύμφωνα με το άγραφο Τυπικό, το Χερουβικό και το Κοινωνικό σήμερα, απλή Πέμπτη, "
+            "ψάλλονται σε ήχο πλ δ΄.<br>Το Κοντάκιον. Τη Πέμπτη τῶν Ἁγίων Ἀποστόλων Ἦχος β΄<br>"
+            "Τοὺς ἀσφαλεῖς καὶ θεοφθόγγους κήρυκας, τὴν κορυφὴν τῶν μαθητῶν σου, Κύριε."
+        )
+        piece = "papline-kontakion-apostolon-papachristou-tone2-private-draft"
+        thursday = enrich_service_html(date(2026, 10, 29), "litourgia", source, verified_digital_scores={piece})
+        self.assertIn(f'data-music-piece="{piece}"', thursday.html)
+        other = enrich_service_html(date(2026, 10, 28), "litourgia", source, verified_digital_scores={piece})
+        self.assertNotIn(piece, other.html)
+
     def test_plagal_fourth_ainoi_follow_their_final_sticheron(self):
         source = (
             "Ήχος εβδομάδος πλ δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄<br>"

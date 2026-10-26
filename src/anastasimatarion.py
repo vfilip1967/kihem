@@ -1903,6 +1903,16 @@ PILOT_RULES += tuple(
 PILOT_RULES += (
     AttachmentRule(
         "litourgia",
+        "Τοὺς ἀσφαλεῖς καὶ θεοφθόγγους κήρυκας",
+        "papline-kontakion-apostolon-papachristou-tone2-private-draft",
+        weekdays=(3,),
+        required_text=("απλή Πέμπτη, ψάλλονται σε ήχο πλ δ΄",),
+        digital_title="Κοντάκιον Ἀποστόλων «Τοὺς ἀσφαλεῖς», ἦχος β΄ (ψηφιακή)",
+    ),
+)
+PILOT_RULES += (
+    AttachmentRule(
+        "litourgia",
         "Ἀγαλλιᾶσθε",
         "papline-koinonikon-agalliasthe-protopsaltes-varys-private-draft",
         weekdays=(1,),
