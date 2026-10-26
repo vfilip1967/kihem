@@ -745,6 +745,27 @@ This file records only durable implementation decisions.
   before the iframe loads. The default comes from the optional catalogue field
   `playback_speed` (Koinonikon «Αἰνεῖτε» = 0.6); a student's choice is kept
   per score under `kihem-speed-<id>`.
+- Weekday Liturgy batch (2026-10-26, user: transcribe whatever papline offers for the weekday Liturgies
+  from Tue 27 Oct on and attach it). papline has day books only for feasts (26-10, 28-10 …), so the
+  weekday music comes from its collections (public downloads under `/index.php/bibliotheke-downloads/56-theia-leitourgia/…`):
+  Cherubika (a4, 375 pp., per tone; TOC page = PDF page, the heading of a piece sits at the bottom of the
+  previous page and the piece ends at the next composer's heading) and «Κοινωνικά του ενιαυτού και της
+  εβδομάδος» (a4, 931 pp.; «Τῆς Ἑβδομάδος» p. 875 maps Mon–Sat to sections), Kontakia (a4). Melodos' own
+  sentence names the tone of the day («απλή Τρίτη, ψάλλονται σε ήχο βαρύ», Wed «δ΄ άγια», Thu «πλ δ΄»,
+  Fri «πλ α΄», Sat «πλ α΄»), so the rules are keyed on weekday + that sentence (`_WEEKDAY_LITURGY_DRAFTS`).
+  Drafts (all `needs_review` + `public_draft`, Lambadarios unless noted): Cherubikon varys (pp. 243–245,
+  Zo 16/16), tone 4 (124–126, opening Δι = Neanes `Thi`, 12/12), pl.4 (283–285, Ni 16/16), pl.1 reused;
+  Koinonika Tue «Ἀγαλλιᾶσθε δίκαιοι» (the Melodos text is the All-Saints one, not «Εἰς μνημόσυνον»;
+  Konstantinos Protopsaltes varys, pp. 447–449, 12/12), Wed «Ποτήριον» t4 (726–728, 10/10), Thu «Εἰς πᾶσαν τὴν γῆν»
+  pl.4 (856–858, 10/11: soft-chromatic fthora BZFthores F027 not applied), Fri «Σωτηρίαν εἰργάσω» pl.1 (876–877, 9/9),
+  Sat «Μακάριοι» pl.1 (890–892, 13/14: BZFthores F04F not applied); speed 0.6; Kontakion «Ὁ ὑψωθείς» (Prygos,
+  Kont. pp. 16–17, Thi 9/9) for Wed and Fri. New glyph readings: BZLoipa F074 \ypokkoli =
+  OligonPlusHyporoePlusKentemata, BZByzantina F04B \elapet = PetastiPlusElaphron (chosen so the martyria agree).
+  Converter additions (scratch `gen_run.py`; `bz_extract.SKIP_BOXES` for the pale-grey 0.95 boxes — but those
+  boxes can be part of the melody, so it was NOT used) and `drop_first_martyria` (a pickup line that starts
+  with a martyria duplicating the opening one). Not done: Saturday nekrosimon Kontakion (Stanitsas pl.4, p. 131
+  of the Kontakia PDF: 2/4 martyria, chromatic fthora), Tue Kontakion of the Prodromos, Thursday Apostles'
+  Kontakion, Apolytikia, Alleluia, Leitourgika, Trisagion. Not heard by a psaltis.
 - Rewind (2026-10-25, user: teaching tool, go back a line after a wrong
   variation): `_neanes_practice.html` has «↩ Πίσω μία γραμμή» and the ←
   key (top page and iframe): jump to the start of the current printed line

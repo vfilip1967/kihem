@@ -1857,6 +1857,97 @@ PILOT_RULES += (
     ),
 )
 
+# Weekday Liturgy digital drafts (27-31 Oct 2026).  On plain weekdays the Great
+# Church practice puts the Cherubikon and the Koinonikon in the tone that
+# Melodos names in the day's own instruction, so each rule is keyed on that
+# sentence and on the weekday, not on the weekly tone.
+_CHERUBIKON_ANCHOR = "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες"
+_WEEKDAY_LITURGY_DRAFTS = (
+    # (python weekday, Melodos sentence naming the tone, Cherubikon id, Cherubikon title)
+    (1, "απλή Τρίτη, ψάλλονται σε ήχο βαρύ", "papline-cherubikon-lambadarios-varys-private-draft",
+     "Χερουβικόν, ἦχος βαρύς · Πέτρου Λαμπαδαρίου (ψηφιακή)"),
+    (2, "απλή Τετάρτη, ψάλλονται σε ήχο δ΄ άγια", "papline-cherubikon-lambadarios-tone4-private-draft",
+     "Χερουβικόν, ἦχος δ΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)"),
+    (3, "απλή Πέμπτη, ψάλλονται σε ήχο πλ δ΄", "papline-cherubikon-lambadarios-pl4-private-draft",
+     "Χερουβικόν, ἦχος πλ. δ΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)"),
+    (4, "απλή Παρασκευή, ψάλλονται σε ήχο πλ α΄", "papline-cherubikon-lambadarios-pl1-private-draft",
+     "Χερουβικόν, ἦχος πλ. α΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)"),
+    (5, "απλό Σάββατο, ψάλλονται στον πλ α΄", "papline-cherubikon-lambadarios-pl1-private-draft",
+     "Χερουβικόν, ἦχος πλ. α΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)"),
+)
+PILOT_RULES += tuple(
+    AttachmentRule(
+        "litourgia",
+        _CHERUBIKON_ANCHOR,
+        _piece,
+        weekdays=(_weekday,),
+        required_text=(_sentence,),
+        digital_title=_title,
+    )
+    for _weekday, _sentence, _piece, _title in _WEEKDAY_LITURGY_DRAFTS
+)
+PILOT_RULES += tuple(
+    AttachmentRule(
+        "litourgia",
+        "Ὁ ὑψωθεὶς ἐν τῷ Σταυρῷ ἑκουσίως",
+        "papline-kontakion-stavrou-prigos-tone4-private-draft",
+        weekdays=(_weekday,),
+        required_text=(_sentence,),
+        digital_title="Κοντάκιον Σταυροῦ «Ὁ ὑψωθείς», ἦχος δ΄ · Κωνσταντίνου Πρίγγου (ψηφιακή)",
+    )
+    for _weekday, _sentence in (
+        (2, "απλή Τετάρτη, ψάλλονται σε ήχο δ΄ άγια"),
+        (4, "απλή Παρασκευή, ψάλλονται σε ήχο πλ α΄"),
+    )
+)
+PILOT_RULES += (
+    AttachmentRule(
+        "litourgia",
+        "Ἀγαλλιᾶσθε",
+        "papline-koinonikon-agalliasthe-protopsaltes-varys-private-draft",
+        weekdays=(1,),
+        required_text=("απλή Τρίτη, ψάλλονται σε ήχο βαρύ",),
+        preceding_text="Κοινωνικόν της εορτής της ημέρας",
+        digital_title="Κοινωνικόν «Ἀγαλλιᾶσθε δίκαιοι», ἦχος βαρύς · Κωνσταντίνου Πρωτοψάλτου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Ποτήριον σωτηρίου λήψομαι",
+        "papline-koinonikon-potirion-lambadarios-tone4-private-draft",
+        weekdays=(2,),
+        required_text=("απλή Τετάρτη, ψάλλονται σε ήχο δ΄ άγια",),
+        preceding_text="Τῇ Τετάρτῃ, εις το πάθος του Κυρίου",
+        digital_title="Κοινωνικόν «Ποτήριον σωτηρίου», ἦχος δ΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν",
+        "papline-koinonikon-eis-pasan-lambadarios-pl4-private-draft",
+        weekdays=(3,),
+        required_text=("απλή Πέμπτη, ψάλλονται σε ήχο πλ δ΄",),
+        preceding_text="Τῇ Πέμπτῃ, τῶν ἀποστόλων",
+        digital_title="Κοινωνικόν «Εἰς πᾶσαν τὴν γῆν», ἦχος πλ. δ΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Σωτηρίαν εἰργάσω ἐν μέσῳ τῆς γῆς",
+        "papline-koinonikon-soterian-lambadarios-pl1-private-draft",
+        weekdays=(4,),
+        required_text=("απλή Παρασκευή, ψάλλονται σε ήχο πλ α΄",),
+        preceding_text="Τῇ Παρασκευῇ,",
+        digital_title="Κοινωνικόν «Σωτηρίαν εἰργάσω», ἦχος πλ. α΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Μακάριοι",
+        "papline-koinonikon-makarioi-lambadarios-pl1-private-draft",
+        weekdays=(5,),
+        required_text=("απλό Σάββατο, ψάλλονται στον πλ α΄",),
+        preceding_text="Τῷ Σαββάτῳ με Αλληλούια",
+        digital_title="Κοινωνικόν «Μακάριοι οὓς ἐξελέξω», ἦχος πλ. α΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+)
+
 
 def catalog_pieces() -> tuple[MusicPiece, ...]:
     piece_ids = dict.fromkeys(rule.piece_id for rule in PILOT_RULES if rule.digital_title is None)

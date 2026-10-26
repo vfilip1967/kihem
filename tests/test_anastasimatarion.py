@@ -377,6 +377,30 @@ class AnastasimatarionTests(unittest.TestCase):
         )
         self.assertIn(label, draft.html)
 
+    def test_plain_weekday_liturgy_digital_drafts_follow_the_day_instruction(self):
+        source = (
+            "Σύμφωνα με το άγραφο Τυπικό, το Χερουβικό και το Κοινωνικό σήμερα, απλή Τρίτη, "
+            "ψάλλονται σε ήχο βαρύ.<br>Καὶ ψάλλει τὸν Χερουβικὸν ὕμνον ἀργῶς.<br>"
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες, καὶ τῇ ζωοποιῷ Τριάδι.<br>Και γίνεται η μεγάλη είσοδος.<br>"
+            "Κοινωνικόν της εορτής της ημέρας.<br>"
+            "Ἀγαλλιᾶσθε , δίκαιοι, ἐν Κυρίῳ· τοῖς εὐθέσι πρέπει αἴνεσις. Ἀλληλούϊα.<br>Μετὰ φόβου Θεοῦ."
+        )
+        cherubikon = "papline-cherubikon-lambadarios-varys-private-draft"
+        koinonikon = "papline-koinonikon-agalliasthe-protopsaltes-varys-private-draft"
+        ids = {cherubikon, koinonikon}
+        tuesday = enrich_service_html(date(2026, 10, 27), "litourgia", source, verified_digital_scores=ids)
+        self.assertIn(f'data-music-piece="{cherubikon}"', tuesday.html)
+        self.assertIn(f'data-music-piece="{koinonikon}"', tuesday.html)
+        self.assertLess(tuesday.html.index("ζωοποιῷ Τριάδι"), tuesday.html.index(f'data-music-piece="{cherubikon}"'))
+        self.assertLess(tuesday.html.index("πρέπει αἴνεσις"), tuesday.html.index(f'data-music-piece="{koinonikon}"'))
+        # the same Melodos text on another weekday, or without the verified/public
+        # flag, never receives the Tuesday settings
+        for other in (date(2026, 10, 28), date(2026, 10, 25)):
+            result = enrich_service_html(other, "litourgia", source, verified_digital_scores=ids)
+            self.assertNotIn(cherubikon, result.html)
+            self.assertNotIn(koinonikon, result.html)
+        self.assertNotIn(cherubikon, enrich_service_html(date(2026, 10, 27), "litourgia", source).html)
+
     def test_plagal_fourth_ainoi_follow_their_final_sticheron(self):
         source = (
             "Ήχος εβδομάδος πλ δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄<br>"

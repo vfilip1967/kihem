@@ -370,6 +370,171 @@
         "papline-doxastikon-lambadarios-pl4-eothinon11-source-2.png",
         "papline-doxastikon-lambadarios-pl4-eothinon11-source-3.png"
       ]
+    },
+    {
+      "id": "papline-cherubikon-lambadarios-varys-private-draft",
+      "title": "Χερουβικό Πέτρου Λαμπαδαρίου ἦχος βαρύς · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+      "tone_label": "Ἦχος βαρύς · Ζω · διατονικός",
+      "source_description": "Χερουβικό Πέτρου Λαμπαδαρίου ἦχος βαρύς από τη συλλογή «Χερουβικά (συλλογή, εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 243–245 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Χερουβικά (συλλογή Α4) σελ. 243–245, ἦχος βαρύς, Πέτρου Λαμπαδαρίου (1730-1777), Πανδέκτη 1851.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 425 νευμάτων και 16 ενδιάμεσων μαρτυριών· όλες ταιριάζουν με την πηγή. Δεν μετατράπηκαν: 1 ισοκρατήματα BZIson; 1 σύμβολα. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-cherubikon-lambadarios-varys.byzx",
+      "source_scan_filenames": [
+        "papline-cherubikon-lambadarios-varys-source-1.png",
+        "papline-cherubikon-lambadarios-varys-source-2.png",
+        "papline-cherubikon-lambadarios-varys-source-3.png"
+      ]
+    },
+    {
+      "id": "papline-cherubikon-lambadarios-tone4-private-draft",
+      "title": "Χερουβικό Πέτρου Λαμπαδαρίου ἦχος δ΄ · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+      "tone_label": "Ἦχος δ΄ · Δι · διατονικός",
+      "source_description": "Χερουβικό Πέτρου Λαμπαδαρίου ἦχος δ΄ από τη συλλογή «Χερουβικά (συλλογή, εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 124–126 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Χερουβικά (συλλογή Α4) σελ. 124–126, ἦχος δ΄, Πέτρου Λαμπαδαρίου (1730-1777), Πανδέκτη 1851.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 434 νευμάτων και 12 ενδιάμεσων μαρτυριών· όλες ταιριάζουν με την πηγή. Δεν μετατράπηκαν: 3 σύμβολα. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-cherubikon-lambadarios-tone4.byzx",
+      "source_scan_filenames": [
+        "papline-cherubikon-lambadarios-tone4-source-1.png",
+        "papline-cherubikon-lambadarios-tone4-source-2.png",
+        "papline-cherubikon-lambadarios-tone4-source-3.png"
+      ]
+    },
+    {
+      "id": "papline-cherubikon-lambadarios-pl4-private-draft",
+      "title": "Χερουβικό Πέτρου Λαμπαδαρίου ἦχος πλ. δ΄ · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+      "tone_label": "Ἦχος πλ. δ΄ · Νη · διατονικός",
+      "source_description": "Χερουβικό Πέτρου Λαμπαδαρίου ἦχος πλ. δ΄ από τη συλλογή «Χερουβικά (συλλογή, εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 283–285 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Χερουβικά (συλλογή Α4) σελ. 283–285, ἦχος πλ. δ΄, Πέτρου Λαμπαδαρίου (1730-1777), Πανδέκτη 1851.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 380 νευμάτων και 16 ενδιάμεσων μαρτυριών· όλες ταιριάζουν με την πηγή. Δεν μετατράπηκαν: 5 ισοκρατήματα BZIson; 3 σύμβολα χωρίς βάση. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-cherubikon-lambadarios-pl4.byzx",
+      "source_scan_filenames": [
+        "papline-cherubikon-lambadarios-pl4-source-1.png",
+        "papline-cherubikon-lambadarios-pl4-source-2.png",
+        "papline-cherubikon-lambadarios-pl4-source-3.png"
+      ]
+    },
+    {
+      "id": "papline-koinonikon-agalliasthe-protopsaltes-varys-private-draft",
+      "title": "Κοινωνικό «Ἀγαλλιᾶσθε δίκαιοι» Κωνσταντίνου Πρωτοψάλτου ἦχος βαρύς · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Ἀγαλλιᾶσθε δίκαιοι ἐν Κυρίῳ",
+      "tone_label": "Ἦχος βαρύς · Ζω · διατονικός",
+      "source_description": "Κοινωνικό «Ἀγαλλιᾶσθε δίκαιοι» Κωνσταντίνου Πρωτοψάλτου ἦχος βαρύς από τη συλλογή «Κοινωνικά του ενιαυτού και της εβδομάδος (εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 447–449 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Κοινωνικά του ενιαυτού και της εβδομάδος, «Τῶν Ἁγίων Πάντων» σελ. 447–449, ἦχος βαρύς, Κωνσταντίνου Πρωτοψάλτου (†1862), Ταμείον Ανθολογίας Β΄ 1846 σ. 243.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 465 νευμάτων και 12 ενδιάμεσων μαρτυριών· όλες ταιριάζουν με την πηγή. Δεν μετατράπηκαν: 1 φθορές. Το BZByzantina F04B (\\elapet) διαβάστηκε ως PetastiPlusElaphron, γιατί έτσι συμφωνούν οι μαρτυρίες. Η πρώτη γραμμή (προοίμιο «ε ε ε ες») περιλαμβάνεται· η μαρτυρία της πηγής στην αρχή της αφαιρέθηκε, γιατί επαναλαμβάνει την αρχική. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-koinonikon-agalliasthe-protopsaltes-varys.byzx",
+      "source_scan_filenames": [
+        "papline-koinonikon-agalliasthe-protopsaltes-varys-source-1.png",
+        "papline-koinonikon-agalliasthe-protopsaltes-varys-source-2.png",
+        "papline-koinonikon-agalliasthe-protopsaltes-varys-source-3.png"
+      ],
+      "playback_speed": 0.6
+    },
+    {
+      "id": "papline-koinonikon-potirion-lambadarios-tone4-private-draft",
+      "title": "Κοινωνικό «Ποτήριον σωτηρίου» Πέτρου Λαμπαδαρίου ἦχος δ΄ · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Ποτήριον σωτηρίου λήψομαι",
+      "tone_label": "Ἦχος δ΄ · Δι · διατονικός",
+      "source_description": "Κοινωνικό «Ποτήριον σωτηρίου» Πέτρου Λαμπαδαρίου ἦχος δ΄ από τη συλλογή «Κοινωνικά του ενιαυτού και της εβδομάδος (εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 726–728 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Κοινωνικά του ενιαυτού και της εβδομάδος, «Εἰς Θεομητορικὰς ἑορτάς» σελ. 726–728, ἦχος δ΄, Πέτρου Λαμπαδαρίου (1730-1778), Πανδέκτη 1851.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 360 νευμάτων και 10 ενδιάμεσων μαρτυριών· όλες ταιριάζουν με την πηγή. Δεν μετατράπηκαν: 3 ισοκρατήματα BZIson; 2 φθορές. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-koinonikon-potirion-lambadarios-tone4.byzx",
+      "source_scan_filenames": [
+        "papline-koinonikon-potirion-lambadarios-tone4-source-1.png",
+        "papline-koinonikon-potirion-lambadarios-tone4-source-2.png",
+        "papline-koinonikon-potirion-lambadarios-tone4-source-3.png"
+      ],
+      "playback_speed": 0.6
+    },
+    {
+      "id": "papline-koinonikon-eis-pasan-lambadarios-pl4-private-draft",
+      "title": "Κοινωνικό «Εἰς πᾶσαν τὴν γῆν» Πέτρου Λαμπαδαρίου ἦχος πλ. δ΄ · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν ὁ φθόγγος αὐτῶν",
+      "tone_label": "Ἦχος πλ. δ΄ · Νη · διατονικός",
+      "source_description": "Κοινωνικό «Εἰς πᾶσαν τὴν γῆν» Πέτρου Λαμπαδαρίου ἦχος πλ. δ΄ από τη συλλογή «Κοινωνικά του ενιαυτού και της εβδομάδος (εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 856–858 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Κοινωνικά του ενιαυτού και της εβδομάδος, «Εἰς ἑορτὰς τῶν Ἀποστόλων» σελ. 856–858, ἦχος πλ. δ΄, Πέτρου Λαμπαδαρίου (1730-1778), Πανδέκτη 1851.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 426 νευμάτων και 11 ενδιάμεσων μαρτυριών· 10 από 11 ταιριάζουν με την πηγή (η διαφορά οφείλεται σε φθορά/σύμβολο που δεν μετατράπηκε). Δεν μετατράπηκαν: 4 ισοκρατήματα BZIson; 1 σύμβολα; 1 φθορές. Η τελευταία μαρτυρία (Θη με μαλακή χρωματική φθορά, σελ. 858) δεν ταιριάζει: η φθορά BZFthores F027 δεν μετατράπηκε. Το BZLoipa F074 (\\ypokkoli) διαβάστηκε ως OligonPlusHyporoePlusKentemata, γιατί έτσι συμφωνούν οι μαρτυρίες· το BZLoipa F0AB (μικρό σημάδι πάνω από αυτό) δεν μετατράπηκε. Τα γκρι πλαίσια της σελ. 856 και 858 αντιμετωπίστηκαν ως μέρος της μελωδίας. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-koinonikon-eis-pasan-lambadarios-pl4.byzx",
+      "source_scan_filenames": [
+        "papline-koinonikon-eis-pasan-lambadarios-pl4-source-1.png",
+        "papline-koinonikon-eis-pasan-lambadarios-pl4-source-2.png",
+        "papline-koinonikon-eis-pasan-lambadarios-pl4-source-3.png"
+      ],
+      "playback_speed": 0.6
+    },
+    {
+      "id": "papline-koinonikon-soterian-lambadarios-pl1-private-draft",
+      "title": "Κοινωνικό «Σωτηρίαν εἰργάσω» Πέτρου Λαμπαδαρίου ἦχος πλ. α΄ · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Σωτηρίαν εἰργάσω ἐν μέσῳ τῆς γῆς",
+      "tone_label": "Ἦχος πλ. α΄ · Πα · διατονικός",
+      "source_description": "Κοινωνικό «Σωτηρίαν εἰργάσω» Πέτρου Λαμπαδαρίου ἦχος πλ. α΄ από τη συλλογή «Κοινωνικά του ενιαυτού και της εβδομάδος (εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 876–877 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Κοινωνικά του ενιαυτού και της εβδομάδος, «Τῇ Παρασκευῇ» σελ. 876–877, ἦχος πλ. α΄, Πέτρου Λαμπαδαρίου (1730-1778).",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 263 νευμάτων και 9 ενδιάμεσων μαρτυριών· όλες ταιριάζουν με την πηγή. Δεν μετατράπηκαν: 1 ισοκρατήματα BZIson. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-koinonikon-soterian-lambadarios-pl1.byzx",
+      "source_scan_filenames": [
+        "papline-koinonikon-soterian-lambadarios-pl1-source-1.png",
+        "papline-koinonikon-soterian-lambadarios-pl1-source-2.png"
+      ],
+      "playback_speed": 0.6
+    },
+    {
+      "id": "papline-koinonikon-makarioi-lambadarios-pl1-private-draft",
+      "title": "Κοινωνικό «Μακάριοι οὓς ἐξελέξω» Πέτρου Λαμπαδαρίου ἦχος πλ. α΄ · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Μακάριοι οὓς ἐξελέξω καὶ προσελάβου, Κύριε",
+      "tone_label": "Ἦχος πλ. α΄ · Πα · διατονικός",
+      "source_description": "Κοινωνικό «Μακάριοι οὓς ἐξελέξω» Πέτρου Λαμπαδαρίου ἦχος πλ. α΄ από τη συλλογή «Κοινωνικά του ενιαυτού και της εβδομάδος (εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 890–892 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Κοινωνικά του ενιαυτού και της εβδομάδος, «Τῷ Σαββάτῳ» σελ. 890–892, ἦχος πλ. α΄, Πέτρου Λαμπαδαρίου (1730-1778).",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 371 νευμάτων και 14 ενδιάμεσων μαρτυριών· 13 από 14 ταιριάζουν με την πηγή (η διαφορά οφείλεται σε φθορά/σύμβολο που δεν μετατράπηκε). Δεν μετατράπηκαν: 1 φθορές; 1 ισοκρατήματα BZIson. Η μαρτυρία «Κε» της σελ. 891 (γρ. 5) δεν ταιριάζει· στη γραμμή 3 της ίδιας σελίδας υπάρχει κόκκινο σημάδι (BZFthores F04F) που δεν εφαρμόστηκε και πιθανώς εξηγεί τη διαφορά. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-koinonikon-makarioi-lambadarios-pl1.byzx",
+      "source_scan_filenames": [
+        "papline-koinonikon-makarioi-lambadarios-pl1-source-1.png",
+        "papline-koinonikon-makarioi-lambadarios-pl1-source-2.png",
+        "papline-koinonikon-makarioi-lambadarios-pl1-source-3.png"
+      ],
+      "playback_speed": 0.6
+    },
+    {
+      "id": "papline-kontakion-stavrou-prigos-tone4-private-draft",
+      "title": "Κοντάκιον «Ὁ ὑψωθεὶς ἐν τῷ Σταυρῷ» Κωνσταντίνου Πρίγγου ἦχος δ΄ · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Ὁ ὑψωθεὶς ἐν τῷ Σταυρῷ ἑκουσίως",
+      "tone_label": "Ἦχος δ΄ · Δι · διατονικός",
+      "source_description": "Κοντάκιον «Ὁ ὑψωθεὶς ἐν τῷ Σταυρῷ» Κωνσταντίνου Πρίγγου ἦχος δ΄ από τη συλλογή «Κοντάκια του ενιαυτού (εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 16–17 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Κοντάκια του ενιαυτού (Α4), «Εἰς τὴν Ὕψωσιν τοῦ Τιμίου Σταυροῦ» σελ. 16–17, Κωνσταντίνου Πρίγγου (Μουσικὴ Κυψέλη 1869 σ. 211).",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 105 νευμάτων και 9 ενδιάμεσων μαρτυριών· όλες ταιριάζουν με την πηγή. Δεν μετατράπηκαν: 2 σύμβολα χωρίς βάση; 1 ισοκρατήματα BZIson. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-kontakion-stavrou-prigos-tone4.byzx",
+      "source_scan_filenames": [
+        "papline-kontakion-stavrou-prigos-tone4-source-1.png",
+        "papline-kontakion-stavrou-prigos-tone4-source-2.png"
+      ]
     }
   ]
 }

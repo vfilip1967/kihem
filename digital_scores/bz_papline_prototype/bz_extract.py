@@ -11,7 +11,13 @@ def ink(font,cp):
     if g is None: return None
     bp=BoundsPen(gs); gs[g].draw(bp)
     return None if bp.bounds is None else tuple(v/upm for v in bp.bounds)+(gs[g].width/upm,)
+SKIP_BOXES=False  # drop glyphs inside the pale-grey boxes papline uses for alternative endings
+def _boxes(pg):
+    if not SKIP_BOXES: return []
+    return [d['rect'] for d in pg.get_drawings() if d.get('fill') and all(abs(v-0.95)<0.02 for v in d['fill']) and d['rect'].width>40 and d['rect'].height>20]
 def page_glyphs(pg):
+    boxes=_boxes(pg)
+    inbox=lambda x,y: any(r.x0<=x<=r.x1 and r.y0<=y<=r.y1 for r in boxes)
     out=[]; lyr=[]
     for b in pg.get_text('rawdict')['blocks']:
         for l in b.get('lines',[]):
@@ -19,6 +25,7 @@ def page_glyphs(pg):
                 f=re.sub(r'^[A-Z]{6}\+','',s['font']).replace(' ',''); size=s['size']  # the Doxologies PDF writes "BZ Byzantina"
                 for c in s['chars']:
                     ch=c['c']; x,y=c['origin']
+                    if boxes and inbox(x,y): continue
                     if f in ('BZByzantina','BZLoipa','BZFthores','BZIson','BZPalaia','BZXronos') and ch.strip():
                         bb=ink(f,ord(ch))
                         if bb is None:
