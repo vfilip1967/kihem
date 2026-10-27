@@ -18,6 +18,17 @@ class NeanesByzxBridgeTests(unittest.TestCase):
         with self.assertRaisesRegex(NeanesByzxBridgeError, "έγκυρο ιδιωτικό"):
             write_private_byzx({}, output_path="/tmp/ignored.byzx", title="x", neanes_source="/tmp/no-neanes")
 
+    def test_rejects_a_martyria_sign_neanes_cannot_draw(self):
+        # "Beta" is not a Neanes RootSign: the layout crashes and the player stays empty.
+        draft = event_draft()
+        draft["opening_martyria"] = {"note": "Thi", "rootSign": "Beta", "scale": "Diatonic"}
+        with self.assertRaisesRegex(NeanesByzxBridgeError, "Beta"):
+            write_private_byzx(draft, output_path="/tmp/ignored.byzx", title="x", neanes_source="/tmp/no-neanes")
+        draft["opening_martyria"]["rootSign"] = "Tilt"
+        with self.assertRaises(NeanesByzxBridgeError) as raised:
+            write_private_byzx(draft, output_path="/tmp/ignored.byzx", title="x", neanes_source="/tmp/no-neanes")
+        self.assertNotIn("Tilt", str(raised.exception))
+
     def test_generated_worker_uses_neanes_own_serializer_and_marks_the_draft_private(self):
         worker = _typescript_worker(event_draft(), Path("/tmp/private.byzx"), "Δοκιμή")
         self.assertIn("SaveService.SaveScoreToJson(score)", worker)

@@ -24,6 +24,19 @@ class NeanesByzxBridgeError(RuntimeError):
     """Raised when the local Neanes serializer cannot create a valid file."""
 
 
+# The ``RootSign`` values Neanes 0.5.55 can draw.  Any other name (such as
+# "Beta") is accepted by the serializer but crashes the page layout, so the
+# player stays empty.
+NEANES_ROOT_SIGNS = frozenset(
+    f"{name}{low}"
+    for name in (
+        "Delta", "Alpha", "Legetos", "Nana", "Tilt", "Varys", "Squiggle", "Zygos",
+        "SoftChromaticSquiggle", "DeltaDotted", "AlphaDotted", "SoftChromaticPaRootSign",
+    )
+    for low in ("", "Low")
+)
+
+
 def _require_private_event_draft(event_draft: Mapping[str, Any]) -> list[Mapping[str, Any]]:
     if event_draft.get("purpose") != "private-confirmed-ez-neanes-event-draft; not-a-complete-byzx-score":
         raise NeanesByzxBridgeError("Δεν δόθηκε έγκυρο ιδιωτικό EZ Neanes event draft.")
@@ -34,6 +47,9 @@ def _require_private_event_draft(event_draft: Mapping[str, Any]) -> list[Mapping
         raise NeanesByzxBridgeError("Το event draft δεν έχει γεγονότα Note.")
     if any(not isinstance(event, Mapping) or event.get("elementType") not in ("Note", "Martyria", "Tempo") for event in events):
         raise NeanesByzxBridgeError("Το event draft περιέχει μη έγκυρο στοιχείο Neanes Note.")
+    for item in [*events, event_draft.get("opening_martyria")]:
+        if isinstance(item, Mapping) and item.get("rootSign") not in (None, *NEANES_ROOT_SIGNS):
+            raise NeanesByzxBridgeError(f"Άγνωστο σημάδι μαρτυρίας Neanes: {item.get('rootSign')!r}.")
     controls = event_draft.get("ison_controls", [])
     if not isinstance(controls, list) or any(not isinstance(control, Mapping) or control.get("kind") != "pause" for control in controls):
         raise NeanesByzxBridgeError("Το event draft έχει μη έγκυρα ison controls.")

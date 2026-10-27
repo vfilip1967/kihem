@@ -1,0 +1,25 @@
+    <script>
+      /* The web build of Neanes reopens every "workspace-*" entry in
+         localStorage as a tab at start-up and shows the first one.  Each player
+         leaves its own copy there, and all players share this origin, so a
+         frame could show another piece (a Cherubikon in the place of the
+         Monogenes) or one left by an earlier visit.  Before the player boots,
+         and until its own score has loaded, drop every such entry. */
+      (() => {
+        const drop = () => {
+          try {
+            for (const key of Object.keys(localStorage)) {
+              if (key.startsWith('workspace-')) localStorage.removeItem(key);
+            }
+          } catch (error) { /* storage unavailable: nothing to restore either */ }
+        };
+        drop();
+        const started = Date.now();
+        const timer = window.setInterval(() => {
+          const status = document.getElementById('neanes-load-status');
+          const done = status && (status.classList.contains('ready') || status.classList.contains('error'));
+          if (done || Date.now() - started > 30000) { window.clearInterval(timer); return; }
+          drop();
+        }, 30);
+      })();
+    </script>
