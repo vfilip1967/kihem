@@ -602,6 +602,26 @@
         "papline-axion-estin-patriarchal-pl1-source-1.png",
         "papline-axion-estin-patriarchal-pl1-source-2.png"
       ]
+    },
+    {
+      "id": "papline-koinonikon-agalliasthe-tsiknopoulos-tone1-private-draft",
+      "title": "Κοινωνικό «Ἀγαλλιᾶσθε δίκαιοι» Ἀνδρέου Τσικνοπούλου ἦχος α΄ · πρόχειρη αυτόματη μεταγραφή",
+      "incipit": "Ἀγαλλιᾶσθε δίκαιοι ἐν Κυρίῳ",
+      "tone_label": "Ἦχος α΄ · Πα · διατονικός",
+      "source_description": "Κοινωνικό «Ἀγαλλιᾶσθε δίκαιοι» Ἀνδρέου Τσικνοπούλου ἦχος α΄ από τη συλλογή «Κοινωνικά του ενιαυτού και της εβδομάδος (εκτυπώσιμη έκδοση Α4)» του papline.gr, σελ. 426–429 του PDF. Ο papline.gr επέτρεψε (email 13/10/2026) χρήση χωρίς εμπορικό σκοπό, με αναφορά της πηγής. Αυτόματη μετατροπή BZ → Neanes, χωρίς έλεγχο ψάλτη.",
+      "source_reference": "papline.gr, Κοινωνικά του ενιαυτού και της εβδομάδος, «Τῶν Ἁγίων Πάντων» σελ. 426–429, ἦχος α΄, Ἀνδρέου Τσικνοπούλου.",
+      "transcription_by": "Kihem · αυτόματη μετατροπή BZ → Neanes (πρόχειρο, χωρίς έλεγχο)",
+      "review_state": "needs_review",
+      "public_draft": true,
+      "notes": "Αυτόματη μεταγραφή 382 νευμάτων και 13 ενδιάμεσων μαρτυριών· 11 από 13 ταιριάζουν με την πηγή (η διαφορά οφείλεται σε φθορά/σύμβολο που δεν μετατράπηκε). Δεν μετατράπηκαν: 5 σύμβολα; 1 φθορές; 1 σύμβολα χωρίς βάση. Οι δύο τελευταίες μαρτυρίες (σελ. 428-429) δεν ταιριάζουν: δεν εφαρμόστηκαν οι φθορές (χρωματική και διατονική) που αλλάζουν τα ονόματα των φθόγγων. Οι κρυφές παύσεις μετά τις μαρτυρίες είναι εκτίμηση. Δεν έχει επιβεβαιωθεί ψαλτικά· ο ιδιοκτήτης του Kihem επέτρεψε (25/10/2026) να εμφανίζεται στις ακολουθίες ως πρόχειρη αυτόματη μεταγραφή, με σχετική σήμανση. Χρήση χωρίς εμπορικό σκοπό.",
+      "byzx_filename": "papline-koinonikon-agalliasthe-tsiknopoulos-tone1.byzx",
+      "source_scan_filenames": [
+        "papline-koinonikon-agalliasthe-tsiknopoulos-tone1-source-1.png",
+        "papline-koinonikon-agalliasthe-tsiknopoulos-tone1-source-2.png",
+        "papline-koinonikon-agalliasthe-tsiknopoulos-tone1-source-3.png",
+        "papline-koinonikon-agalliasthe-tsiknopoulos-tone1-source-4.png"
+      ],
+      "playback_speed": 0.6
     }
   ]
 }

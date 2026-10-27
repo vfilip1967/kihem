@@ -433,6 +433,17 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn(f'data-music-piece="{mono}"', wednesday.html)  # fixed every day
         self.assertNotIn(varys, wednesday.html)  # the Axion Estin follows the day's tone
 
+    def test_monday_koinonikon_draft_needs_plain_monday_in_tone_one(self):
+        source = (
+            "Σήμερα, απλή Δευτέρα, ψάλλονται σε ήχο α΄.<br>Κοινωνικόν της εορτής της ημέρας.<br>"
+            "Ἀγαλλιᾶσθε , δίκαιοι, ἐν Κυρίῳ· τοῖς εὐθέσι πρέπει αἴνεσις. Ἀλληλούϊα."
+        )
+        piece = "papline-koinonikon-agalliasthe-tsiknopoulos-tone1-private-draft"
+        monday = enrich_service_html(date(2026, 11, 2), "litourgia", source, verified_digital_scores={piece})
+        self.assertIn(f'data-music-piece="{piece}"', monday.html)
+        tuesday = enrich_service_html(date(2026, 11, 3), "litourgia", source, verified_digital_scores={piece})
+        self.assertNotIn(piece, tuesday.html)
+
     def test_plagal_fourth_ainoi_follow_their_final_sticheron(self):
         source = (
             "Ήχος εβδομάδος πλ δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄<br>"

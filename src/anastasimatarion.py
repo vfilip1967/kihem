@@ -1900,6 +1900,17 @@ PILOT_RULES += tuple(
         (4, "απλή Παρασκευή, ψάλλονται σε ήχο πλ α΄"),
     )
 )
+PILOT_RULES += (
+    AttachmentRule(
+        "litourgia",
+        "Ἀγαλλιᾶσθε",
+        "papline-koinonikon-agalliasthe-tsiknopoulos-tone1-private-draft",
+        weekdays=(0,),
+        required_text=("απλή Δευτέρα, ψάλλονται σε ήχο α΄",),
+        preceding_text="Κοινωνικόν της εορτής της ημέρας",
+        digital_title="Κοινωνικόν «Ἀγαλλιᾶσθε δίκαιοι», ἦχος α΄ · Ἀνδρέου Τσικνοπούλου (ψηφιακή)",
+    ),
+)
 # Fixed Monogenes (Lambadarios, Pandekti 1851) and the Axion Estin in the tone of
 # the day's Leitourgika.  Both sit beside the scanned settings of the same piece.
 PILOT_RULES += (

@@ -776,7 +776,11 @@ This file records only durable implementation decisions.
   pl.1 «Τὸ Πατριαρχικόν» (pp.132-133, 9/9 after reading BZLoipa F074 as OligonPlusHyporoePlusKentemata) for Fri/Sat/Sunday pl.1.
   NOT done: tone 4 agia (Nikolaidis p.100-101, best 7/14) and pl.4 («τὸ συνειθισμένον» p.224, 8/11): martyria disagree,
   probably an unapplied Δι fthora. BZFthores F027 is a small "+" mark, not a fthora (the "fthora-unmapped" warnings are harmless).
-  Papline's Antiphonarion (ntifonarion-syllogi.pdf) also holds the weekday Prokeimena, Alleluia and Koinonika (not transcribed).
+  Papline's Antiphonarion (ntifonarion-syllogi.pdf) pp.18-21: the weekday Prokeimena/Alleluia/Koinonika are TEXT ONLY (no
+  notation); only the Sunday ones (pp.8-17) are notated. 2026-10-27: Monday (2 Nov, Melodos prints «Ἀγαλλιᾶσθε» as the
+  feast koinonikon, tone 1) -> Tsiknopoulos tone 1 `papline-koinonikon-agalliasthe-tsiknopoulos-tone1-private-draft`
+  (koin-week.pdf p.426-429, martyria 11/13: two late ones off, unapplied fthoras). Archangels' «Ὁ ποιῶν τοὺς ἀγγέλους»
+  (Lambadarios p.505-507, 9/9) was converted but is not attached (Melodos did not print it for 2 Nov).
 - Rewind (2026-10-25, user: teaching tool, go back a line after a wrong
   variation): `_neanes_practice.html` has «↩ Πίσω μία γραμμή» and the ←
   key (top page and iframe): jump to the start of the current printed line
