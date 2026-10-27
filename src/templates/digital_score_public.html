@@ -75,6 +75,7 @@
 {% include "_neanes_speed.html" %}
         <iframe id="neanes-player" class="neanes-player" src="{{ neanes_url }}" title="Neanes player για {{ score.incipit }}" allow="autoplay"></iframe>
 {% include "_neanes_practice.html" %}
+{% include "_neanes_pitch_colors.html" %}
       </section>
     {% endif %}
   </main>
@@ -204,6 +205,7 @@
         const first = player.contentDocument && player.contentDocument.querySelector('.element-box[id^="element-"]');
         const n = elementNumber(first);
         if (Number.isFinite(n)) elementIdBase = n;
+        window.kihemElementBase = () => elementIdBase;
       };
       const watchParallage = () => {
         const frameDocument = player.contentDocument;
@@ -239,7 +241,10 @@
           const names = noteLabels[String(index)];
           if (!names) { tip.style.display = 'none'; return; }
           const text = names.join(' → ');
-          if (text !== lastNames) { tip.textContent = text; lastNames = text; }
+          if (text !== lastNames) {
+            lastNames = text;
+            if (window.kihemPitchTip) window.kihemPitchTip(tip, names); else tip.textContent = text;
+          }
           const rect = playing.getBoundingClientRect();
           tip.style.display = 'block';
           tip.style.left = `${rect.left + rect.width / 2}px`;

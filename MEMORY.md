@@ -790,6 +790,19 @@ This file records only durable implementation decisions.
   browser menu). Verified in headless Chrome with a dispatched dblclick; a
   real mouse hit on the narrow `.element-box` centre misses (hits `.page`),
   and iPhone is untested.
+- Pitch colours (2026-10-27, user: can't see which note he is on while
+  singing): `_neanes_pitch_colors.html`, included after the practice bar on
+  the public and review pages. Every `.syllable-box` in the Neanes frame is
+  coloured by its first note from the `.notes.json` sidecar via an injected
+  stylesheet (`#element-<base+index>`, `!important` over the inline black);
+  the floating parallage tag and a legend take the same colours. Scale
+  position low Zo 0 … Ga 4 … Zo 7, high Ni 8; hue rises 25° brown → 130°
+  green (Ga) → 355° red (high Ni), notes beyond the nine are darker. Martyria
+  and red accessory signs keep their colour. Toggle remembered in
+  localStorage `kihem-pitch-colors`. Needs `window.kihemElementBase`, set in
+  `rememberElementIdBase` of both player templates. Seen in headless Chrome
+  on two drafts; untested on phones. Switching the toggle restyles the tag at
+  the next note.
 - Practice bar (2026-10-14, user: replay difficult passages):
   `_neanes_practice.html` sets a start/end neume from the Neanes selection
   (`.element-box .selected`, ids `element-N`) and plays/loops that span.

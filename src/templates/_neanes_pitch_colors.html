@@ -1,0 +1,104 @@
+    <div class="pitch-colors" role="group" aria-label="Χρώμα ανά νότα">
+      <label><input id="pitch-colors-toggle" type="checkbox" checked> <strong>Χρώμα ανά νότα</strong></label>
+      <span id="pitch-colors-legend" class="pitch-legend" aria-hidden="true"></span>
+    </div>
+    <style>
+      .pitch-colors { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem; margin: .4rem 0; font-size: .9rem; }
+      .pitch-colors label { display: inline-flex; align-items: center; gap: .4em; margin: 0; }
+      .pitch-colors input[type=checkbox] { width: auto; margin: 0; }
+      .pitch-legend { display: inline-flex; flex-wrap: wrap; gap: .25rem; }
+      .pitch-legend span { padding: 0 .5em; border-radius: 999px; font-weight: 600; line-height: 1.6; color: #fff; }
+    </style>
+    <script>
+      /* Learning aid: every neume is coloured by its pitch, from the low Zo
+         (brown) through Ga (green) to the high Ni (red), so a student singing
+         along can see where the melody is.  The note names come from the
+         private sidecar (note_labels); the colour is drawn in the Neanes frame
+         from a stylesheet, so the score itself is untouched.  The hue rises
+         steadily with the pitch, so neighbouring notes look alike and
+         distant ones differ. */
+      (() => {
+        const labels = {{ note_labels|tojson }};
+        const player = document.getElementById('neanes-player');
+        const toggle = document.getElementById('pitch-colors-toggle');
+        const legend = document.getElementById('pitch-colors-legend');
+        if (!labels || !player || !toggle) { toggle?.closest('.pitch-colors')?.setAttribute('hidden', ''); return; }
+
+        // Position on the scale: low Zo = 0, Ni = 1 … Ke = 6, Zo = 7, high Ni = 8.
+        const degree = { 'Νη': 0, 'Πα': 1, 'Βου': 2, 'Γα': 3, 'Δι': 4, 'Κε': 5, 'Ζω': 6 };
+        const position = (label) => {
+          const [name, octave] = label.split(' ');
+          if (!(name in degree)) return null;
+          return degree[name] + 1 + (octave === 'άνω' ? 7 : octave === 'κάτω' ? -7 : 0);
+        };
+        const anchors = [
+          [25, 60, 28], [38, 85, 36], [62, 72, 32], [90, 60, 31], [130, 65, 29],
+          [175, 75, 27], [215, 72, 42], [270, 55, 46], [355, 80, 46],
+        ];
+        const hsl = (label) => {
+          const p = position(label);
+          if (p == null) return null;
+          const [h, s, l] = anchors[Math.max(0, Math.min(anchors.length - 1, p))];
+          // Beyond the nine notes (low Ke, high Pa …) keep the end colour, a step darker.
+          const beyond = p < 0 ? -p : Math.max(0, p - (anchors.length - 1));
+          return { h, s, l: Math.max(14, l - 7 * beyond) };
+        };
+        const color = (label) => { const c = hsl(label); return c ? `hsl(${c.h} ${c.s}% ${c.l}%)` : null; };
+        const tint = (label) => { const c = hsl(label); return c ? `hsl(${c.h} ${c.s}% 94%)` : null; };
+
+        // Legend: only the notes this score uses, lowest first.
+        const used = [...new Set(Object.values(labels).flat())].filter((label) => position(label) != null)
+          .sort((a, b) => position(a) - position(b));
+        for (const label of used) {
+          const chip = document.createElement('span');
+          chip.textContent = label;
+          chip.style.background = color(label);
+          legend.append(chip);
+        }
+
+        let on = true;
+        try { on = localStorage.getItem('kihem-pitch-colors') !== 'off'; } catch (error) { /* keep the default */ }
+        toggle.checked = on;
+        legend.hidden = !on;
+
+        // The small tag over the playing neume takes the same colours.
+        window.kihemPitchTip = (tip, names) => {
+          tip.textContent = '';
+          tip.style.background = ''; tip.style.borderColor = ''; tip.style.color = '';
+          const first = names[0];
+          if (!toggle.checked || !color(first)) { tip.textContent = names.join(' → '); return; }
+          tip.style.background = tint(first);
+          tip.style.borderColor = color(first);
+          names.forEach((name, i) => {
+            if (i) tip.append(' → ');
+            const part = document.createElement('span');
+            part.textContent = name;
+            part.style.color = color(name) || '';
+            tip.append(part);
+          });
+        };
+
+        const apply = () => {
+          const doc = player.contentDocument;
+          const base = window.kihemElementBase && window.kihemElementBase();
+          if (!doc || !doc.head || base == null) return;
+          let style = doc.getElementById('kihem-pitch-colors');
+          if (!style) {
+            style = doc.createElement('style');
+            style.id = 'kihem-pitch-colors';
+            style.textContent = Object.entries(labels).map(([index, names]) => {
+              const c = color(names[0]);
+              return c ? `#element-${base + Number(index)} .syllable-box { color: ${c} !important; }` : '';
+            }).join('\n');
+            doc.head.append(style);
+          }
+          style.disabled = !toggle.checked;
+        };
+        toggle.addEventListener('change', () => {
+          legend.hidden = !toggle.checked;
+          try { localStorage.setItem('kihem-pitch-colors', toggle.checked ? 'on' : 'off'); } catch (error) { /* per-visit only */ }
+          apply();
+        });
+        window.setInterval(apply, 500);
+      })();
+    </script>
