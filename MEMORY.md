@@ -771,6 +771,12 @@ This file records only durable implementation decisions.
   (martyria 3/3, root Beta, Δι=Thi); rule weekdays=(3,). Papline has NO Kontakion «Προφῆτα Θεοῦ» (Tuesday Prodromos,
   tone 2 «Τὰ ἄνω ζητῶν») and the Saturday nekrosimon failed (see above). Leitourgika (Trisagion, Axion, Patera...) already
   exist as pandekti scores and attach on weekdays.
+  2026-10-27: digital Monogenes (Lambadarios, Pandekti 1851, from papline Antiphonarion pp.6-7, tone 2 Δι, martyria 5/5,
+  attached every day beside the scan) and Axion Estin drafts: varys Nikolaidis (leit.pdf p.194-195, 10/11) for Tuesday,
+  pl.1 «Τὸ Πατριαρχικόν» (pp.132-133, 9/9 after reading BZLoipa F074 as OligonPlusHyporoePlusKentemata) for Fri/Sat/Sunday pl.1.
+  NOT done: tone 4 agia (Nikolaidis p.100-101, best 7/14) and pl.4 («τὸ συνειθισμένον» p.224, 8/11): martyria disagree,
+  probably an unapplied Δι fthora. BZFthores F027 is a small "+" mark, not a fthora (the "fthora-unmapped" warnings are harmless).
+  Papline's Antiphonarion (ntifonarion-syllogi.pdf) also holds the weekday Prokeimena, Alleluia and Koinonika (not transcribed).
 - Rewind (2026-10-25, user: teaching tool, go back a line after a wrong
   variation): `_neanes_practice.html` has «↩ Πίσω μία γραμμή» and the ←
   key (top page and iframe): jump to the start of the current printed line

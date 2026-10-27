@@ -413,6 +413,26 @@ class AnastasimatarionTests(unittest.TestCase):
         other = enrich_service_html(date(2026, 10, 28), "litourgia", source, verified_digital_scores={piece})
         self.assertNotIn(piece, other.html)
 
+    def test_monogenes_and_axion_estin_drafts_follow_the_leitourgika_tone(self):
+        axion = (
+            "Ἄξιόν ἐστιν ὡς ἀληθῶς μακαρίζειν σε τὴν Θεοτόκον, τὴν ἀειμακάριστον καὶ παναμώμητον "
+            "καὶ μητέρα τοῦ Θεοῦ ἡμῶν. Τὴν τιμιωτέραν τῶν Χερουβεὶμ καὶ ἐνδοξοτέραν ἀσυγκρίτως τῶν Σεραφείμ· "
+            "τὴν ἀδιαφθόρως Θεὸν Λόγον τεκοῦσαν, τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν."
+        )
+        source = (
+            "Σήμερα, απλή Τρίτη, ψάλλονται σε ήχο βαρύ.<br>"
+            "Ὁ Μονογενὴς Υἱὸς καὶ Λόγος τοῦ Θεοῦ, ἀθάνατος ὑπάρχων.<br>" + axion
+        )
+        mono = "papline-monogenis-lambadarios-tone2-private-draft"
+        varys = "papline-axion-estin-nikolaidis-varys-private-draft"
+        ids = {mono, varys}
+        tuesday = enrich_service_html(date(2026, 10, 27), "litourgia", source, verified_digital_scores=ids)
+        self.assertIn(f'data-music-piece="{mono}"', tuesday.html)
+        self.assertIn(f'data-music-piece="{varys}"', tuesday.html)
+        wednesday = enrich_service_html(date(2026, 10, 28), "litourgia", source, verified_digital_scores=ids)
+        self.assertIn(f'data-music-piece="{mono}"', wednesday.html)  # fixed every day
+        self.assertNotIn(varys, wednesday.html)  # the Axion Estin follows the day's tone
+
     def test_plagal_fourth_ainoi_follow_their_final_sticheron(self):
         source = (
             "Ήχος εβδομάδος πλ δ΄.<br>Αἶνοι<br>Στιχηρὰ Ἀναστάσιμα Ἦχος πλ δ΄<br>"

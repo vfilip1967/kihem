@@ -1900,6 +1900,46 @@ PILOT_RULES += tuple(
         (4, "απλή Παρασκευή, ψάλλονται σε ήχο πλ α΄"),
     )
 )
+# Fixed Monogenes (Lambadarios, Pandekti 1851) and the Axion Estin in the tone of
+# the day's Leitourgika.  Both sit beside the scanned settings of the same piece.
+PILOT_RULES += (
+    AttachmentRule(
+        "litourgia",
+        "Μονογενὴς Υἱὸς καὶ Λόγος",
+        "papline-monogenis-lambadarios-tone2-private-draft",
+        digital_title="Ὁ Μονογενής, ἦχος β΄ · Πέτρου Λαμπαδαρίου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "litourgia",
+        _LITOURGIA_AXION_ESTIN,
+        "papline-axion-estin-nikolaidis-varys-private-draft",
+        weekdays=(1,),
+        required_text=("απλή Τρίτη, ψάλλονται σε ήχο βαρύ",),
+        digital_title="Ἄξιόν ἐστιν, ἦχος βαρύς · Βασιλείου Νικολαΐδου (ψηφιακή)",
+    ),
+    AttachmentRule(
+        "litourgia",
+        _LITOURGIA_AXION_ESTIN,
+        "papline-axion-estin-patriarchal-pl1-private-draft",
+        weekly_tone=5,
+        weekdays=(6,),
+        digital_title="Ἄξιόν ἐστιν, ἦχος πλ. α΄ · Τὸ Πατριαρχικόν (ψηφιακή)",
+    ),
+)
+PILOT_RULES += tuple(
+    AttachmentRule(
+        "litourgia",
+        _LITOURGIA_AXION_ESTIN,
+        "papline-axion-estin-patriarchal-pl1-private-draft",
+        weekdays=(_weekday,),
+        required_text=(_sentence,),
+        digital_title="Ἄξιόν ἐστιν, ἦχος πλ. α΄ · Τὸ Πατριαρχικόν (ψηφιακή)",
+    )
+    for _weekday, _sentence in (
+        (4, "απλή Παρασκευή, ψάλλονται σε ήχο πλ α΄"),
+        (5, "απλό Σάββατο, ψάλλονται στον πλ α΄"),
+    )
+)
 PILOT_RULES += (
     AttachmentRule(
         "litourgia",
