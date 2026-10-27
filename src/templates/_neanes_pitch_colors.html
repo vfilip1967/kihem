@@ -31,12 +31,13 @@
           if (!(name in degree)) return null;
           return degree[name] + 1 + (octave === 'άνω' ? 7 : octave === 'κάτω' ? -7 : 0);
         };
-        // Hue still rises with the pitch, but the steps are wide and the
-        // lightness alternates, so neighbours differ even for thin strokes.
+        // Mostly a rising hue (brown, orange … green … blue, purple, red), but
+        // the middle-low notes Ni, Pa and Vou must never look alike, so Pa
+        // leaves the rainbow for magenta and the lightness alternates.
         const anchors = [
           [24, 76, 20],   // low Zo: dark brown
           [29, 100, 50],  // Ni: orange
-          [48, 100, 42],  // Pa: gold
+          [318, 80, 44],  // Pa: magenta (off the rainbow on purpose: orange, gold and lime looked alike)
           [79, 92, 36],   // Vou: lime
           [138, 87, 30],  // Ga: green
           [180, 100, 30], // Thi: teal

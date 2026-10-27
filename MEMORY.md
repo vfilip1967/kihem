@@ -796,13 +796,33 @@ This file records only durable implementation decisions.
   coloured by its first note from the `.notes.json` sidecar via an injected
   stylesheet (`#element-<base+index>`, `!important` over the inline black);
   the floating parallage tag and a legend take the same colours. Scale
-  position low Zo 0 … Ga 4 … Zo 7, high Ni 8; hue rises (wide steps, alternating lightness, 0.4px text stroke) brown → orange → gold → lime →
-  green (Ga) → teal → blue → purple → red (high Ni), notes beyond the nine are darker. Martyria
+  position low Zo 0 … Ga 4 … Zo 7, high Ni 8: brown, orange (Ni), magenta (Pa),
+  lime (Vou), green (Ga), teal, blue, purple, red (high Ni); Pa leaves the rainbow
+  on purpose (user: Ni, Pa, Vou looked alike as orange/gold/lime). 0.4px text
+  stroke; notes beyond the nine are darker. Martyria
   and red accessory signs keep their colour. Toggle remembered in
   localStorage `kihem-pitch-colors`. Needs `window.kihemElementBase`, set in
   `rememberElementIdBase` of both player templates. Seen in headless Chrome
   on two drafts; untested on phones. Switching the toggle restyles the tag at
   the next note.
+- Empty player / wrong piece (2026-10-27, user: a Cherubikon where the
+  Monogenes should be): two causes. (1) The Monogenes and Apostles Kontakion
+  were built with martyria root sign `Beta`, which is not a Neanes `RootSign`;
+  Neanes' layout throws `reading 'text'` and the player stays empty (valid
+  names: Delta, Alpha, Legetos, Nana, Tilt, Varys, Squiggle, Zygos,
+  SoftChromaticSquiggle, DeltaDotted, AlphaDotted, SoftChromaticPaRootSign and
+  their `…Low`). Tone 2 diatonic now uses `Tilt` (the ring sign in papline's
+  header «Ἦχος β΄ Δι»); `NEANES_ROOT_SIGNS` in the bridge rejects unknown names.
+  Never trust "martyria agree" alone: open the player and check boxes > 0.
+  (2) The web Neanes reopens every `workspace-*` localStorage entry as a tab and
+  shows the first, so a frame that failed to load showed another piece or one
+  left by an earlier visit; `_neanes_isolate.html` clears those keys before the
+  player boots and until its score is ready. A scan of all 34 pages shows
+  every public draft now renders.
+- Scripture interpretations stopped on 2026-10-26: OpenAI answers 429
+  `insufficient_quota` / `credit_balance_exhausted` (checked 2026-10-27). The
+  code is fine; the owner must add credits, then the next visit generates and
+  caches them. The last cached entries date from 2026-10-25.
 - Practice bar (2026-10-14, user: replay difficult passages):
   `_neanes_practice.html` sets a start/end neume from the Neanes selection
   (`.element-box .selected`, ids `element-N`) and plays/loops that span.
