@@ -796,8 +796,8 @@ This file records only durable implementation decisions.
   coloured by its first note from the `.notes.json` sidecar via an injected
   stylesheet (`#element-<base+index>`, `!important` over the inline black);
   the floating parallage tag and a legend take the same colours. Scale
-  position low Zo 0 … Ga 4 … Zo 7, high Ni 8; hue rises 25° brown → 130°
-  green (Ga) → 355° red (high Ni), notes beyond the nine are darker. Martyria
+  position low Zo 0 … Ga 4 … Zo 7, high Ni 8; hue rises (wide steps, alternating lightness, 0.4px text stroke) brown → orange → gold → lime →
+  green (Ga) → teal → blue → purple → red (high Ni), notes beyond the nine are darker. Martyria
   and red accessory signs keep their colour. Toggle remembered in
   localStorage `kihem-pitch-colors`. Needs `window.kihemElementBase`, set in
   `rememberElementIdBase` of both player templates. Seen in headless Chrome

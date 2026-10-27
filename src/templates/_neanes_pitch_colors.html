@@ -31,9 +31,18 @@
           if (!(name in degree)) return null;
           return degree[name] + 1 + (octave === 'άνω' ? 7 : octave === 'κάτω' ? -7 : 0);
         };
+        // Hue still rises with the pitch, but the steps are wide and the
+        // lightness alternates, so neighbours differ even for thin strokes.
         const anchors = [
-          [25, 60, 28], [38, 85, 36], [62, 72, 32], [90, 60, 31], [130, 65, 29],
-          [175, 75, 27], [215, 72, 42], [270, 55, 46], [355, 80, 46],
+          [24, 76, 20],   // low Zo: dark brown
+          [29, 100, 50],  // Ni: orange
+          [48, 100, 42],  // Pa: gold
+          [79, 92, 36],   // Vou: lime
+          [138, 87, 30],  // Ga: green
+          [180, 100, 30], // Thi: teal
+          [219, 75, 48],  // Ke: blue
+          [271, 76, 53],  // Zo: purple
+          [353, 87, 47],  // high Ni: red
         ];
         const hsl = (label) => {
           const p = position(label);
@@ -88,7 +97,7 @@
             style.id = 'kihem-pitch-colors';
             style.textContent = Object.entries(labels).map(([index, names]) => {
               const c = color(names[0]);
-              return c ? `#element-${base + Number(index)} .syllable-box { color: ${c} !important; }` : '';
+              return c ? `#element-${base + Number(index)} .syllable-box { color: ${c} !important; -webkit-text-stroke: calc(0.4px * var(--zoom, 1)) currentcolor !important; }` : '';
             }).join('\n');
             doc.head.append(style);
           }
