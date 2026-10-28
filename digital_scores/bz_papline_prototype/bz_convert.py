@@ -59,12 +59,15 @@ def convert(page, line_index):
             if n['base']['x0']==a['x0'] and n['base']['code']=='F061' and n['base']['font']=='BZByzantina' and not n['att']:
                 n['att'].append(a)
     warn=[]
-    pending_vareia=False; mfth={}
+    pending_vareia=False; mfth={}; stavroi=[]
     marts=[a for a in gg if (a['font']=='BZByzantina' and a['code'] in MART) or (a['font']=='BZFthores' and a['code'] in FTH_MART)]
     for a in sorted(gg,key=lambda a:a['x0']):
         c=a['code']
         if isbase(a) or id(a) in alone: continue
         if a['font']=='BZByzantina' and (c in MART or (c in MARTSIGN and any(abs((m['x0']+m['x1'])/2-(a['x0']+a['x1'])/2)<25 for m in marts))): continue
+        if a['font']=='BZFthores' and c=='F027':
+            # the stavros (+), a pause: kept as a marked rest, hidden by the callers
+            stavroi.append(a); continue
         if a['font']=='BZFthores' and (a['font'],c) not in YFESIS:
             if c in FTH_MART or c in FTH_MARTSIGN: continue
             if c not in FTHORA: warn.append(('fthora-unmapped',c,round(a['x0'])));continue
@@ -139,6 +142,9 @@ def convert(page, line_index):
         me={'elementType':'Martyria','source_note':(MART if m['font']=='BZByzantina' else FTH_MART)[m['code']]}
         if id(m) in mfth: me['fthora']=mfth[id(m)]
         events.append((me,['MART '+m['code']],m['x0']))
+    for st in stavroi:
+        # user, 2026-10-28: wherever the source has a stavros, put a pause there
+        events.append(({'elementType':'Note','quantitativeNeume':'VareiaDotted','stavros':True},['STAVROS'],st['x0']))
     events.sort(key=lambda t:t[2])
     convert.last_x=[x for _,_,x in events]  # x of each returned event, for tempo signs
     return [(e,c) for e,c,_ in events],warn

@@ -611,7 +611,7 @@ This file records only durable implementation decisions.
     martyria (user 2026-10-21: the source's own line ends left orphan syllables
     such as a lone «α» or «δυ» in the narrower Neanes page; let the text flow).
     A BZLoipa `F030` standing alone between bases is an Ison with Tripli
-    (`bz_convert.py`, unconfirmed). Stavros `F027` still unconverted. A hidden 1-time pause
+    (`bz_convert.py`, unconfirmed). Stavros `F027` is now a hidden pause (2026-10-28, see below). A hidden 1-time pause
     after each of the 56 martyria. Tempo (user 2026-10-21: 115 bpm; the verses
     «Αἰνεῖτε…» start very fast and slow down): papline's tempo signs are the
     font `MKXronos2016` (not BZXronos): `F06C` = Neanes `Quicker` (208 bpm),
@@ -875,3 +875,14 @@ This file records only durable implementation decisions.
     BZLoipa F0A3. Rules: digital Orthros rules (Katavasies before the scanned one, Doxastikon after «ἐκ λύκων
     λυμαινομένων αὐτήν.», Doxology after «Παράτεινον…») and Liturgy rules appended after the tone rules so the
     digital score sits above the scanned setting. The converter used was a scratchpad `gen_run.py` (config-driven).
+- Stavros = pause (user 2026-10-28): the cross «+» (BZFthores `F027`) used to be
+  dropped. `bz_convert.convert()` now emits a rest `{'Note','VareiaDotted','stavros':True}`
+  where the cross stands (between two bases by x); the runner scripts add its
+  element index to the sidecar `hidden` list (same as the pause after a martyria),
+  and the bridge worker drops the `stavros` key. Only 6 public pieces have a
+  cross: Axion Estin Nikolaidis varys (5) and Patriarchal pl.1 (8), Koinonikon
+  Thursday pl.4 (1) and Wednesday tone 4 (2), Ainoi tone 4 (8), Doxologia Manuel
+  tone 4 (8); regenerated/patched and installed 2026-10-28 (names of every other
+  element unchanged). The other drafts have no cross in their lines. Not pause: the
+  glyph `F022` (blank in BZFthores). For a piece made from an old draft use a
+  patch (insert the rests into the saved draft by matching the source lines).

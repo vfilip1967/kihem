@@ -80,7 +80,7 @@ describe('Kihem private EZ .byzx bridge', () => {{
     score.documentProperties.title = scoreTitle;
     score.documentProperties.author = 'Kihem · ιδιωτικό EZ draft · απαιτεί μουσικό έλεγχο';
     const elements = eventDraft.events.map((saved: Record<string, unknown>) => {{
-      const {{ elementType: _elementType, source_note: _sourceNote, ...fields }} = saved;
+      const {{ elementType: _elementType, source_note: _sourceNote, stavros: _stavros, ...fields }} = saved;
       if (saved.elementType === 'Martyria' && fields.explicit === true) {{
         // A Martyria written in the source as a new starting sign (the heading of
         // a following piece): explicit, like the opening one, so it resets the note.
