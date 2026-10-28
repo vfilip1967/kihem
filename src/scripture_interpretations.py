@@ -23,6 +23,7 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
+OPENROUTER_CHAT_URL = "https://openrouter.ai/api/v1/chat/completions"
 DEFAULT_MODEL = "gpt-5.6-luna"
 # Include the requested output structure in cache identity. A bumped version
 # regenerates entries that reached the token limit before their theological
@@ -308,8 +309,12 @@ class ScriptureInterpretationService:
     ):
         self.cache_dir = Path(cache_dir) / "scripture-interpretations"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
-        self.model = model
+        # OpenRouter is preferred when its key is configured: it serves the
+        # same model without the separate OpenAI credit balance.
+        openrouter_key = os.environ.get("OPENROUTER_API_KEY") if api_key is None else None
+        self.use_openrouter = bool(openrouter_key)
+        self.api_key = api_key or openrouter_key or os.environ.get("OPENAI_API_KEY")
+        self.model = f"openai/{model}" if self.use_openrouter and "/" not in model else model
         self.session = session or requests.Session()
         self.background = background
         # Eothinon, first Apostle and first Gospel are independent cache keys.
@@ -355,7 +360,28 @@ Reference: {passage.reference}
 Ancient Greek source text:
 {passage.text}"""
 
+    def _request_openrouter(self, passage: ScripturePassage) -> str:
+        response = self.session.post(
+            OPENROUTER_CHAT_URL,
+            headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
+            json={
+                "model": self.model,
+                "reasoning": {"effort": "none"},
+                "max_tokens": 9000,
+                "messages": [{"role": "user", "content": self._prompt(passage)}],
+            },
+            timeout=(10, 180),
+        )
+        response.raise_for_status()
+        choices = response.json().get("choices") or [{}]
+        output = (choices[0].get("message") or {}).get("content")
+        if not isinstance(output, str) or not output.strip():
+            raise RuntimeError("The interpretation response did not contain text.")
+        return output.strip()
+
     def _request(self, passage: ScripturePassage) -> str:
+        if self.use_openrouter:
+            return self._request_openrouter(passage)
         response = self.session.post(
             OPENAI_RESPONSES_URL,
             headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},

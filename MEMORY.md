@@ -819,10 +819,12 @@ This file records only durable implementation decisions.
   left by an earlier visit; `_neanes_isolate.html` clears those keys before the
   player boots and until its score is ready. A scan of all 34 pages shows
   every public draft now renders.
-- Scripture interpretations stopped on 2026-10-26: OpenAI answers 429
-  `insufficient_quota` / `credit_balance_exhausted` (checked 2026-10-27). The
-  code is fine; the owner must add credits, then the next visit generates and
-  caches them. The last cached entries date from 2026-10-25.
+- Scripture interpretations stopped on 2026-10-26 (OpenAI 429
+  `insufficient_quota`). Fixed 2026-10-28 on the user's request: if
+  `OPENROUTER_API_KEY` is set (production drop-in
+  `/etc/systemd/system/kihem.service.d/openrouter.conf`, mode 600) the service
+  calls OpenRouter chat completions with `openai/<model>`
+  (`openai/gpt-5.6-luna`, same prompt and cache); otherwise OpenAI as before.
 - Practice bar (2026-10-14, user: replay difficult passages):
   `_neanes_practice.html` sets a start/end neume from the Neanes selection
   (`.element-box .selected`, ids `element-N`) and plays/loops that span.
