@@ -2240,6 +2240,9 @@ def enrich_service_html(
     attachment_count = 0
     unmatched: list[str] = []
     bookmarks: list[MusicBookmark] = []
+    # (anchor text node, inserted aside, is_digital): a digital score replaces
+    # the scanned setting attached to the same hymn (owner, 2026-10-30).
+    placed: list[tuple[object, Tag, bool]] = []
     normalized_document = _normalized(soup.get_text(" ", strip=True))
     weekly_tone = _weekly_tone_from_document(normalized_document)
 
@@ -2390,10 +2393,16 @@ def enrich_service_html(
                 _insertion_point_before(text_node).insert_before(fragment)
             else:
                 _insertion_point(text_node).insert_after(fragment)
+            placed.append((text_node, fragment, piece is None))
             if piece is None:
                 bookmarks.append(MusicBookmark(f"music-{rule.piece_id}-{instance}", rule.digital_title or rule.piece_id))
             else:
                 bookmarks.append(MusicBookmark(_bookmark_id(piece, instance), piece.title))
+
+    digital_nodes = {id(node) for node, _, digital in placed if digital}
+    for node, aside, digital in placed:
+        if not digital and id(node) in digital_nodes:
+            aside.decompose()
 
     # Rules are maintained by source/matching concerns, not by the order in
     # which a particular service prints its hymns.  Re-read the inserted

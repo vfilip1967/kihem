@@ -886,3 +886,8 @@ This file records only durable implementation decisions.
   element unchanged). The other drafts have no cross in their lines. Not pause: the
   glyph `F022` (blank in BZFthores). For a piece made from an old draft use a
   patch (insert the rests into the saved draft by matching the source lines).
+- Digital score replaces the scan (owner 2026-10-30): `enrich_service_html` now removes the
+  scanned excerpts attached to the same hymn text node as a shown digital (Neanes) score
+  (`placed` list). The scan stays when the digital score is not shown (not approved/verified).
+  Sunday 2026-11-01: Doxastikon 11, Doxologia, Katavasies, Cherubikon, Monogenis, Axion Estin and
+  Koinonikon show only the Neanes player.

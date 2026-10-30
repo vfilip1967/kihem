@@ -344,10 +344,9 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn(f'src="digital-scores/{score_id}/"', result.html)
         self.assertLess(result.html.index("Σωτὴρ ἡμῶν δόξα σοί."), result.html.index(f'data-music-piece="{score_id}"'))
         self.assertLess(result.html.index(f'data-music-piece="{score_id}"'), result.html.index("ΔΟΞΑΣΤΙΚΟΝ"))
-        # the scanned Ioannis Protopsaltis setting stays as the alternative, after it
-        self.assertLess(
-            result.html.index(f'data-music-piece="{score_id}"'), result.html.index('data-music-piece="tone4-ainoi"')
-        )
+        # the digital score replaces the scanned setting of the same hymn (owner, 2026-10-30)
+        self.assertNotIn('data-music-piece="tone4-ainoi"', result.html)
+        self.assertIn('data-music-piece="tone4-ainoi"', enrich_service_html(date(2026, 10, 25), "orthros", source).html)
 
     def test_sunday_eothinon_doxastikon_uses_the_verified_digital_score(self):
         source = (
