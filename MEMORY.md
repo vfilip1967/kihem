@@ -811,8 +811,10 @@ This file records only durable implementation decisions.
   Neanes' layout throws `reading 'text'` and the player stays empty (valid
   names: Delta, Alpha, Legetos, Nana, Tilt, Varys, Squiggle, Zygos,
   SoftChromaticSquiggle, DeltaDotted, AlphaDotted, SoftChromaticPaRootSign and
-  their `…Low`). Tone 2 diatonic now uses `Tilt` (the ring sign in papline's
-  header «Ἦχος β΄ Δι»); `NEANES_ROOT_SIGNS` in the bridge rejects unknown names.
+  their `…Low`). Tone 2 first used `Tilt`+Diatonic, WRONG (2026-10-31, user: the Monogenes
+  sounded wrong): `Tilt` is the HARD-chromatic Di sign and tone 2 is SOFT chromatic; now
+  `SoftChromaticSquiggle` + `SoftChromatic` (the Δι martyria with dots and curl in
+  papline's header; rebuilt both pieces, the martyria glyphs now match the source); `NEANES_ROOT_SIGNS` in the bridge rejects unknown names.
   Never trust "martyria agree" alone: open the player and check boxes > 0.
   (2) The web Neanes reopens every `workspace-*` localStorage entry as a tab and
   shows the first, so a frame that failed to load showed another piece or one
