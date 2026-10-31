@@ -797,7 +797,7 @@ This file records only durable implementation decisions.
   stylesheet (`#element-<base+index>`, `!important` over the inline black);
   the floating parallage tag and a legend take the same colours. Scale
   position low Zo 0 … Ga 4 … Zo 7, high Ni 8: brown, orange (Ni), magenta (Pa),
-  lime (Vou), green (Ga), teal, blue, purple, red (high Ni); Pa leaves the rainbow
+  golden yellow (Vou; was lime until 2026-10-31, too close to Ga), green (Ga), teal, blue, purple, red (high Ni); Pa leaves the rainbow
   on purpose (user: Ni, Pa, Vou looked alike as orange/gold/lime). 0.4px text
   stroke; notes beyond the nine are darker. Martyria
   and red accessory signs keep their colour. Toggle remembered in
