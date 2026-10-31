@@ -3,7 +3,7 @@ import pymupdf, bz_extract as bx
 BASE={'F047':'PetastiPlusHypsiliRight','F073':'Oligon','F06A':'Apostrophos','F061':'Ison','F063':'KentemataPlusOligon','F0CE':'KentemataPlusOligon',
  'F066':'OligonPlusKentimaAbove','F064':'OligonPlusKentimaBelow','F053':'Petasti','F04A':'PetastiPlusApostrophos',
  'F044':'PetastiPlusOligon','F046':'PetastiPlusKentimaAbove','F06C':'ElaphronPlusApostrophos','F02D':'OligonPlusApostrophosPlusKentemata','F05F':'OligonPlusIsonPlusKentemata','F0A2':'OligonPlusKentimaBelow','F067':'OligonPlusHypsiliRight','F07A':'OligonPlusKentemata','F03B':'Hamili','F076':'OligonPlusKentemata','F078':'Kentemata',
- 'F022':'PetastiPlusHyporoe','F027':'Hyporoe','F06B':'Elaphron','F068':'RunningElaphron','F041':'PetastiWithIson','F03D':'DoubleApostrophos','F02B':'IsonPlusApostrophos'}
+ 'F022':'PetastiPlusHyporoe','F027':'Hyporoe','F06B':'Elaphron','F04B':'PetastiPlusElaphron','F068':'RunningElaphron','F041':'PetastiWithIson','F03D':'DoubleApostrophos','F02B':'IsonPlusApostrophos'}
 BASEL={'F073':'OligonPlusHypsiliLeft','F03D':'OligonPlusElaphronPlusApostrophos','F029':'OligonPlusApostrophos','F064':'OligonPlusHypsiliPlusKentimaHorizontal','F061':'OligonPlusKentemataPlusHypsiliRight','F03F':'OligonPlusKentimaBelow','F070':'OligonPlusElaphronPlusKentemata','F053':'PetastiPlusHypsiliLeft','F07B':'OligonPlusHamiliPlusKentemata','F041':'OligonPlusKentemataPlusHypsiliLeft'}  # BZLoipa bases; F053 \ypsApet, chosen so the martyria agree
 LOIPA_VOCAL={'F07D':'Heteron','F03F':'Antikenoma'}
 # BZFthores (font, code) -> Neanes Fthora stem; names from the CTAN package,
@@ -16,7 +16,7 @@ for codes,name in (('F066 F046 F056 F076 F087','DiatonicPa'),('F067 F047','Diato
     ('F032 F040 F057 F077 F085','SoftChromaticThi'),('F033 F023 F045 F065','SoftChromaticPa'),
     ('F039 F028 F049 F069','Zygos'),('F02D F05F F050 F070','Kliton'),('F060 F07E','Spathi')):
     for c in codes.split(): FTHORA[c]=name
-for c in ('F029','F06F'): FTHORA[c]='GeneralFlat'   # \zwanwyfesh: flat of Zo
+for c in ('F029','F06F','F030'): FTHORA[c]='GeneralFlat'   # \zwanwyfesh: flat of Zo
 FTH_MART={'F073':'Ke','F07A':'Ga','F061':'Thi'}          # martyria letters drawn in BZFthores
 FTH_MARTSIGN={'F053','F05A','F041','F058','F078','F07C'}
 GORGON={'F072','F065','F0D8','F0D0','F045','F052'}

@@ -891,3 +891,14 @@ This file records only durable implementation decisions.
   (`placed` list). The scan stays when the digital score is not shown (not approved/verified).
   Sunday 2026-11-01: Doxastikon 11, Doxologia, Katavasies, Cherubikon, Monogenis, Axion Estin and
   Koinonikon show only the Neanes player.
+- Sunday pl.1 Ainoi (2026-10-31, user: «Ξεκίνα το πασαπνοάριο και τους Αίνους της Κυριακής 1/11»):
+  `papline-ainoi-byzantios-pl1-private-draft` (assets `papline-ainoi-byzantios-pl1.*`), needs_review,
+  public draft. Source: papline 01-11-2026 book (`d1101.pdf`) pp.337 line 8–338 (Pasapnoaria of Petros
+  Byzantios, Ephesios 1820 p.140) and pp.352 line 8–358 line 1 (the 4 anastasima stichera, p.141 ff.),
+  explicit Martyria Pa (`Alpha`) before the stichera; 858 notes, 44/44 martyria with octave, 11 tempo
+  signs, stavros pauses hidden; the Menaion stichera after it are not included. Composer choice
+  (Petros Byzantios, the only anastasima setting in that section) is mine; the Lambadarios settings used
+  for tone 4 do not exist for pl.1 in that book. New glyphs: BZByzantina `F04B` = `\elapet`
+  `PetastiPlusElaphron`; BZFthores `F030` = GeneralFlat (like F029). A diatonic Ni fthora over a Pa
+  martyria is left unapplied (it would rename the later notes). Orthros rule `ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ`,
+  weekly_tone 5, Sunday only; it replaces the scanned Ioannis Protopsaltis Ainoi (see the scan rule).
