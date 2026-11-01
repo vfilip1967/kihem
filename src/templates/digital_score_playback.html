@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <title>Ακρόαση Neanes · {{ score.incipit }}</title>
-  <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261008-neanes-player">
+  <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261101-neanes-svh">
 </head>
 <body class="review-body playback-body{{ ' playback-embedded' if embedded else '' }}">
   <header class="review-header playback-header">
@@ -228,6 +228,8 @@
           .main-toolbar { min-height: 0 !important; padding: 2px 4px !important; }
           .toolbar-left { display: flex !important; flex: 0 0 auto !important; min-width: 0 !important; }
           .toolbar-leading-group, .toolbar-aligned-group, .toolbar-zoom-adjacent-actions, .toolbar-rest { display: none !important; }
+          /* Editing buttons (drop cap, text boxes, initial martyria, image). */
+          .toolbar-primary-group:not(.toolbar-primary-group-zoom) { display: none !important; }
           .toolbar-primary-group-zoom { display: flex !important; }
           .toolbar-primary-group-zoom > :not(.zoom-control) { display: none !important; }
           .toolbar-playback-section { flex: 0 1 auto !important; }
