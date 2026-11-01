@@ -348,15 +348,15 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertNotIn('data-music-piece="tone4-ainoi"', result.html)
         self.assertIn('data-music-piece="tone4-ainoi"', enrich_service_html(date(2026, 10, 25), "orthros", source).html)
 
-    def test_sunday_pl1_trisagion_digital_short_setting_keeps_the_slow_scan(self):
+    def test_trisagion_digital_settings_are_tone_2_on_any_day_and_replace_the_scan(self):
         line = "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
         source = "Ήχος εβδομάδος πλ α΄.<br>" + line * 3 + "Δύναμις<br>"
-        score_id = "papline-trisagion-ioannidis-pl1-private-draft"
-        result = enrich_service_html(date(2026, 11, 1), "litourgia", source, verified_digital_scores={score_id})
-        self.assertIn(f'data-music-piece="{score_id}"', result.html)
-        self.assertIn('data-music-piece="litourgia-trisagion-argon-pandekti"', result.html)
-        weekday = enrich_service_html(date(2026, 11, 2), "litourgia", source, verified_digital_scores={score_id})
-        self.assertNotIn(score_id, weekday.html)
+        ids = {"papline-trisagion-progakis-tone2-private-draft", "papline-trisagion-klasika-tone2-private-draft"}
+        for day in (date(2026, 11, 1), date(2026, 11, 2)):
+            result = enrich_service_html(day, "litourgia", source, verified_digital_scores=ids)
+            for score_id in ids:
+                self.assertIn(f'data-music-piece="{score_id}"', result.html)
+            self.assertNotIn('data-music-piece="litourgia-trisagion-argon-pandekti"', result.html)
 
     def test_sunday_eothinon_doxastikon_uses_the_verified_digital_score(self):
         source = (

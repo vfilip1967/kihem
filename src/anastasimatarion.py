@@ -190,9 +190,6 @@ class AttachmentRule:
     # the caller reports that score as verified, and ``digital_title`` is the
     # bookmark label.
     digital_title: str | None = None
-    # Show the digital score beside the scan instead of replacing it (used
-    # while the digital setting is not the same execution as the scan).
-    keep_scan: bool = False
 
 
 @dataclass(frozen=True)
@@ -1870,20 +1867,22 @@ PILOT_RULES += (
     ),
 )
 
-# Sunday pl.1 Trisagion: the short setting (Ioannidis) is digital; the slow one
-# is still only the scan (Pandekti), so the scan stays beside it.
-PILOT_RULES += (
+# The Trisagion after the Eisodikon is always sung in tone 2, whatever the
+# weekly tone (owner, 2026-11-01).  Both settings are digital, so the scanned
+# Pandekti Trisagion (tone 4) is replaced.  The later rule is placed first.
+PILOT_RULES += tuple(
     AttachmentRule(
         "litourgia",
         "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.",
-        "papline-trisagion-ioannidis-pl1-private-draft",
-        weekly_tone=5,
-        weekdays=(6,),
+        _score_id,
         match_number=3,
         following_text="Δύναμις",
-        keep_scan=True,
-        digital_title="Τρισάγιος ὕμνος · σύντομος, ἦχος πλ. α΄ · Κυριάκου Ἰωαννίδου (ψηφιακή)",
-    ),
+        digital_title=_title,
+    )
+    for _score_id, _title in (
+        ("papline-trisagion-progakis-tone2-private-draft", "Τρισάγιος ὕμνος · σύντομος, ἦχος β΄ · Γεωργίου Πρωγάκη (ψηφιακή)"),
+        ("papline-trisagion-klasika-tone2-private-draft", "Τρισάγιος ὕμνος · ἀργός (κλασικά), ἦχος β΄ (ψηφιακή)"),
+    )
 )
 
 # Weekday Liturgy digital drafts (27-31 Oct 2026).  On plain weekdays the Great
@@ -2422,7 +2421,7 @@ def enrich_service_html(
                 _insertion_point_before(text_node).insert_before(fragment)
             else:
                 _insertion_point(text_node).insert_after(fragment)
-            placed.append((text_node, fragment, piece is None and not rule.keep_scan))
+            placed.append((text_node, fragment, piece is None))
             if piece is None:
                 bookmarks.append(MusicBookmark(f"music-{rule.piece_id}-{instance}", rule.digital_title or rule.piece_id))
             else:
