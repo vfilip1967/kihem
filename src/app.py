@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import os
 from hmac import compare_digest
-from datetime import date, timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from urllib.parse import quote
 
 from flask import Flask, Response, abort, jsonify, make_response, render_template, request, send_file, send_from_directory
@@ -111,7 +112,7 @@ def create_app(config: dict | None = None) -> Flask:
 
     @app.get("/")
     def index():
-        default_date = app.config["DEFAULT_DATE"] or (date.today() + timedelta(days=1)).isoformat()
+        default_date = app.config["DEFAULT_DATE"] or (datetime.now(ZoneInfo("Europe/Athens")).date() + timedelta(days=1)).isoformat()
         selected_raw = request.args.get("date", default_date)
         # The web view deliberately renders one service per request.  This keeps
         # the heavy scanned music excerpts from being downloaded twice on one
