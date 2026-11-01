@@ -190,6 +190,9 @@ class AttachmentRule:
     # the caller reports that score as verified, and ``digital_title`` is the
     # bookmark label.
     digital_title: str | None = None
+    # Show the digital score beside the scan instead of replacing it (used
+    # while the digital setting is not the same execution as the scan).
+    keep_scan: bool = False
 
 
 @dataclass(frozen=True)
@@ -1867,6 +1870,22 @@ PILOT_RULES += (
     ),
 )
 
+# Sunday pl.1 Trisagion: the short setting (Ioannidis) is digital; the slow one
+# is still only the scan (Pandekti), so the scan stays beside it.
+PILOT_RULES += (
+    AttachmentRule(
+        "litourgia",
+        "Ἅγιος ὁ Θεός, ἅγιος ἰσχυρός, ἅγιος ἀθάνατος, ἐλέησον ἡμᾶς.",
+        "papline-trisagion-ioannidis-pl1-private-draft",
+        weekly_tone=5,
+        weekdays=(6,),
+        match_number=3,
+        following_text="Δύναμις",
+        keep_scan=True,
+        digital_title="Τρισάγιος ὕμνος · σύντομος, ἦχος πλ. α΄ · Κυριάκου Ἰωαννίδου (ψηφιακή)",
+    ),
+)
+
 # Weekday Liturgy digital drafts (27-31 Oct 2026).  On plain weekdays the Great
 # Church practice puts the Cherubikon and the Koinonikon in the tone that
 # Melodos names in the day's own instruction, so each rule is keyed on that
@@ -2403,7 +2422,7 @@ def enrich_service_html(
                 _insertion_point_before(text_node).insert_before(fragment)
             else:
                 _insertion_point(text_node).insert_after(fragment)
-            placed.append((text_node, fragment, piece is None))
+            placed.append((text_node, fragment, piece is None and not rule.keep_scan))
             if piece is None:
                 bookmarks.append(MusicBookmark(f"music-{rule.piece_id}-{instance}", rule.digital_title or rule.piece_id))
             else:

@@ -904,3 +904,11 @@ This file records only durable implementation decisions.
   `PetastiPlusElaphron`; BZFthores `F030` = GeneralFlat (like F029). A diatonic Ni fthora over a Pa
   martyria is left unapplied (it would rename the later notes). Orthros rule `ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ`,
   weekly_tone 5, Sunday only; it replaces the scanned Ioannis Protopsaltis Ainoi (see the scan rule).
+
+- 2026-11-01 Trisagion (user: slow and short). papline «Τρισάγιος ὕμνος» collection is `wk/dl/trisagios.pdf`
+  (124 pp.; printed p. N = PDF page N+4). Installed the SHORT pl.1 setting (Kyriakos Ioannidis «ἄνευ κρατημάτων»,
+  printed pp. 70–71, 223 notes, martyria 14/14) as `papline-trisagion-ioannidis-pl1-private-draft`; rule uses
+  `keep_scan=True` (new AttachmentRule field) so it sits BESIDE the slow Pandekti scan instead of replacing it.
+  The SLOW kratematic pl.1 setting (printed pp. 72–73) was NOT published: converter gives martyria 5/13 (drift starts at the
+  last two lines of p. 72; BZ F078/F027/F02F/F0A7/F057 readings unclear). Manuel Protopsaltes tone 1 (pp. 1–2) was also tried:
+  martyria 5/6, last line drifts +1. Next step if asked: decode those glyphs, then drop `keep_scan`.
