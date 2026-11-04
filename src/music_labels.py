@@ -70,6 +70,16 @@ _TONE_NUMERALS = {
     "δ": "δ΄",
 }
 
+_VARIANT_MARKERS = {
+    "αργοσ": "αργ.",
+    "αργα": "αργ.",
+    "αργον": "αργ.",
+    "συντομοσ": "σύντ.",
+    "συντομον": "σύντ.",
+    "συντομα": "σύντ.",
+    "συντομη": "σύντ.",
+}
+
 _PRIMES = "΄'′’᾽"
 _TOKEN_RE = re.compile(r"[^\s·,;:(){}\[\]«»\"“”]+")
 
@@ -190,14 +200,27 @@ def _genre_label(tokens: list[str]) -> str | None:
         for stem, abbreviation in _GENRE_MARKERS:
             if prepared.startswith(stem):
                 return abbreviation
+    return None
+
+
+def _variant_label(tokens: list[str]) -> str | None:
     for token in tokens:
-        prepared = _prepare(token)
-        if prepared in _STOPWORDS:
+        prepared = _prepare(token).replace("ς", "σ")
+        variant = _VARIANT_MARKERS.get(prepared)
+        if variant:
+            return variant
+    return None
+
+
+def _significant_tokens(tokens: list[str]) -> list[str]:
+    significant = []
+    for token in tokens:
+        if _prepare(token) in _STOPWORDS:
             continue
         if len([char for char in token if char.isalpha()]) < 3:
             continue
-        return token[:4] + "."
-    return None
+        significant.append(token)
+    return significant
 
 
 def short_music_label(title: str) -> str:
@@ -206,19 +229,42 @@ def short_music_label(title: str) -> str:
         return "Μουσικό"
 
     tokens = _tokens(stripped)
-    parts = []
+    tone = _explicit_tone(tokens) or _fallback_tone(tokens)
+    digital = "ψηφιακη" in _fold(stripped)
+    suffix = ([tone] if tone else []) + (["ψηφ."] if digital else [])
+
     genre = _genre_label(tokens)
     if genre:
-        parts.append(genre)
-    tone = _explicit_tone(tokens) or _fallback_tone(tokens)
-    if tone:
-        parts.append(tone)
-    if "ψηφιακη" in _fold(stripped):
-        parts.append("ψηφ.")
+        parts = [genre]
+        variant = _variant_label(tokens)
+        if variant:
+            parts.append(variant)
+        parts.extend(suffix)
+        label = " ".join(parts)
+        if len(label) > _MAX_LABEL_LENGTH and "ψηφ." in parts:
+            parts.remove("ψηφ.")
+            label = " ".join(parts)
+    else:
+        words = _significant_tokens(tokens)
+        without_digital = [tone] if tone else []
+        extras_options = [suffix]
+        if digital:
+            extras_options.append(without_digital)
+        label = ""
+        for count in (2, 1):
+            if len(words) < count:
+                continue
+            prefix = " ".join(word[:4] + "." for word in words[:count])
+            for extras in extras_options:
+                candidate = " ".join([prefix] + extras)
+                if len(candidate) <= _MAX_LABEL_LENGTH:
+                    label = candidate
+                    break
+            if label:
+                break
+        if not label:
+            label = stripped[:_FALLBACK_LENGTH] + "…"
 
-    label = " ".join(parts)
-    if not label:
-        label = stripped[:_FALLBACK_LENGTH] + "…"
     if len(label) > _MAX_LABEL_LENGTH:
         label = stripped[:_FALLBACK_LENGTH] + "…"
     return label
