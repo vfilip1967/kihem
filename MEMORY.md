@@ -13,7 +13,8 @@ This file records only durable implementation decisions.
   Its top navigation is a single non-wrapping compact row; the music bookmark
   buttons are labelled «Αναγνώσεις» and «Μουσικά» and stay beside the
   pause/resume icon. «Αναγνώσεις» contains anchors for «1ος Απόστολος» and
-  «Ευαγγέλιο» whenever they occur.
+  «Ευαγγέλιο» whenever they occur. Music bookmark labels are shortened for
+  phones (e.g. «Κοιν. α΄ ψηφ.»); the full piece title stays as the link tooltip.
 - The heading copies Melodos' date, weekly tone and feast/saints text. The
   monthly calendar response is cached; it is never guessed.
 - Sunday Orthros has verified, tone-specific clips for the Kathismata,

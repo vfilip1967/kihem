@@ -20,6 +20,7 @@ from src.digital_scores import DigitalScoreCatalog, DigitalScoreReviewStore
 from src.liturgical_calendar import LiturgicalCalendar
 from src.melodos import MELODOS_HOME, MelodosClient, MelodosError
 from src.isokratis import ISON_NOTES, MODE_LABELS, IsokratisLibrary
+from src.music_labels import short_music_label
 from src.scripture_interpretations import ScriptureInterpretationService, add_reading_bookmarks
 from src.typesafe_decisions import TypesafeDecisionService
 
@@ -177,7 +178,8 @@ def create_app(config: dict | None = None) -> Flask:
                 music_bookmarks.extend(
                     {
                         "anchor_id": bookmark.anchor_id,
-                        "label": bookmark.title,
+                        "label": short_music_label(bookmark.title),
+                        "title": bookmark.title,
                     }
                     for bookmark in enriched.bookmarks
                 )

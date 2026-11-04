@@ -4,6 +4,7 @@ import unittest
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from src.app import create_app
 from src.composer import ComposedService
@@ -70,7 +71,7 @@ class AppTests(unittest.TestCase):
         response = self.client.get("/?date=2026-09-13&services=orthros")
         self.assertEqual(response.status_code, 200)
         text = response.get_data(as_text=True)
-        self.assertIn('href="static/app.css?v=20260929-reading-bookmarks"', text)
+        self.assertIn('href="static/app.css?v=20261104-short-music-menu"', text)
         self.assertIn("Όρθρος", text)
         self.assertIn("Θεία Λειτουργία", text)  # separate-page navigation
         self.assertIn('class="service-switch-link active" href="?date=2026-09-13&amp;services=orthros"', text)
@@ -82,12 +83,16 @@ class AppTests(unittest.TestCase):
         self.assertIn('class="music-bookmarks-menu"', text)
         self.assertIn('class="reading-bookmarks-menu"', text)
         self.assertIn('class="reader-nav-row"', text)
+        self.assertLess(text.index('class="music-bookmarks-menu"'), text.index('class="reading-bookmarks-menu"'))
         self.assertIn('<summary>Αναγνώσεις <span>2</span></summary>', text)
         self.assertIn('href="#reading-orthros-first-apostolos"', text)
         self.assertIn('href="#reading-orthros-first-evangelion"', text)
         self.assertIn('<summary>Μουσικά <span>1</span></summary>', text)
         self.assertNotIn('Μουσικά κείμενα', text)
-        self.assertIn('href="#music-tone6-apolytikion-1"', text)
+        self.assertIn(
+            '<a href="#music-tone6-apolytikion-1" title="Ἀναστάσιμον Ἀπολυτίκιον, πλ. β΄">Απολ. πλ.β΄</a>',
+            text,
+        )
         self.assertNotIn('href="#music-tone6-apolytikion-2"', text)
         self.assertIn("link.closest('details').open = false", text)
         self.assertIn('data-scroll-controls', text)
@@ -137,9 +142,12 @@ class AppTests(unittest.TestCase):
 
     def test_unconfigured_default_date_is_tomorrow_and_orthros(self):
         self.app.config["DEFAULT_DATE"] = None
-        response = self.client.get("/")
+        fixed_now = datetime(2026, 9, 8, 23, 30)
+        with patch("src.app.datetime") as mocked_datetime:
+            mocked_datetime.now.return_value = fixed_now
+            response = self.client.get("/")
         text = response.get_data(as_text=True)
-        tomorrow = date.today() + timedelta(days=1)
+        tomorrow = fixed_now.date() + timedelta(days=1)
         self.assertIn(f'value="{tomorrow.isoformat()}"', text)
         self.assertIn('id="orthros"', text)
         self.assertNotIn('id="litourgia"', text)
