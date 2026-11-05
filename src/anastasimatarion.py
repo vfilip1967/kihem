@@ -1939,6 +1939,52 @@ PILOT_RULES += (
         digital_title="Κοινωνικόν «Ἀγαλλιᾶσθε δίκαιοι», ἦχος α΄ · Ἀνδρέου Τσικνοπούλου (ψηφιακή)",
     ),
 )
+# Tone-1 Liturgy digital scores.  On a day whose weekly tone is 1 they replace
+# the Melodos tone-1 scanned setting at the very same anchor, so every other
+# tone keeps its existing behaviour.
+_TONE1_LITURGY_DIGITAL_DRAFTS = (
+    (
+        "Παράσχου Κύριε.",
+        "papline-lit1-kyrie-parashou-private-draft",
+        "Κύριε ἐλέησον καὶ Παράσχου Κύριε · ἦχος α΄ · Βασιλείου Νικολαΐδου (ψηφιακή)",
+        "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν",
+    ),
+    (
+        "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.",
+        "papline-lit1-patera-private-draft",
+        "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα · ἦχος α΄ · Βασιλείου Νικολαΐδου (ψηφιακή)",
+        None,
+    ),
+    (
+        _LITOURGIA_SANCTUS,
+        "papline-lit1-axion-dikaion-private-draft",
+        "Ἄξιον καὶ δίκαιον · ἦχος α΄ · Βασιλείου Νικολαΐδου (ψηφιακή)",
+        None,
+    ),
+    (
+        "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν",
+        "papline-lit1-se-ymnoumen-private-draft",
+        "Ἀμήν… Σὲ ὑμνοῦμεν · ἦχος α΄ · Βασιλείου Νικολαΐδου (ψηφιακή)",
+        None,
+    ),
+    (
+        _LITOURGIA_AXION_ESTIN,
+        "papline-lit1-axion-estin-private-draft",
+        "Ἄξιόν ἐστιν · ἦχος α΄ · Γρηγορίου Πρωτοψάλτου (ψηφιακή)",
+        None,
+    ),
+)
+PILOT_RULES += tuple(
+    AttachmentRule(
+        "litourgia",
+        _anchor,
+        _score_id,
+        required_text_any=_TONE_REQUIREMENTS[1],
+        preceding_text=_preceding,
+        digital_title=_title,
+    )
+    for _anchor, _score_id, _title, _preceding in _TONE1_LITURGY_DIGITAL_DRAFTS
+)
 # Fixed Monogenes (Lambadarios, Pandekti 1851) and the Axion Estin in the tone of
 # the day's Leitourgika.  Both sit beside the scanned settings of the same piece.
 PILOT_RULES += (
