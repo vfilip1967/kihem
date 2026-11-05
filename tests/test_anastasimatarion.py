@@ -426,6 +426,89 @@ class AnastasimatarionTests(unittest.TestCase):
         ):
             self.assertIn(f'data-music-piece="{scan_id}"', result.html)
 
+    def test_tone2_liturgy_digital_scores_replace_the_scans_and_leave_tone1_unchanged(self):
+        sanctus = (
+            "Ἅγιος, ἅγιος, ἅγιος Κύριος Σαβαώθ· πλήρης ὁ οὐρανὸς καὶ ἡ γῆ "
+            "τῆς δόξης σου, ὡσαννὰ ἐν τοῖς ὑψίστοις. Εὐλογημένος ὁ ἐρχόμενος "
+            "ἐν ὀνόματι Κυρίου. Ὡσαννὰ ὁ ἐν τοῖς ὑψίστοις."
+        )
+        axion = (
+            "Ἄξιόν ἐστιν ὡς ἀληθῶς μακαρίζειν σε τὴν Θεοτόκον, τὴν "
+            "ἀειμακάριστον καὶ παναμώμητον καὶ μητέρα τοῦ Θεοῦ ἡμῶν. Τὴν "
+            "τιμιωτέραν τῶν Χερουβεὶμ καὶ ἐνδοξοτέραν ἀσυγκρίτως τῶν Σεραφείμ· "
+            "τὴν ἀδιαφθόρως Θεὸν Λόγον τεκοῦσαν, τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν."
+        )
+        body = (
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+            "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν.<br>Παράσχου Κύριε.<br>"
+            "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.<br>"
+            + sanctus + "<br>"
+            "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, "
+            "ὁ Θεὸς ἡμῶν.<br>" + axion
+        )
+        ids = {
+            "papline-lit2-kyrie-parashou-private-draft",
+            "papline-lit2-patera-private-draft",
+            "papline-lit2-axion-dikaion-private-draft",
+            "papline-lit2-se-ymnoumen-private-draft",
+            "papline-lit2-axion-estin-private-draft",
+        }
+        scans = {
+            "litourgia-tone-2-kyrie-paraschou",
+            "litourgia-patera-pandekti",
+            "litourgia-tone-2-axion-kai-dikaion",
+            "litourgia-tone-2-amin-se-ymnoumen",
+            "litourgia-tone-2-axion-estin",
+        }
+        tone2_sources = (
+            (date(2026, 11, 3), "Ήχος εβδομάδος β΄.<br>Σήμερα, απλή Τρίτη, ψάλλονται σε ήχο β΄.<br>"),
+            (
+                date(2026, 11, 1),
+                "Ήχος εβδομάδος β΄.<br>το Χερουβικό, τα Λειτουργικά και το Κοινωνικό σήμερα, "
+                "ψάλλονται στον κύριο ήχο της ημέρας, ήχο β΄.<br>",
+            ),
+        )
+        for day, prefix in tone2_sources:
+            source = prefix + body
+            without_digital = enrich_service_html(day, "litourgia", source)
+            for scan_id in scans:
+                self.assertIn(f'data-music-piece="{scan_id}"', without_digital.html)
+            result = enrich_service_html(day, "litourgia", source, verified_digital_scores=ids)
+            for score_id in ids:
+                self.assertIn(f'data-music-piece="{score_id}"', result.html)
+            for scan_id in scans:
+                self.assertNotIn(f'data-music-piece="{scan_id}"', result.html)
+
+        tone1 = (
+            "Ήχος εβδομάδος α΄.<br>Σήμερα, απλή Δευτέρα, ψάλλονται σε ήχο α΄.<br>" + body
+        )
+        result = enrich_service_html(date(2026, 11, 2), "litourgia", tone1, verified_digital_scores=ids)
+        for score_id in ids:
+            self.assertNotIn(score_id, result.html)
+        for scan_id in (
+            "litourgia-tone-1-kyrie-paraschou",
+            "litourgia-patera-pandekti",
+            "litourgia-tone-1-axion-kai-dikaion",
+            "litourgia-tone-1-amin-se-ymnoumen",
+            "litourgia-tone-1-axion-estin",
+        ):
+            self.assertIn(f'data-music-piece="{scan_id}"', result.html)
+
+        tone1_ids = {
+            "papline-lit1-kyrie-parashou-private-draft",
+            "papline-lit1-patera-private-draft",
+            "papline-lit1-axion-dikaion-private-draft",
+            "papline-lit1-se-ymnoumen-private-draft",
+            "papline-lit1-axion-estin-private-draft",
+        }
+        result = enrich_service_html(
+            date(2026, 11, 2), "litourgia", tone1, verified_digital_scores=ids | tone1_ids
+        )
+        for score_id in tone1_ids:
+            self.assertIn(f'data-music-piece="{score_id}"', result.html)
+        for score_id in ids:
+            self.assertNotIn(score_id, result.html)
+
     def test_sunday_eothinon_doxastikon_uses_the_verified_digital_score(self):
         source = (
             "Ήχος εβδομάδος δ΄.<br>ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ Ι'<br>Ἦχος πλ β' Ἰδιόμελον<br>"
