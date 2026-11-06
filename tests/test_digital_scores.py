@@ -1,4 +1,5 @@
 import json
+import unicodedata
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -207,3 +208,31 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         self.assertEqual(score.review_state, "draft")
         self.assertEqual(score.ocr_filename, "ote-katilthes-tone2-ocr.byzocr")
         self.assertNotIn(score, catalog.verified_scores())
+
+    def test_short_katavasies_data_exists_in_the_catalogue_with_unique_incipits(self):
+        project_root = Path(__file__).resolve().parents[1]
+        catalogue = json.loads(
+            (project_root / "src" / "data" / "digital_scores.json").read_text(encoding="utf-8")
+        )["scores"]
+        catalogue_ids = {score["id"] for score in catalogue}
+        entries = json.loads(
+            (project_root / "src" / "data" / "katavasies.json").read_text(encoding="utf-8")
+        )
+        self.assertTrue(entries)
+
+        def normalized(value):
+            value = unicodedata.normalize("NFD", value.casefold())
+            cleaned = "".join(
+                ch
+                for ch in value
+                if unicodedata.category(ch)
+                not in {"Mn", "Pc", "Pd", "Pe", "Pf", "Pi", "Po", "Ps"}
+            )
+            return " ".join(cleaned.split())
+
+        for entry in entries:
+            self.assertIn(entry["id"], catalogue_ids)
+            for field in ("set", "ode", "incipit", "first_incipit", "feast", "composer", "tone", "title"):
+                self.assertTrue(entry[field], f"{entry['id']} has no {field}")
+        incipits = [normalized(entry["incipit"]) for entry in entries]
+        self.assertEqual(len(incipits), len(set(incipits)))

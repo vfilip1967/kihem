@@ -1,0 +1,2007 @@
+{
+ "eis": {
+  "set": "eis",
+  "title": "Εἰς τά Εἰσόδια τῆς Θεοτόκου 21/11",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "α΄",
+  "section_pdf_page": 145,
+  "first_incipit": "Χριστὸς γεννᾶται",
+  "odes": {
+   "α": {
+    "id": "papline-kat-eis-s-α-private-draft",
+    "incipit": "Χριστὸς γεννᾶται",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-eis-s-γ-private-draft",
+    "incipit": "Τῷ πρὸ τῶν αἰώνων",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-eis-s-δ-private-draft",
+    "incipit": "Ῥάβδος ἐκ τῆς ῥίζης",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-eis-s-ε-private-draft",
+    "incipit": "Θεὸς ὢν εἰρήνης",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-eis-s-ς-private-draft",
+    "incipit": "Σπλάγχνων Ἰωνᾶν",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-eis-s-ζ-private-draft",
+    "incipit": "Οἱ Παῖδες",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-eis-s-η-private-draft",
+    "incipit": "Θαύματος ὑπερφυοῦς",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-eis-s-θ-private-draft",
+    "incipit": "Μυστήριον ξένον",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "eisp": {
+  "set": "eisp",
+  "title": "Εἰς τὰ Εἰσόδια τῆς Θεοτόκου (προεόρτιες)",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 119,
+  "first_incipit": "Ἀνοίξω τὸ στόμα μου",
+  "odes": {
+   "α": {
+    "id": "papline-kat-eisp-s-α-private-draft",
+    "incipit": "Ἀνοίξω τὸ στόμα μου",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-eisp-s-γ-private-draft",
+    "incipit": "Τοὺς σοὺς ὑμνολόγους",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-eisp-s-δ-private-draft",
+    "incipit": "Τὴν ἀνεξιχνίαστον θείαν βουλήν",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-eisp-s-ε-private-draft",
+    "incipit": "Ἐξέστη τὰ σύμπαντα",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-eisp-s-ς-private-draft",
+    "incipit": "Τὴν θείαν ταύτην",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-eisp-s-ζ-private-draft",
+    "incipit": "Οὐκ ἐλάτρευσαν",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-eisp-s-η-private-draft",
+    "incipit": "Παῖδας εὐαγεῖς",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-eisp-s-θ-private-draft",
+    "incipit": "Ἅπας γηγενής",
+    "status": "pass"
+   }
+  }
+ },
+ "kyrpx": {
+  "set": "kyrpx",
+  "title": "Τῆς Κυριακῆς πρὸ Χριστοῦ Γεννήσεως",
+  "composer": "Ἀποστόλου Ε. Παπαχρήστου",
+  "tone": "α΄",
+  "section_pdf_page": 182,
+  "first_incipit": "Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",
+  "odes": {
+   "α": {
+    "id": "papline-kat-kyrpx-s-α-private-draft",
+    "incipit": "Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-kyrpx-s-γ-private-draft",
+    "incipit": "Ὑψιμέδων ἄναρχε εὐμενὲς Λόγε",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-kyrpx-s-δ-private-draft",
+    "incipit": "Ἀκηκοὼς ὁ προφήτης, Χριστέ, τὴν ἀκοήν σου",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-kyrpx-s-ε-private-draft",
+    "incipit": "Ὦ παντεπόπτα τῶν ἀνάκτων τὸ κλέος",
+    "status": "failed"
+   },
+   "ς": {
+    "id": "papline-kat-kyrpx-s-ς-private-draft",
+    "incipit": "Εἰς βυθὸν ἀπωλείας ἡ ταλαίπωρος φύσις",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-kyrpx-s-ζ-private-draft",
+    "incipit": "Ὡς οἱ παῖδες πάλαι σοι κράζομεν, Λόγε",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-kyrpx-s-η-private-draft",
+    "incipit": "Νεουργὲ τοῦ σύμπαντος κόσμου καὶ σῶστα",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-kyrpx-s-θ-private-draft",
+    "incipit": "Χαίροις, πάναγνε θεοδέγμον Μαρία",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "gen": {
+  "set": "gen",
+  "title": "Εἰς τὸ Γενέσιον τῆς Θεοτόκου",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.δ΄",
+  "section_pdf_page": 18,
+  "first_incipit": "Σταυρὸν χαράξας Μωσῆς",
+  "odes": {
+   "α": {
+    "id": "papline-kat-gen-s-α-private-draft",
+    "incipit": "Σταυρὸν χαράξας Μωσῆς",
+    "status": "failed"
+   },
+   "γ": {
+    "id": "papline-kat-gen-s-γ-private-draft",
+    "incipit": "Ῥάβδος εἰς τύπον τοῦ μυστηρίου παραλαμβάνεται· τῷ",
+    "status": "failed"
+   },
+   "δ": {
+    "id": "papline-kat-gen-s-δ-private-draft",
+    "incipit": "Εἰσακήκοα Κύριε",
+    "status": "failed"
+   },
+   "ε": {
+    "id": "papline-kat-gen-s-ε-private-draft",
+    "incipit": "Ὦ τρισμακάριστον ξύλον",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-gen-s-ς-private-draft",
+    "incipit": "Νοτίου θηρὸς ἐν σπλάγχνοις",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-gen-s-ζ-private-draft",
+    "incipit": "Ἔκνοον πρόσταγμα τυράννου",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-gen-s-η-private-draft",
+    "incipit": "Εὐλογεῖτε παῖδες",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-gen-s-θ-private-draft",
+    "incipit": "Μυστικὸς εἶ Θεοτόκε παράδεισος",
+    "status": "failed"
+   }
+  }
+ },
+ "ypsp": {
+  "set": "ypsp",
+  "title": "Εἰς τὴν Ὕψωσιν τοῦ Τιμίου Σταυροῦ (προεόρτιες/μεθέορτες)",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.δ΄",
+  "section_pdf_page": 51,
+  "first_incipit": "Σταυρὸν χαράξας Μωσῆς",
+  "odes": {
+   "α": {
+    "id": "papline-kat-ypsp-s-α-private-draft",
+    "incipit": "Σταυρὸν χαράξας Μωσῆς",
+    "status": "failed"
+   },
+   "γ": {
+    "id": "papline-kat-ypsp-s-γ-private-draft",
+    "incipit": "Ῥάβδος εἰς τύπον τοῦ μυστηρίου παραλαμβάνεται· τῷ",
+    "status": "failed"
+   },
+   "δ": {
+    "id": "papline-kat-ypsp-s-δ-private-draft",
+    "incipit": "Εἰσακήκοα Κύριε",
+    "status": "failed"
+   },
+   "ε": {
+    "id": "papline-kat-ypsp-s-ε-private-draft",
+    "incipit": "Ὦ τρισμακάριστον ξύλον",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-ypsp-s-ς-private-draft",
+    "incipit": "Νοτίου θηρὸς ἐν σπλάγχνοις",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-ypsp-s-ζ-private-draft",
+    "incipit": "Ἔκνοον πρόσταγμα τυράννου",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-ypsp-s-η-private-draft",
+    "incipit": "Εὐλογεῖτε παῖδες",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-ypsp-s-θ-private-draft",
+    "incipit": "Μυστικὸς εἶ Θεοτόκε παράδεισος",
+    "status": "failed"
+   }
+  }
+ },
+ "yps": {
+  "set": "yps",
+  "title": "Εἰς τήν Ὕψωσιν τοῦ Τιμίου Σταυροῦ",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.δ΄",
+  "section_pdf_page": 89,
+  "first_incipit": "Σταυρὸν χαράξας Μωσῆς",
+  "odes": {
+   "α": {
+    "id": "papline-kat-yps-s-α-private-draft",
+    "incipit": "Σταυρὸν χαράξας Μωσῆς",
+    "status": "failed"
+   },
+   "γ": {
+    "id": "papline-kat-yps-s-γ-private-draft",
+    "incipit": "Ῥάβδος εἰς τύπον τοῦ μυστηρίου παραλαμβάνεται· τῷ",
+    "status": "failed"
+   },
+   "δ": {
+    "id": "papline-kat-yps-s-δ-private-draft",
+    "incipit": "Εἰσακήκοα Κύριε",
+    "status": "failed"
+   },
+   "ε": {
+    "id": "papline-kat-yps-s-ε-private-draft",
+    "incipit": "Ὦ τρισμακάριστον ξύλον",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-yps-s-ς-private-draft",
+    "incipit": "Νοτίου θηρὸς ἐν σπλάγχνοις",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-yps-s-ζ-private-draft",
+    "incipit": "Ἔκνοον πρόσταγμα τυράννου",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-yps-s-η-private-draft",
+    "incipit": "Εὐλογεῖτε παῖδες",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-yps-s-θ-private-draft",
+    "incipit": "Μυστικὸς εἶ Θεοτόκε παράδεισος",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "xrist": {
+  "set": "xrist",
+  "title": "Τῶν Χριστουγέννων",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "α΄",
+  "section_pdf_page": 226,
+  "first_incipit": "Χριστὸς γεννᾶται",
+  "odes": {
+   "α": {
+    "id": "papline-kat-xrist-s-α-private-draft",
+    "incipit": "Χριστὸς γεννᾶται",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-xrist-s-γ-private-draft",
+    "incipit": "Τῷ πρὸ τῶν αἰώνων",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-xrist-s-δ-private-draft",
+    "incipit": "Ῥάβδος ἐκ τῆς ῥίζης Ἰεσσαί",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-xrist-s-ε-private-draft",
+    "incipit": "Θεὸς ὢν εἰρήνης",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-xrist-s-ς-private-draft",
+    "incipit": "Σπλάγχνων Ἰωνᾶν",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-xrist-s-ζ-private-draft",
+    "incipit": "Οἱ παῖδες εὐσεβείᾳ συντραφέντες",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-xrist-s-η-private-draft",
+    "incipit": "Θαύματος ὑπερφυοῦς ἡ δροσοβόλος",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-xrist-s-θ-private-draft",
+    "incipit": "Μυστήριον ξένον",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "xristp": {
+  "set": "xristp",
+  "title": "Τῶν Χριστουγέννων, πεζαὶ",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "α΄",
+  "section_pdf_page": 280,
+  "first_incipit": "Χριστὸς γεννᾶται",
+  "odes": {
+   "α": {
+    "id": "papline-kat-xristp-s-α-private-draft",
+    "incipit": "Χριστὸς γεννᾶται",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-xristp-s-γ-private-draft",
+    "incipit": "Τῶ πρὸ τῶν αἰώνων",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-xristp-s-δ-private-draft",
+    "incipit": "Ῥάβδος ἐκ τῆς ῥίζης Ἰεσσαί",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-xristp-s-ε-private-draft",
+    "incipit": "Θεὸς ὢν εἰρήνης",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-xristp-s-ς-private-draft",
+    "incipit": "Σπλάγχνων Ἰωνᾶν",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-xristp-s-ζ-private-draft",
+    "incipit": "Οἱ Παῖδες εὐσεβείᾳ συντραφέντες",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-xristp-s-η-private-draft",
+    "incipit": "Θαύματος ὑπερφυοῦς ἡ δροσοβόλος",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-xristp-s-θ-private-draft",
+    "incipit": "Μυστήριον ξένον",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "xristi": {
+  "set": "xristi",
+  "title": "Τῶν Χριστουγέννων, ἰαμβικαὶ",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "α΄",
+  "section_pdf_page": 316,
+  "first_incipit": "Ἔσωσε λαόν",
+  "odes": {
+   "α": {
+    "id": "papline-kat-xristi-s-α-private-draft",
+    "incipit": "Ἔσωσε λαόν",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-xristi-s-γ-private-draft",
+    "incipit": "Νεῦσον πρὸς ὕμνους οἰκετῶν εὐεργέτα",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-xristi-s-δ-private-draft",
+    "incipit": "Γένους βροτείου τὴν ἀνάπλασιν πάλαι",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-xristi-s-ε-private-draft",
+    "incipit": "Ἐκ νυκτὸς ἔργων",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-xristi-s-ς-private-draft",
+    "incipit": "Ναίων Ἰωνᾶς",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-xristi-s-ζ-private-draft",
+    "incipit": "Τῷ παντάνακτος ἐξεφαύλισαν πόθῳ",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-xristi-s-η-private-draft",
+    "incipit": "Μήτραν ἀφλέκτως εἰκονίζουσι Κόρης",
+    "status": "failed"
+   },
+   "θ": {
+    "id": "papline-kat-xristi-s-θ-private-draft",
+    "incipit": "Στέργειν μὲν ἡμᾶς",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "perit": {
+  "set": "perit",
+  "title": "Εἰς τὴν περιτομὴν τοῦ Ἰησοῦ καὶ Μεγ. Βασιλείου 1/1",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "β΄",
+  "section_pdf_page": 353,
+  "first_incipit": "Βυθοῦ ἀνεκάλυψε πυθμένα",
+  "odes": {
+   "α": {
+    "id": "papline-kat-perit-s-α-private-draft",
+    "incipit": "Βυθοῦ ἀνεκάλυψε πυθμένα",
+    "status": "failed"
+   },
+   "γ": {
+    "id": "papline-kat-perit-s-γ-private-draft",
+    "incipit": "Ἰσχὺν ὁ διδούς",
+    "status": "failed"
+   },
+   "δ": {
+    "id": "papline-kat-perit-s-δ-private-draft",
+    "incipit": "Ἀκήκοε Κύριε φωνῆς σου",
+    "status": "failed"
+   },
+   "ε": {
+    "id": "papline-kat-perit-s-ε-private-draft",
+    "incipit": "Ἰησοῦς ὁ ζωῆς ἀρχηγός",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-perit-s-ς-private-draft",
+    "incipit": "Ἡ φωνὴ τοῦ Λόγου",
+    "status": "failed"
+   },
+   "ζ": {
+    "id": "papline-kat-perit-s-ζ-private-draft",
+    "incipit": "Νέους εὐσεβεῖς",
+    "status": "failed"
+   },
+   "η": {
+    "id": "papline-kat-perit-s-η-private-draft",
+    "incipit": "Μυστήριον παράδοξον",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-perit-s-θ-private-draft",
+    "incipit": "Ἀπορεῖ πᾶσα γλῶσσα",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "theof": {
+  "set": "theof",
+  "title": "Τῶν Θεοφανείων",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "β΄",
+  "section_pdf_page": 410,
+  "first_incipit": "Βυθοῦ ἀνεκάλυψε πυθμένα",
+  "odes": {
+   "α": {
+    "id": "papline-kat-theof-s-α-private-draft",
+    "incipit": "Βυθοῦ ἀνεκάλυψε πυθμένα",
+    "status": "failed"
+   },
+   "γ": {
+    "id": "papline-kat-theof-s-γ-private-draft",
+    "incipit": "Ἰσχὺν ὁ διδούς",
+    "status": "failed"
+   },
+   "δ": {
+    "id": "papline-kat-theof-s-δ-private-draft",
+    "incipit": "Ἀκήκοε Κύριε φωνῆς σου",
+    "status": "failed"
+   },
+   "ε": {
+    "id": "papline-kat-theof-s-ε-private-draft",
+    "incipit": "Ἰησοῦς ὁ ζωῆς ἀρχηγός",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-theof-s-ς-private-draft",
+    "incipit": "Ἡ φωνὴ τοῦ Λόγου",
+    "status": "failed"
+   },
+   "ζ": {
+    "id": "papline-kat-theof-s-ζ-private-draft",
+    "incipit": "Νέους εὐσεβεῖς",
+    "status": "failed"
+   },
+   "η": {
+    "id": "papline-kat-theof-s-η-private-draft",
+    "incipit": "Μυστήριον παράδοξον",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-theof-s-θ-private-draft",
+    "incipit": "Ἀπορεῖ πᾶσα γλῶσσα",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "theofp": {
+  "set": "theofp",
+  "title": "Τῶν Θεοφανείων, πεζαὶ",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "β΄",
+  "section_pdf_page": 474,
+  "first_incipit": "Βυθοῦ ἀνεκάλυψε πυθμένα",
+  "odes": {
+   "α": {
+    "id": "papline-kat-theofp-s-α-private-draft",
+    "incipit": "Βυθοῦ ἀνεκάλυψε πυθμένα",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-theofp-s-γ-private-draft",
+    "incipit": "Ἰσχὺν ὁ διδούς",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-theofp-s-δ-private-draft",
+    "incipit": "Ἀκήκοε Κύριε φωνῆς σου",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-theofp-s-ε-private-draft",
+    "incipit": "Ἰησοῦς ὁ ζωῆς ἀρχηγός",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-theofp-s-ς-private-draft",
+    "incipit": "Ἡ φωνὴ τοῦ Λόγου",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-theofp-s-ζ-private-draft",
+    "incipit": "Νέους εὐσεβεῖς",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-theofp-s-η-private-draft",
+    "incipit": "Μυστήριον παράδοξον",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-theofp-s-θ-private-draft",
+    "incipit": "Ἀπορεῖ πᾶσα γλῶσσα",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "theofi": {
+  "set": "theofi",
+  "title": "Τῶν Θεοφανείων, ἰαμβικαὶ",
+  "composer": "Πέτρου Λαμπαδαρίου",
+  "tone": "β΄",
+  "section_pdf_page": 506,
+  "first_incipit": "Στείβει θαλάσσης",
+  "odes": {
+   "α": {
+    "id": "papline-kat-theofi-s-α-private-draft",
+    "incipit": "Στείβει θαλάσσης",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-theofi-s-γ-private-draft",
+    "incipit": "Ὅσοι παλαιῶν",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-theofi-s-δ-private-draft",
+    "incipit": "Πυρσῷ καθαρθεὶς μυστικῆς θεωρίας",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-theofi-s-ε-private-draft",
+    "incipit": "Ἐχθροῦ ζοφώδους καὶ βεβορβορωμένου",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-theofi-s-ς-private-draft",
+    "incipit": "Ἱμερτὸν ἐξέφηνε σὺν πανολβίῳ",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-theofi-s-ζ-private-draft",
+    "incipit": "Ἔφλεξε ῥείθρῳ τῶν δρακόντων τὰς κάρας",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-theofi-s-η-private-draft",
+    "incipit": "Ἐλευθέρα μὲν ἡ κτίσις γνωρίζεται",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-theofi-s-θ-private-draft",
+    "incipit": "Ὢ τῶν ὑπὲρ νοῦν",
+    "status": "failed"
+   }
+  }
+ },
+ "ypapp": {
+  "set": "ypapp",
+  "title": "Τῆς Ὑπαπαντῆς (προεόρτιες)",
+  "composer": "Πέτρου Λαμπαδαρίου τοῦ Πελοποννησίου",
+  "tone": "γ΄",
+  "section_pdf_page": 539,
+  "first_incipit": "Χέρσον ἀβυσσοτόκον πέδον ἥλιος",
+  "odes": {
+   "α": {
+    "id": "papline-kat-ypapp-s-α-private-draft",
+    "incipit": "Χέρσον ἀβυσσοτόκον πέδον ἥλιος",
+    "status": "failed"
+   },
+   "γ": {
+    "id": "papline-kat-ypapp-s-γ-private-draft",
+    "incipit": "Τὸ στερέωμα",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-ypapp-s-δ-private-draft",
+    "incipit": "Ἐκάλυψεν οὐρανούς",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-ypapp-s-ε-private-draft",
+    "incipit": "Ὡς εἶδεν Ἡσαΐας συμβολικῶς",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-ypapp-s-ς-private-draft",
+    "incipit": "Ἐβόησέ σοι",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-ypapp-s-ζ-private-draft",
+    "incipit": "Σὲ τὸν ἐν πυρὶ δροσίσαντα",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-ypapp-s-η-private-draft",
+    "incipit": "Ἀστέκτῳ πυρὶ ἑνωθέντες",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-ypapp-s-θ-private-draft",
+    "incipit": "Θεοτόκε ἡ ἐλπίς",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "ypap": {
+  "set": "ypap",
+  "title": "Τῆς Ὑπαπαντῆς 2/2",
+  "composer": "Πέτρου Λαμπαδαρίου τοῦ Πελοποννησίου",
+  "tone": "γ΄",
+  "section_pdf_page": 571,
+  "first_incipit": "Χέρσον ἀβυσσοτόκον πέδον ἥλιος",
+  "odes": {
+   "α": {
+    "id": "papline-kat-ypap-s-α-private-draft",
+    "incipit": "Χέρσον ἀβυσσοτόκον πέδον ἥλιος",
+    "status": "failed"
+   },
+   "γ": {
+    "id": "papline-kat-ypap-s-γ-private-draft",
+    "incipit": "Τὸ στερέωμα",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-ypap-s-δ-private-draft",
+    "incipit": "Ἐκάλυψεν οὐρανούς",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-ypap-s-ε-private-draft",
+    "incipit": "Ὡς εἶδεν Ἡσαΐας συμβολικῶς",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-ypap-s-ς-private-draft",
+    "incipit": "Ἐβόησέ σοι",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-ypap-s-ζ-private-draft",
+    "incipit": "Σὲ τὸν ἐν πυρὶ δροσίσαντα",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-ypap-s-η-private-draft",
+    "incipit": "Ἀστέκτῳ πυρὶ ἑνωθέντες",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-ypap-s-θ-private-draft",
+    "incipit": "Θεοτόκε ἡ ἐλπίς, πάντων τῶν χριστιανῶν, σκέπε",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "telos": {
+  "set": "telos",
+  "title": "Τῶν Κυριακῶν Τελώνου-Φαρισαίου καὶ Τυρινῆς",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.β΄",
+  "section_pdf_page": 610,
+  "first_incipit": "Ὡς ἐν ἠπείρῳ πεζεύσας ὁ Ἰσραήλ",
+  "odes": {
+   "α": {
+    "id": "papline-kat-telos-s-α-private-draft",
+    "incipit": "Ὡς ἐν ἠπείρῳ πεζεύσας ὁ Ἰσραήλ",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-telos-s-γ-private-draft",
+    "incipit": "Οὐκ ἔστιν ἅγιος ὡς σύ",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-telos-s-δ-private-draft",
+    "incipit": "Χριστός μου δύναμις",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-telos-s-ε-private-draft",
+    "incipit": "Τῷ θείῳ φέγγει σου ἀγαθέ",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-telos-s-ς-private-draft",
+    "incipit": "Τοῦ βίου τὴν θάλασσαν",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-telos-s-ζ-private-draft",
+    "incipit": "Δροσοβόλον μὲν τὴν κάμινον εἰργάσατο",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-telos-s-η-private-draft",
+    "incipit": "Ἐκ φλογὸς τοῖς ὁσίοις",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-telos-s-θ-private-draft",
+    "incipit": "Θεὸν ἀνθρώποις ἰδεῖν ἀδύνατον",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "asot": {
+  "set": "asot",
+  "title": "Τῆς Κυριακῆς τοῦ Ἀσώτου",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "β΄",
+  "section_pdf_page": 629,
+  "first_incipit": "Τὴν Μωσέως ᾠδήν",
+  "odes": {
+   "α": {
+    "id": "papline-kat-asot-s-α-private-draft",
+    "incipit": "Τὴν Μωσέως ᾠδήν",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-asot-s-γ-private-draft",
+    "incipit": "Στειρωθέντα μου τὸν νοῦν",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-asot-s-δ-private-draft",
+    "incipit": "Τὴν ἐκ Παρθένου σου γέννησιν",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-asot-s-ε-private-draft",
+    "incipit": "Τῆς νυκτὸς διελθούσης",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-asot-s-ς-private-draft",
+    "incipit": "Βυθῷ ἁμαρτημάτων",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-asot-s-ζ-private-draft",
+    "incipit": "Τὰ Χερουβὶμ μιμούμενοι",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-asot-s-η-private-draft",
+    "incipit": "Τὸν ἐν τῇ βάτῳ Μωσῆ",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-asot-s-θ-private-draft",
+    "incipit": "Τῶν γηγενῶν τίς ἤκουσε τοιοῦτον",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "sabap": {
+  "set": "sabap",
+  "title": "Τῷ Σαββάτῳ πρὸ τῆς Ἀπόκρεῳ",
+  "composer": "Ἀπόστολος Παπαχρήστου",
+  "tone": "πλ.δ΄",
+  "section_pdf_page": 648,
+  "first_incipit": "ᾎσμα ἀναπέμψωμεν λαοί",
+  "odes": {
+   "α": {
+    "id": "papline-kat-sabap-s-α-private-draft",
+    "incipit": "ᾎσμα ἀναπέμψωμεν λαοί",
+    "status": "pass-with-warnings"
+   },
+   "β": {
+    "id": "papline-kat-sabap-s-β-private-draft",
+    "incipit": "Ἴδετε",
+    "status": "pass"
+   },
+   "γ": {
+    "id": "papline-kat-sabap-s-γ-private-draft",
+    "incipit": "Ὁ στερεώσας ἐν τῇ χειρί σου",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-sabap-s-δ-private-draft",
+    "incipit": "Ἐξ ὄρους κατασκίου",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-sabap-s-ε-private-draft",
+    "incipit": "Ὀρθρίζει τὸ πνεῦμά μου",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-sabap-s-ς-private-draft",
+    "incipit": "Συνεχόμενον δέξαι με φιλάνθρωπε",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-sabap-s-ζ-private-draft",
+    "incipit": "Ὁ ἐν ἀρχῇ",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-sabap-s-η-private-draft",
+    "incipit": "Τὸν ἐν ὄρει",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-sabap-s-θ-private-draft",
+    "incipit": "Τὸν προδηλωθέντα ἐν ὄρει τῷ νομοθέτῃ",
+    "status": "failed"
+   }
+  }
+ },
+ "kyrap": {
+  "set": "kyrap",
+  "title": "Τῆς Κυριακῆς τῆς Ἀπόκρεῳ",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.β΄",
+  "section_pdf_page": 667,
+  "first_incipit": "Βοηθὸς καὶ σκεπαστὴς ἐγένετό μοι εἰς σωτηρίαν",
+  "odes": {
+   "α": {
+    "id": "papline-kat-kyrap-s-α-private-draft",
+    "incipit": "Βοηθὸς καὶ σκεπαστὴς ἐγένετό μοι εἰς σωτηρίαν",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-kyrap-s-γ-private-draft",
+    "incipit": "Στερέωσον",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-kyrap-s-δ-private-draft",
+    "incipit": "Ἀκήκοεν ὁ προφήτης",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-kyrap-s-ε-private-draft",
+    "incipit": "Ἐκ νυκτὸς ὀρθρίζοντα φιλάνθρωπε",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-kyrap-s-ς-private-draft",
+    "incipit": "Ἐβόησα",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-kyrap-s-ζ-private-draft",
+    "incipit": "Ἡμάρτομεν",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-kyrap-s-η-private-draft",
+    "incipit": "Ὃν στρατιαὶ οὐρανῶν δοξάζουσι καὶ φρίττει τὰ",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-kyrap-s-θ-private-draft",
+    "incipit": "Ἀσπόρου συλλήψεως",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "theot": {
+  "set": "theot",
+  "title": "Εἰς ἑορτάς τῆς Θεοτόκου (ἐν Τριωδίῳ)",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 710,
+  "first_incipit": "Ἀνοίξω τὸ στόμα μου",
+  "odes": {
+   "α": {
+    "id": "papline-kat-theot-s-α-private-draft",
+    "incipit": "Ἀνοίξω τὸ στόμα μου",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-theot-s-γ-private-draft",
+    "incipit": "Τοὺς σοὺς ὑμνολόγους Θεοτόκε",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-theot-s-δ-private-draft",
+    "incipit": "Ὁ καθήμενος ἐν δόξῃ",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-theot-s-ε-private-draft",
+    "incipit": "Ἐξέστη τὰ σύμπαντα",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-theot-s-ς-private-draft",
+    "incipit": "Τὴν θείαν ταύτην καὶ πάντιμον",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-theot-s-ζ-private-draft",
+    "incipit": "Οὐκ ἐλάτρευσαν τῇ κτίσει οἱ θεόφρονες",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-theot-s-η-private-draft",
+    "incipit": "Παίδας εὐαγεῖς ἐν τῇ καμίνῳ",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-theot-s-θ-private-draft",
+    "incipit": "Ἅπας γηγενής",
+    "status": "pass"
+   }
+  }
+ },
+ "evang": {
+  "set": "evang",
+  "title": "Εἰς τὸν Εὐαγγελισμόν",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 763,
+  "first_incipit": "Ἀνοίξω τὸ στόμα μου καὶ πληρωθήσεται Πνεύματος",
+  "odes": {
+   "α": {
+    "id": "papline-kat-evang-s-α-private-draft",
+    "incipit": "Ἀνοίξω τὸ στόμα μου καὶ πληρωθήσεται Πνεύματος",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-evang-s-γ-private-draft",
+    "incipit": "Τοὺς σοὺς ὑμνολόγους",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-evang-s-δ-private-draft",
+    "incipit": "Ὁ καθήμενος ἐν δόξῃ",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-evang-s-ε-private-draft",
+    "incipit": "Ἐξέστη τὰ σύμπαντα",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-evang-s-ς-private-draft",
+    "incipit": "Ἐβόησε",
+    "status": "pass"
+   },
+   "ζ": {
+    "id": "papline-kat-evang-s-ζ-private-draft",
+    "incipit": "Οὐκ ἐλάτρευσαν",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-evang-s-η-private-draft",
+    "incipit": "Ἄκουε κόρη Παρθένε ἁγνή",
+    "status": "pass"
+   },
+   "θ": {
+    "id": "papline-kat-evang-s-θ-private-draft",
+    "incipit": "Εὐαγγελίζου γῆ χαρὰν μεγάλην",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "sabva": {
+  "set": "sabva",
+  "title": "Τῷ Σαββάτῳ πρὸ τῶν Βαΐων",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.δ΄",
+  "section_pdf_page": 787,
+  "first_incipit": "Ὑγρὰν διοδεύσας ὡσεὶ ξηράν",
+  "odes": {
+   "α": {
+    "id": "papline-kat-sabva-s-α-private-draft",
+    "incipit": "Ὑγρὰν διοδεύσας ὡσεὶ ξηράν",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-sabva-s-γ-private-draft",
+    "incipit": "Οὐρανίας ἁψῖδος",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-sabva-s-δ-private-draft",
+    "incipit": "Σύ μου ἰσχύς",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-sabva-s-ε-private-draft",
+    "incipit": "Ἵνα τί με ἀπώσω",
+    "status": "pass"
+   },
+   "ς": {
+    "id": "papline-kat-sabva-s-ς-private-draft",
+    "incipit": "Ἱλάσθητί μοὶ Σωτήρ· πολλαὶ γὰρ αἱ ἀνομίαι",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-sabva-s-ζ-private-draft",
+    "incipit": "Οἱ ἐκ τῆς Ἰουδαίας",
+    "status": "failed"
+   },
+   "η": {
+    "id": "papline-kat-sabva-s-η-private-draft",
+    "incipit": "Τὸν βασιλέα τῶν οὐρανῶν",
+    "status": "failed"
+   },
+   "θ": {
+    "id": "papline-kat-sabva-s-θ-private-draft",
+    "incipit": "Κυρίως Θεοτόκον",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "vaion": {
+  "set": "vaion",
+  "title": "Τῶν Βαΐων",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 803,
+  "first_incipit": "Ὤφθησαν",
+  "odes": {
+   "α": {
+    "id": "papline-kat-vaion-s-α-private-draft",
+    "incipit": "Ὤφθησαν",
+    "status": "pass"
+   },
+   "γ": {
+    "id": "papline-kat-vaion-s-γ-private-draft",
+    "incipit": "Νάουσαν ἀκρότομον",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-vaion-s-δ-private-draft",
+    "incipit": "Χριστὸς ὁ ἐρχόμενος ἐμφανῶς Θεὸς ἡμῶν",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-vaion-s-ε-private-draft",
+    "incipit": "Τὴν Σιὼν ἐπ' ὅρους ἀνάβηθι",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-vaion-s-ς-private-draft",
+    "incipit": "Ἐβόησαν",
+    "status": "pass"
+   },
+   "ζ": {
+    "id": "papline-kat-vaion-s-ζ-private-draft",
+    "incipit": "Ὁ διασώσας ἐν πυρί",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-vaion-s-η-private-draft",
+    "incipit": "Εὐφράνθητι Ἱερουσαλήμ",
+    "status": "pass"
+   },
+   "θ": {
+    "id": "papline-kat-vaion-s-θ-private-draft",
+    "incipit": "Θεὸς Κύριος",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "megsab": {
+  "set": "megsab",
+  "title": "Τῷ Ἁγίῳ καὶ Μεγάλῳ Σαββάτῳ",
+  "composer": "Ἀθανασίου Καραμάνη",
+  "tone": "πλ.β΄",
+  "section_pdf_page": 824,
+  "first_incipit": "Κύματι θαλάσσης",
+  "odes": {
+   "α": {
+    "id": "papline-kat-megsab-s-α-private-draft",
+    "incipit": "Κύματι θαλάσσης",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-megsab-s-γ-private-draft",
+    "incipit": "Σὲ τὸν ἐπὶ ὑδάτων",
+    "status": "failed"
+   },
+   "δ": {
+    "id": "papline-kat-megsab-s-δ-private-draft",
+    "incipit": "Τὴν ἐν Σταυρῷ σου θείαν κένωσιν",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-megsab-s-ε-private-draft",
+    "incipit": "Θεοφανείας σου Χριστέ",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-megsab-s-ς-private-draft",
+    "incipit": "Συνεσχέθη",
+    "status": "failed"
+   },
+   "ζ": {
+    "id": "papline-kat-megsab-s-ζ-private-draft",
+    "incipit": "Ἄφραστον θαῦμα",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-megsab-s-η-private-draft",
+    "incipit": "Ἔκστηθι φρίττων οὐρανέ",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-megsab-s-θ-private-draft",
+    "incipit": "Μὴ ἐποδύρου μου Μῆτερ",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "pasxa": {
+  "set": "pasxa",
+  "title": "Τοῦ Πάσχα",
+  "composer": "Ιωάννου Πρωτοψάλτου",
+  "tone": "α΄",
+  "section_pdf_page": 856,
+  "first_incipit": "Ἀναστάσεως ἡμέρα λαμπρυνθῶμεν λαοί",
+  "odes": {
+   "α": {
+    "id": "papline-kat-pasxa-s-α-private-draft",
+    "incipit": "Ἀναστάσεως ἡμέρα λαμπρυνθῶμεν λαοί",
+    "status": "pass"
+   },
+   "γ": {
+    "id": "papline-kat-pasxa-s-γ-private-draft",
+    "incipit": "Δεῦτε πόμα πίωμεν καινόν",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-pasxa-s-δ-private-draft",
+    "incipit": "Ἐπὶ τῆς θείας φυλακῆς ὁ θεηγόρος Ἀββακούμ",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-pasxa-s-ε-private-draft",
+    "incipit": "Ὀρθρίσωμεν ὄρθρου βαθέος",
+    "status": "pass"
+   },
+   "ς": {
+    "id": "papline-kat-pasxa-s-ς-private-draft",
+    "incipit": "Κατῆλθες ἐν τοῖς κατωτάτοις τῆς γῆς",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-pasxa-s-ζ-private-draft",
+    "incipit": "Ὁ παῖδας ἐκ καμίνου ῥυσάμενος",
+    "status": "pass"
+   },
+   "η": {
+    "id": "papline-kat-pasxa-s-η-private-draft",
+    "incipit": "Αὕτη ἡ κλητὴ καὶ ἁγία ἡμέρα",
+    "status": "pass"
+   },
+   "θ": {
+    "id": "papline-kat-pasxa-s-θ-private-draft",
+    "incipit": "Ὁ ἄγγελος ἐβόα τῇ κεχαριτωμένῃ· Ἁγνὴ Παρθένε",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "thoma": {
+  "set": "thoma",
+  "title": "Τῆς Κυριακῆς τοῦ Θωμᾶ",
+  "composer": "Ιωάννου Πρωτοψάλτου",
+  "tone": "α΄",
+  "section_pdf_page": 905,
+  "first_incipit": "Ἀναστάσεως ἡμέρα λαμπρυνθῶμεν λαοί",
+  "odes": {
+   "α": {
+    "id": "papline-kat-thoma-s-α-private-draft",
+    "incipit": "Ἀναστάσεως ἡμέρα λαμπρυνθῶμεν λαοί",
+    "status": "pass"
+   },
+   "γ": {
+    "id": "papline-kat-thoma-s-γ-private-draft",
+    "incipit": "Δεῦτε πόμα πίωμεν καινόν",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-thoma-s-δ-private-draft",
+    "incipit": "Ἐπὶ τῆς θείας φυλακῆς ὁ θεηγόρος Ἀββακούμ",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-thoma-s-ε-private-draft",
+    "incipit": "Ὀρθρίσωμεν ὄρθρου βαθέος",
+    "status": "pass"
+   },
+   "ς": {
+    "id": "papline-kat-thoma-s-ς-private-draft",
+    "incipit": "Κατῆλθες ἐν τοῖς κατωτάτοις τῆς γῆς",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-thoma-s-ζ-private-draft",
+    "incipit": "Ὁ παῖδας ἐκ καμίνου ῥυσάμενος",
+    "status": "pass"
+   },
+   "η": {
+    "id": "papline-kat-thoma-s-η-private-draft",
+    "incipit": "Αὕτη ἡ κλητὴ καὶ ἁγία ἡμέρα",
+    "status": "pass"
+   },
+   "θ": {
+    "id": "papline-kat-thoma-s-θ-private-draft",
+    "incipit": "Ὁ ἄγγελος ἐβόα τῇ κεχαριτωμένῃ· Ἁγνὴ Παρθένε",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "mesop": {
+  "set": "mesop",
+  "title": "Τῆς Μεσοπεντηκοστῆς",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.δ΄",
+  "section_pdf_page": 968,
+  "first_incipit": "Θάλασσαν ἔπηξας",
+  "odes": {
+   "α": {
+    "id": "papline-kat-mesop-s-α-private-draft",
+    "incipit": "Θάλασσαν ἔπηξας",
+    "status": "pass"
+   },
+   "γ": {
+    "id": "papline-kat-mesop-s-γ-private-draft",
+    "incipit": "Ἐστερεώθη ἡ καρδία μου ἐν Κυρίῳ",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-mesop-s-δ-private-draft",
+    "incipit": "Ὁ προφήτης Ἀββακούμ",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-mesop-s-ε-private-draft",
+    "incipit": "Κύριε ὁ Θεὸς ἡμῶν",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-mesop-s-ς-private-draft",
+    "incipit": "Ὡς ὕδατα θαλάσσης φιλάνθρωπε",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-mesop-s-ζ-private-draft",
+    "incipit": "Τῶν Χαλδαίων ἡ κάμινος",
+    "status": "pass"
+   },
+   "η": {
+    "id": "papline-kat-mesop-s-η-private-draft",
+    "incipit": "Ἄγγελοι καὶ οὐρανοὶ τὸν ἐπὶ θρόνου δόξης",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-mesop-s-θ-private-draft",
+    "incipit": "Ἀλλότριον τῶν μητέρων ἡ παρθενία",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "analp": {
+  "set": "analp",
+  "title": "Τῆς Ἀναλήψεως (προεόρτιες)",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.α΄",
+  "section_pdf_page": 992,
+  "first_incipit": "Τῷ Σωτῆρι Θεῷ",
+  "odes": {
+   "α": {
+    "id": "papline-kat-analp-s-α-private-draft",
+    "incipit": "Τῷ Σωτῆρι Θεῷ",
+    "status": "pass"
+   },
+   "γ": {
+    "id": "papline-kat-analp-s-γ-private-draft",
+    "incipit": "Δυνάμει τοῦ Σταυροῦ σου Χριστέ",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-analp-s-δ-private-draft",
+    "incipit": "Εἰσακήκοα τὴν ἀκοήν",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-analp-s-ε-private-draft",
+    "incipit": "Ὀρθρίζοντες βοῶμέν σοι Κύριε· Σῶσον ἡμᾶς· σὺ",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-analp-s-ς-private-draft",
+    "incipit": "Ἐκύκλωσέ με ἄβυσσος",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-analp-s-ζ-private-draft",
+    "incipit": "Ὁ ἐν καμίνῳ πυρός",
+    "status": "pass"
+   },
+   "η": {
+    "id": "papline-kat-analp-s-η-private-draft",
+    "incipit": "Τὸν ἐκ Πατρὸς πρὸ αἰώνων",
+    "status": "failed"
+   },
+   "θ": {
+    "id": "papline-kat-analp-s-θ-private-draft",
+    "incipit": "Σὲ τὴν ὑπὲρ νοῦν",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "anal": {
+  "set": "anal",
+  "title": "Τῆς Ἀναλήψεως",
+  "composer": "Ιωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 1048,
+  "first_incipit": "Θείῳ καλυφθεὶς ὁ βραδύγλωσσος γνόφῳ",
+  "odes": {
+   "α": {
+    "id": "papline-kat-anal-s-α-private-draft",
+    "incipit": "Θείῳ καλυφθεὶς ὁ βραδύγλωσσος γνόφῳ",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-anal-s-γ-private-draft",
+    "incipit": "Ἔρρηξε γαστρὸς ἠτεκνωμένης πέδας",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-anal-s-δ-private-draft",
+    "incipit": "Ἄναξ ἀνάκτων",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-anal-s-ε-private-draft",
+    "incipit": "Λυτήριον κάθαρσιν ἀμπλακημάτων",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-anal-s-ς-private-draft",
+    "incipit": "Ἱλασμὸς ἡμῖν Χριστὲ καὶ σωτηρία",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-anal-s-ζ-private-draft",
+    "incipit": "Σύμφωνον ἐθρόησεν ὀργάνων μέλος",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-anal-s-η-private-draft",
+    "incipit": "Λύει τὰ δεσμά",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-anal-s-θ-private-draft",
+    "incipit": "Χαίροις ἄνασσα",
+    "status": "pass"
+   }
+  }
+ },
+ "sabpen": {
+  "set": "sabpen",
+  "title": "Τῷ Σαββάτῳ πρὸ τῆς Πεντηκοστῆς",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.β΄",
+  "section_pdf_page": 1106,
+  "first_incipit": "Ὡς ἐν ἠπείρῳ πεζεύσας ὁ Ἰσραήλ",
+  "odes": {
+   "α": {
+    "id": "papline-kat-sabpen-s-α-private-draft",
+    "incipit": "Ὡς ἐν ἠπείρῳ πεζεύσας ὁ Ἰσραήλ",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-sabpen-s-γ-private-draft",
+    "incipit": "Οὐκ ἔστιν ἅγιος ὡς σύ",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-sabpen-s-δ-private-draft",
+    "incipit": "Χριστός μου δύναμις",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-sabpen-s-ε-private-draft",
+    "incipit": "Τῷ θείῳ φέγγει σου ἀγαθέ",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-sabpen-s-ς-private-draft",
+    "incipit": "Τοῦ βίου τὴν θάλασσαν",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-sabpen-s-ζ-private-draft",
+    "incipit": "Δροσοβόλον μὲν τὴν κάμινον εἰργάσατο",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-sabpen-s-η-private-draft",
+    "incipit": "Ἔκστηθι φρίττων οὐρανέ",
+    "status": "failed"
+   },
+   "θ": {
+    "id": "papline-kat-sabpen-s-θ-private-draft",
+    "incipit": "Ἀπορεῖ πᾶσα γλῶσσα",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "pent": {
+  "set": "pent",
+  "title": "Τῆς Πεντηκοστῆς",
+  "composer": "Ιωάννου Πρωτοψάλτου",
+  "tone": "βαρύς",
+  "section_pdf_page": 1119,
+  "first_incipit": "Πόντῳ ἐκάλυψε Φαραὼ σὺν ἅρμασιν",
+  "odes": {
+   "α": {
+    "id": "papline-kat-pent-s-α-private-draft",
+    "incipit": "Πόντῳ ἐκάλυψε Φαραὼ σὺν ἅρμασιν",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-pent-s-γ-private-draft",
+    "incipit": "Τὴν ἐξ ὕψους δύναμιν τοῖς μαθηταῖς",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-pent-s-δ-private-draft",
+    "incipit": "Κατανοῶν ὁ προφήτης",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-pent-s-ε-private-draft",
+    "incipit": "Τὸ διὰ τὸν φόβον σου ληφθὲν Κύριε",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-pent-s-ς-private-draft",
+    "incipit": "Ναυτιῶν τῷ σάλῳ",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-pent-s-ζ-private-draft",
+    "incipit": "Οἱ ἐν καμίνῳ τοῦ πυρὸς ἐμβληθέντες ὅσιοι",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-pent-s-η-private-draft",
+    "incipit": "Ἄφλεκτος πυρὶ ἐν Σινᾷ προσομιλοῦσα",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-pent-s-θ-private-draft",
+    "incipit": "Μὴ τῆς φθορᾶς διαπείρᾳ κυοφορήσασα",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "penti": {
+  "set": "penti",
+  "title": "Τῆς Πεντηκοστῆς ἰαμβικαὶ",
+  "composer": "Ιωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 1199,
+  "first_incipit": "Θείῳ καλυφθεὶς ὁ βραδύγλωσσος γνόφῳ",
+  "odes": {
+   "α": {
+    "id": "papline-kat-penti-s-α-private-draft",
+    "incipit": "Θείῳ καλυφθεὶς ὁ βραδύγλωσσος γνόφῳ",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-penti-s-γ-private-draft",
+    "incipit": "Ἔρρηξε γαστρὸς ἠτεκνωμένης πέδας",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-penti-s-δ-private-draft",
+    "incipit": "Ἄναξ ἀνάκτων",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-penti-s-ε-private-draft",
+    "incipit": "Λυτήριον κάθαρσιν ἀμπλακημάτων",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-penti-s-ς-private-draft",
+    "incipit": "Ἱλασμὸς ἡμῖν Χριστὲ καὶ σωτηρία",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-penti-s-ζ-private-draft",
+    "incipit": "Σύμφωνον ἐθρόησεν ὀργάνων μέλος",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-penti-s-η-private-draft",
+    "incipit": "Λύει τὰ δεσμά",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-penti-s-θ-private-draft",
+    "incipit": "Χαίροις ἄνασσα",
+    "status": "pass"
+   }
+  }
+ },
+ "metamp": {
+  "set": "metamp",
+  "title": "Τῆς Μεταμορφώσεως (προεόρτιες)",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 1263,
+  "first_incipit": "Χοροὶ Ἰσραήλ",
+  "odes": {
+   "α": {
+    "id": "papline-kat-metamp-s-α-private-draft",
+    "incipit": "Χοροὶ Ἰσραήλ",
+    "status": "pass"
+   },
+   "γ": {
+    "id": "papline-kat-metamp-s-γ-private-draft",
+    "incipit": "Τόξον δυνατῶν ἠσθένησε",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-metamp-s-δ-private-draft",
+    "incipit": "Εἰσακήκοα τὴν ἔνδοξον οἰκονομίαν σου Χριστὲ ὁ",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-metamp-s-ε-private-draft",
+    "incipit": "Ὁ τοῦ φωτὸς διατμήξας τὸ πρωτόγονον χάος",
+    "status": "pass"
+   },
+   "ς": {
+    "id": "papline-kat-metamp-s-ς-private-draft",
+    "incipit": "Ἐν τῷ θλίβεσθαί με",
+    "status": "pass"
+   },
+   "ζ": {
+    "id": "papline-kat-metamp-s-ζ-private-draft",
+    "incipit": "Ἀβραμιαῖοι ποτέ",
+    "status": "pass"
+   },
+   "η": {
+    "id": "papline-kat-metamp-s-η-private-draft",
+    "incipit": "Οἱ ἐν Βαβυλῶνι παῖδες",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-metamp-s-θ-private-draft",
+    "incipit": "Ὁ τόκος σου ἄφθορος ἐδείχθη",
+    "status": "pass"
+   }
+  }
+ },
+ "metam": {
+  "set": "metam",
+  "title": "Τῆς Μεταμορφώσεως 6/8",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "πλ.δ΄",
+  "section_pdf_page": 1292,
+  "first_incipit": "Σταυρὸν χαράξας Μωσῆς",
+  "odes": {
+   "α": {
+    "id": "papline-kat-metam-s-α-private-draft",
+    "incipit": "Σταυρὸν χαράξας Μωσῆς",
+    "status": "failed"
+   },
+   "γ": {
+    "id": "papline-kat-metam-s-γ-private-draft",
+    "incipit": "Ῥάβδος εἰς τύπον τοῦ μυστηρίου παραλαμβάνεται· τῷ",
+    "status": "failed"
+   },
+   "δ": {
+    "id": "papline-kat-metam-s-δ-private-draft",
+    "incipit": "Εἰσακήκοα Κύριε",
+    "status": "failed"
+   },
+   "ε": {
+    "id": "papline-kat-metam-s-ε-private-draft",
+    "incipit": "Ὦ τρισμακάριστον ξύλον",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-metam-s-ς-private-draft",
+    "incipit": "Νοτίου θηρὸς ἐν σπλάγχνοις",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-metam-s-ζ-private-draft",
+    "incipit": "Ἔκνοον πρόσταγμα τυράννου",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-metam-s-η-private-draft",
+    "incipit": "Εὐλογεῖτε παῖδες",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-metam-s-θ-private-draft",
+    "incipit": "Μυστικὸς εἶ Θεοτόκε παράδεισος",
+    "status": "pass-with-warnings"
+   }
+  }
+ },
+ "koimp": {
+  "set": "koimp",
+  "title": "Εἰς τὴν Κοίμησιν τῆς Θεοτόκου (προεόρτιες)",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 1323,
+  "first_incipit": "Ἀνοίξω τὸ στόμα μου",
+  "odes": {
+   "α": {
+    "id": "papline-kat-koimp-s-α-private-draft",
+    "incipit": "Ἀνοίξω τὸ στόμα μου",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-koimp-s-γ-private-draft",
+    "incipit": "Τοὺς σοὺς ὑμνολόγους",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-koimp-s-δ-private-draft",
+    "incipit": "Τὴν ἀνεξιχνίαστον θείαν βουλήν",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-koimp-s-ε-private-draft",
+    "incipit": "Ἐξέστη τὰ σύμπαντα",
+    "status": "pass"
+   },
+   "ς": {
+    "id": "papline-kat-koimp-s-ς-private-draft",
+    "incipit": "Τὴν θείαν ταύτην καὶ πάντιμον",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-koimp-s-ζ-private-draft",
+    "incipit": "Οὐκ ἐλάτρευσαν",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-koimp-s-η-private-draft",
+    "incipit": "Παῖδας εὐαγεῖς ἐν τῇ καμίνῳ",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-koimp-s-θ-private-draft",
+    "incipit": "Ἅπας γηγενής",
+    "status": "pass"
+   }
+  }
+ },
+ "koim": {
+  "set": "koim",
+  "title": "Εἰς τὴν Κοίμησιν τῆς Θεοτόκου 15/8",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "α΄",
+  "section_pdf_page": 1349,
+  "first_incipit": "Πεποικιλμένη τῇ θείᾳ δόξῃ",
+  "odes": {
+   "α": {
+    "id": "papline-kat-koim-s-α-private-draft",
+    "incipit": "Πεποικιλμένη τῇ θείᾳ δόξῃ",
+    "status": "pass"
+   },
+   "γ": {
+    "id": "papline-kat-koim-s-γ-private-draft",
+    "incipit": "Ἡ δημιουργική",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-koim-s-δ-private-draft",
+    "incipit": "Ῥήσεις προφητῶν καὶ αἰνίγματα",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-koim-s-ε-private-draft",
+    "incipit": "Τὸ θεῖον καὶ ἄρρητον κάλλος",
+    "status": "pass"
+   },
+   "ς": {
+    "id": "papline-kat-koim-s-ς-private-draft",
+    "incipit": "Ἅλιον ποντογενές",
+    "status": "pass"
+   },
+   "ζ": {
+    "id": "papline-kat-koim-s-ζ-private-draft",
+    "incipit": "Ἰταμῷ θυμῷ τε καὶ πυρί",
+    "status": "pass"
+   },
+   "η": {
+    "id": "papline-kat-koim-s-η-private-draft",
+    "incipit": "Φλόγα δροσίζουσαν ὁσίους",
+    "status": "failed"
+   },
+   "θ": {
+    "id": "papline-kat-koim-s-θ-private-draft",
+    "incipit": "Αἱ γενεαὶ πᾶσαι",
+    "status": "pass"
+   }
+  }
+ },
+ "koimm": {
+  "set": "koimm",
+  "title": "Εἰς τὴν Κοίμησιν τῆς Θεοτόκου (μεθέορτες)",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "α΄",
+  "section_pdf_page": 1404,
+  "first_incipit": "Πεποικιλμένη τῇ θείᾳ δόξῃ",
+  "odes": {
+   "α": {
+    "id": "papline-kat-koimm-s-α-private-draft",
+    "incipit": "Πεποικιλμένη τῇ θείᾳ δόξῃ",
+    "status": "pass"
+   },
+   "γ": {
+    "id": "papline-kat-koimm-s-γ-private-draft",
+    "incipit": "Ἡ δημιουργική",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-koimm-s-δ-private-draft",
+    "incipit": "Ῥήσεις προφητῶν καὶ αἰνίγματα",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-koimm-s-ε-private-draft",
+    "incipit": "Τὸ θεῖον καὶ ἄρρητον κάλλος",
+    "status": "pass"
+   },
+   "ς": {
+    "id": "papline-kat-koimm-s-ς-private-draft",
+    "incipit": "Ἅλιον ποντογενές",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-koimm-s-ζ-private-draft",
+    "incipit": "Ἰταμῷ θυμῷ τε καὶ πυρί",
+    "status": "pass"
+   },
+   "η": {
+    "id": "papline-kat-koimm-s-η-private-draft",
+    "incipit": "Φλόγα δροσίζουσαν ὁσίους",
+    "status": "failed"
+   },
+   "θ": {
+    "id": "papline-kat-koimm-s-θ-private-draft",
+    "incipit": "α΄ Αἱ γενεαὶ πᾶσαι",
+    "status": "pass"
+   }
+  }
+ },
+ "theot2": {
+  "set": "theot2",
+  "title": "Εἰς ἑορτὰς τῆς Θεοτόκου",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 1459,
+  "first_incipit": "Ἀνοίξω τὸ στόμα μου",
+  "odes": {
+   "α": {
+    "id": "papline-kat-theot2-s-α-private-draft",
+    "incipit": "Ἀνοίξω τὸ στόμα μου",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-theot2-s-γ-private-draft",
+    "incipit": "Τοὺς σοὺς ὑμνολόγους Θεοτόκε",
+    "status": "pass"
+   },
+   "δ": {
+    "id": "papline-kat-theot2-s-δ-private-draft",
+    "incipit": "Τὴν ἀνεξιχνίαστον θείαν βουλήν",
+    "status": "pass"
+   },
+   "ε": {
+    "id": "papline-kat-theot2-s-ε-private-draft",
+    "incipit": "Ἐξέστη τὰ σύμπαντα",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-theot2-s-ς-private-draft",
+    "incipit": "Τὴν θείαν ταύτην καὶ πάντιμον",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-theot2-s-ζ-private-draft",
+    "incipit": "Οὐκ ἐλάτρευσαν τῇ κτίσει οἱ θεόφρονες",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-theot2-s-η-private-draft",
+    "incipit": "Παίδας εὐαγεῖς ἐν τῇ καμίνῳ",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-theot2-s-θ-private-draft",
+    "incipit": "Ἅπας γηγενής",
+    "status": "pass"
+   }
+  }
+ },
+ "kyrn1": {
+  "set": "kyrn1",
+  "title": "Τῆς α´ Κυριακῆς τῶν νηστειῶν",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "δ΄",
+  "section_pdf_page": 686,
+  "first_incipit": "Θαλάσσης τὸ ἐρυθραῖον πέλαγος",
+  "odes": {
+   "α": {
+    "id": "papline-kat-kyrn1-s-α-private-draft",
+    "incipit": "Θαλάσσης τὸ ἐρυθραῖον πέλαγος",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-kyrn1-s-γ-private-draft",
+    "incipit": "Εὐφραίνεται ἐπὶ σοί",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-kyrn1-s-δ-private-draft",
+    "incipit": "Ἐπαρθέντα σε ἰδοῦσα ἡ Ἐκκλησία",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-kyrn1-s-ε-private-draft",
+    "incipit": "Σὺ Κύριέ μου φῶς",
+    "status": "pass-with-warnings"
+   },
+   "ς": {
+    "id": "papline-kat-kyrn1-s-ς-private-draft",
+    "incipit": "Θύσω σοι",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-kyrn1-s-ζ-private-draft",
+    "incipit": "Ἐν τῇ καμίνῳ",
+    "status": "pass-with-warnings"
+   },
+   "η": {
+    "id": "papline-kat-kyrn1-s-η-private-draft",
+    "incipit": "Χεῖρας ἐκπετάσας Δανιήλ",
+    "status": "pass-with-warnings"
+   },
+   "θ": {
+    "id": "papline-kat-kyrn1-s-θ-private-draft",
+    "incipit": "Λίθος ἀχειρότμητος ὄρους",
+    "status": "pass"
+   }
+  }
+ },
+ "stavro": {
+  "set": "stavro",
+  "title": "Τῆς Σταυροπροσκυνήσεως",
+  "composer": "Ἰωάννου Πρωτοψάλτου",
+  "tone": "α΄",
+  "section_pdf_page": 737,
+  "first_incipit": "Ὁ θειότατος προετύπωσε πάλαι Μωσῆς",
+  "odes": {
+   "α": {
+    "id": "papline-kat-stavro-s-α-private-draft",
+    "incipit": "Ὁ θειότατος προετύπωσε πάλαι Μωσῆς",
+    "status": "pass-with-warnings"
+   },
+   "γ": {
+    "id": "papline-kat-stavro-s-γ-private-draft",
+    "incipit": "Στερέωσον δέσποτα Χριστέ",
+    "status": "pass-with-warnings"
+   },
+   "δ": {
+    "id": "papline-kat-stavro-s-δ-private-draft",
+    "incipit": "Ἐπὶ σταυροῦ σε δυνατὲ φωστὴρ ὁ μέγας",
+    "status": "pass-with-warnings"
+   },
+   "ε": {
+    "id": "papline-kat-stavro-s-ε-private-draft",
+    "incipit": "Ὀρθρίζοντες σὲ ἀνυμνοῦμεν",
+    "status": "pass"
+   },
+   "ς": {
+    "id": "papline-kat-stavro-s-ς-private-draft",
+    "incipit": "Τὸν τύπον τοῦ θείου Σταυροῦ Ἰωνᾶς ἐν",
+    "status": "pass-with-warnings"
+   },
+   "ζ": {
+    "id": "papline-kat-stavro-s-ζ-private-draft",
+    "incipit": "Φλογώσεως ὁ παῖδας ῥυσάμενος σάρκα προσλαβόμενος",
+    "status": "pass"
+   },
+   "η": {
+    "id": "papline-kat-stavro-s-η-private-draft",
+    "incipit": "Χεῖρας ἐν τῷ λάκκῳ βληθεὶς τῶν λεόντων",
+    "status": "pass"
+   },
+   "θ": {
+    "id": "papline-kat-stavro-s-θ-private-draft",
+    "incipit": "Ὦ Μῆτερ Παρθένε",
+    "status": "pass"
+   }
+  }
+ }
+}

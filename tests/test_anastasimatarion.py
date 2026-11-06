@@ -1,5 +1,7 @@
+import json
 import unittest
 from datetime import date
+from pathlib import Path
 
 from src.anastasimatarion import (
     BOOK_ID,
@@ -1212,6 +1214,52 @@ class AnastasimatarionTests(unittest.TestCase):
         )
         for score_id in score_ids:
             self.assertNotIn(score_id, christmas.html)
+
+    def test_generated_theophany_katavasies_use_the_first_eirmos_in_ode_order(self):
+        project_root = Path(__file__).resolve().parents[1]
+        entries = json.loads(
+            (project_root / "src" / "data" / "katavasies.json").read_text(encoding="utf-8")
+        )
+        theophany = [entry for entry in entries if entry["set"] == "theofp"]
+        self.assertEqual([entry["ode"] for entry in theophany], ["α", "γ", "δ", "ς", "ζ"])
+        score_ids = [entry["id"] for entry in theophany]
+        source = (
+            "Καταβασίες<br>"
+            f"{theophany[0]['first_incipit']}.<br>"
+            "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
+            "Κατόπιν ψάλλεται ἡ θ΄ Ωδή των καταβασιών"
+        )
+        result = enrich_service_html(
+            date(2026, 1, 6),
+            "orthros",
+            source,
+            verified_digital_scores=set(score_ids),
+        )
+
+        self.assertEqual(result.attachment_count, len(score_ids))
+        positions = [
+            result.html.index(f'data-music-piece="{score_id}"') for score_id in score_ids
+        ]
+        self.assertEqual(positions, sorted(positions))
+        for score_id in score_ids:
+            self.assertEqual(result.html.count(f'data-music-piece="{score_id}"'), 1)
+        self.assertLess(
+            max(positions),
+            result.html.index("Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός"),
+        )
+
+        without_incipit = enrich_service_html(
+            date(2026, 1, 6),
+            "orthros",
+            source.replace(f"{theophany[0]['first_incipit']}.<br>", ""),
+            verified_digital_scores=set(score_ids),
+        )
+        for score_id in score_ids:
+            self.assertNotIn(score_id, without_incipit.html)
+
+        unverified = enrich_service_html(date(2026, 1, 6), "orthros", source)
+        for score_id in score_ids:
+            self.assertNotIn(score_id, unverified.html)
 
     def test_litourgia_gets_pandekti_eisodikon_and_trisagion(self):
         source = (

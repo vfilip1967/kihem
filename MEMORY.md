@@ -79,6 +79,16 @@ This file records only durable implementation decisions.
   Θεοτόκον…». `_normalized()` ignores accents and punctuation, so comma and
   breathing variants need no separate trigger. As with the other digital
   rules, they appear only when the catalogue ids are approved for display.
+- All short katavasies of the year are data-driven. `tools/build_katavasies_json.py`
+  reads `kat_registry_src.json`, keeps only `pass*` odes whose ids exist in
+  `src/data/digital_scores.json`, and writes `src/data/katavasies.json`
+  de-duplicated by normalized incipit (prefer eis/eisp/kyrpx, then `pass`
+  over `pass-with-warnings`, then registry order). `anastasimatarion.py`
+  generates one Orthros rule per entry at the «Τὴν Θεοτόκον…» anchor with
+  `required_text=("Καταβασίες",)` and both the set's first eirmos and the
+  ode incipit as triggers. The eisp/Theotokos entries keep the full scan
+  (`replace_scan=False`); other entries are excluded on the scanned
+  Cross/Theotokos headings. Generated rules precede the scanned settings.
 - Timiotera tone rules must use the nearby «Καὶ ψάλλεται…» and its own tone
   label. Never choose πλ. δ΄ merely because that tone occurs elsewhere in the
   daily Orthros; 26 September's local label is explicitly «Ἦχος δ΄».

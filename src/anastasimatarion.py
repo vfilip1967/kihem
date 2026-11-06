@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import html
+import json
 import logging
 import os
 import threading
@@ -933,6 +934,60 @@ _TONE6_DOXOLOGY_INSTRUCTIONS: Final[tuple[str, ...]] = (
     "η δοξολογία σήμερα ψάλλεται στην ήχο της ημέρας δηλαδή ήχο πλ β",
 )
 
+# The short katavasies of the whole year come from the catalogue registry. They
+# are all inserted before the invitation to the Timiotera, in the order the data
+# file lists them (sets in registry order, odes in liturgical order). The old
+# eis/eisp/kyrpx rules are generated here too, so the data file is the single
+# source of truth.
+KATAVASIES_DATA_PATH: Final = Path(__file__).resolve().parent / "data" / "katavasies.json"
+_KATAVASIES_ANCHOR: Final = (
+    "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν."
+)
+# The scanned Cross and Theotokos katavasies remain authoritative on their own
+# services; the short digital odes must not replace them.
+_CROSS_THEOTOKOS_SCAN_HEADERS: Final[tuple[str, ...]] = (
+    "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+    "Καταβασίες Τῆς Θεοτόκου",
+)
+# The Eisodia and pre-feast Theotokos text shares the first eirmos with the
+# Christmas katavasies, so the Theotokos set is excluded from Christmas days.
+_CHRISTMAS_KATAVASIES_INCIPITS: Final[tuple[str, ...]] = (
+    "Χριστὸς γεννᾶται, δοξάσατε",
+    "Χριστὸς γεννᾶται δοξάσατε",
+)
+
+
+def _generated_katavasies_rules() -> tuple[AttachmentRule, ...]:
+    entries = json.loads(KATAVASIES_DATA_PATH.read_text(encoding="utf-8"))
+    rules: list[AttachmentRule] = []
+    for entry in entries:
+        # Melodos often names only the set's first eirmos; the old rules used
+        # that same trigger for every ode of the set. Keep it alongside the
+        # ode's own incipit so both the set heading and a full text match.
+        triggers = tuple(dict.fromkeys((entry["incipit"], entry["first_incipit"])))
+        if entry["set"] == "eisp":
+            # The short Theotokos setting sits beside the verified full
+            # Theotokos scan, so the scan stays and the digital odes are added.
+            excluded = _CHRISTMAS_KATAVASIES_INCIPITS
+            replace_scan = False
+        else:
+            excluded = _CROSS_THEOTOKOS_SCAN_HEADERS
+            replace_scan = True
+        rules.append(
+            AttachmentRule(
+                "orthros",
+                _KATAVASIES_ANCHOR,
+                entry["id"],
+                required_text=("Καταβασίες",),
+                required_text_any=triggers,
+                excluded_text_any=excluded,
+                insert_before=True,
+                digital_title=entry["title"],
+                replace_scan=replace_scan,
+            )
+        )
+    return tuple(rules)
+
 
 PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     AttachmentRule(
@@ -1235,347 +1290,10 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         insert_before=True,
         digital_title="Καταβασίες Θεοτόκου · Ἀνοίξω τὸ στόμα μου · Πέτρου Λαμπαδαρίου (ψηφιακή)",
     ),
-    # Additional short tone-4 Theotokos katavasies by Ioannis Protopsaltis.
-    # They share the scan's exact trigger and anchor but the scan and the
-    # Lambadarios digital score stay in place (additional setting).  The
-    # Christmas/Eisodia pre-feast text uses the same first eirmos, so exclude
-    # it explicitly to keep these on the ordinary tone-4 Theotokos days only.
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eisp-s-1-private-draft",
-        required_text=(
-            "Καταβασίες Τῆς Θεοτόκου",
-            # Melodos separates the decorated initial alpha into its own span.
-            "νοίξω τὸ στόμα μου",
-        ),
-        excluded_text_any=(
-            "Χριστὸς γεννᾶται, δοξάσατε",
-            "Χριστὸς γεννᾶται δοξάσατε",
-        ),
-        insert_before=True,
-        replace_scan=False,
-        digital_title="Καταβασία ᾠδῆς α΄ · Ἀνοίξω τὸ στόμα μου · Εἰσόδια Θεοτόκου (προεόρτια) · ἦχος δ΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eisp-s-3-private-draft",
-        required_text=(
-            "Καταβασίες Τῆς Θεοτόκου",
-            "νοίξω τὸ στόμα μου",
-        ),
-        excluded_text_any=(
-            "Χριστὸς γεννᾶται, δοξάσατε",
-            "Χριστὸς γεννᾶται δοξάσατε",
-        ),
-        insert_before=True,
-        replace_scan=False,
-        digital_title="Καταβασία ᾠδῆς γ΄ · Τοὺς σοὺς ὑμνολόγους · Εἰσόδια Θεοτόκου (προεόρτια) · ἦχος δ΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eisp-s-4-private-draft",
-        required_text=(
-            "Καταβασίες Τῆς Θεοτόκου",
-            "νοίξω τὸ στόμα μου",
-        ),
-        excluded_text_any=(
-            "Χριστὸς γεννᾶται, δοξάσατε",
-            "Χριστὸς γεννᾶται δοξάσατε",
-        ),
-        insert_before=True,
-        replace_scan=False,
-        digital_title="Καταβασία ᾠδῆς δ΄ · Τὴν ἀνεξιχνίαστον θείαν βουλήν · Εἰσόδια Θεοτόκου (προεόρτια) · ἦχος δ΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eisp-s-5-private-draft",
-        required_text=(
-            "Καταβασίες Τῆς Θεοτόκου",
-            "νοίξω τὸ στόμα μου",
-        ),
-        excluded_text_any=(
-            "Χριστὸς γεννᾶται, δοξάσατε",
-            "Χριστὸς γεννᾶται δοξάσατε",
-        ),
-        insert_before=True,
-        replace_scan=False,
-        digital_title="Καταβασία ᾠδῆς ε΄ · Ἐξέστη τὰ σύμπαντα · Εἰσόδια Θεοτόκου (προεόρτια) · ἦχος δ΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eisp-s-6-private-draft",
-        required_text=(
-            "Καταβασίες Τῆς Θεοτόκου",
-            "νοίξω τὸ στόμα μου",
-        ),
-        excluded_text_any=(
-            "Χριστὸς γεννᾶται, δοξάσατε",
-            "Χριστὸς γεννᾶται δοξάσατε",
-        ),
-        insert_before=True,
-        replace_scan=False,
-        digital_title="Καταβασία ᾠδῆς ς΄ · Τὴν θείαν ταύτην · Εἰσόδια Θεοτόκου (προεόρτια) · ἦχος δ΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eisp-s-7-private-draft",
-        required_text=(
-            "Καταβασίες Τῆς Θεοτόκου",
-            "νοίξω τὸ στόμα μου",
-        ),
-        excluded_text_any=(
-            "Χριστὸς γεννᾶται, δοξάσατε",
-            "Χριστὸς γεννᾶται δοξάσατε",
-        ),
-        insert_before=True,
-        replace_scan=False,
-        digital_title="Καταβασία ᾠδῆς ζ΄ · Οὐκ ἐλάτρευσαν · Εἰσόδια Θεοτόκου (προεόρτια) · ἦχος δ΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eisp-s-8-private-draft",
-        required_text=(
-            "Καταβασίες Τῆς Θεοτόκου",
-            "νοίξω τὸ στόμα μου",
-        ),
-        excluded_text_any=(
-            "Χριστὸς γεννᾶται, δοξάσατε",
-            "Χριστὸς γεννᾶται δοξάσατε",
-        ),
-        insert_before=True,
-        replace_scan=False,
-        digital_title="Καταβασία ᾠδῆς η΄ · Παῖδας εὐαγεῖς · Εἰσόδια Θεοτόκου (προεόρτια) · ἦχος δ΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eisp-s-9-private-draft",
-        required_text=(
-            "Καταβασίες Τῆς Θεοτόκου",
-            "νοίξω τὸ στόμα μου",
-        ),
-        excluded_text_any=(
-            "Χριστὸς γεννᾶται, δοξάσατε",
-            "Χριστὸς γεννᾶται δοξάσατε",
-        ),
-        insert_before=True,
-        replace_scan=False,
-        digital_title="Καταβασία ᾠδῆς θ΄ · Ἅπας γηγενής · Εἰσόδια Θεοτόκου (προεόρτια) · ἦχος δ΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    # Digital short Christmas katavasies for the Eisodia (21 Nov) and the
-    # Christmas pre-feast days.  Their Melodos text has no label matching the
-    # scanned Cross/Theotokos sets, so the first eirmos supplies the trigger.
-    # The rules are listed in ode order because insertions at the same anchor
-    # keep their catalogue order.
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eis-s-1-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς α΄ · Χριστὸς γεννᾶται · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eis-s-3-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς γ΄ · Τῷ πρὸ τῶν αἰώνων · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eis-s-4-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς δ΄ · Ῥάβδος ἐκ τῆς ῥίζης · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eis-s-5-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς ε΄ · Θεὸς ὢν εἰρήνης · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eis-s-6-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς ς΄ · Σπλάγχνων Ἰωνᾶν · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eis-s-7-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς ζ΄ · Οἱ Παῖδες · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eis-s-8-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς η΄ · Θαύματος ὑπερφυοῦς · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-eis-s-9-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς θ΄ · Μυστήριον ξένον · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    # Digital short katavasies of the Sunday before Christmas (tone 1,
-    # Papachristos).  Their Melodos text has no label matching the scanned
-    # Cross/Theotokos sets, so the first eirmos supplies the trigger.  Ode 5 is
-    # intentionally absent from the catalogue.  _normalized() ignores accents
-    # and punctuation, so the comma/breathing variants of the incipit match.
-    # The rules are listed in ode order because insertions at the same anchor
-    # keep their catalogue order.
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-kyrpx-s-1-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς α΄ · Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-kyrpx-s-3-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς γ΄ · Ὑψιμέδων ἄναρχε εὐμενὲς Λόγε · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-kyrpx-s-4-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς δ΄ · Ἀκηκοὼς ὁ προφήτης, Χριστέ, τὴν ἀκοήν σου · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-kyrpx-s-6-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς ς΄ · Εἰς βυθὸν ἀπωλείας ἡ ταλαίπωρος φύσις · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-kyrpx-s-7-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς ζ΄ · Ὡς οἱ παῖδες πάλαι σοι κράζομεν, Λόγε · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-kyrpx-s-8-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς η΄ · Νεουργὲ τοῦ σύμπαντος κόσμου καὶ σῶστα · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
-    AttachmentRule(
-        "orthros",
-        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
-        "papline-kat-kyrpx-s-9-private-draft",
-        required_text=("Καταβασίες",),
-        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
-        excluded_text_any=(
-            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
-            "Καταβασίες Τῆς Θεοτόκου",
-        ),
-        insert_before=True,
-        digital_title="Καταβασία ᾠδῆς θ΄ · Χαίροις, πάναγνε θεοδέγμον Μαρία · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
-    ),
+    # The short katavasies of the whole year, generated from the catalogue
+    # registry. They keep the ode order of the data file and come before the
+    # scanned Cross/Theotokos settings, which stay authoritative.
+    *_generated_katavasies_rules(),
     AttachmentRule(
         "orthros",
         "ἐκ λύκων λυμαινομένων αὐτήν.",
@@ -2809,6 +2527,18 @@ def enrich_service_html(
     placed: list[tuple[object, Tag, bool, bool]] = []
     normalized_document = _normalized(soup.get_text(" ", strip=True))
     weekly_tone = _weekly_tone_from_document(normalized_document)
+    # The many generated katavasies rules all scan the same text nodes. Cache
+    # each node's normalized form so a matching rule does not re-normalize the
+    # whole document; the value depends only on the immutable node text.
+    normalized_nodes: dict[int, str] = {}
+
+    def _normalized_node(node: NavigableString) -> str:
+        key = id(node)
+        value = normalized_nodes.get(key)
+        if value is None:
+            value = _normalized(str(node))
+            normalized_nodes[key] = value
+        return value
 
     for rule in rules:
         if rule.digital_title is not None:
@@ -2843,7 +2573,7 @@ def enrich_service_html(
         text_nodes = list(soup.find_all(string=True))
         matches = []
         for node_index, node in enumerate(text_nodes):
-            if needle not in _normalized(str(node)):
+            if needle not in _normalized_node(node):
                 continue
             if rule.exact_after_text and str(node).strip() != rule.exact_after_text.strip():
                 continue
