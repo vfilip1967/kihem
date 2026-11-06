@@ -190,6 +190,10 @@ class AttachmentRule:
     # the caller reports that score as verified, and ``digital_title`` is the
     # bookmark label.
     digital_title: str | None = None
+    # A digital score normally replaces a scan attached to the same hymn text
+    # (owner, 2026-10-30).  The Timiotera is the exception: the scan stays and
+    # the digital score is shown in addition to it.
+    replace_scan: bool = True
 
 
 @dataclass(frozen=True)
@@ -1105,6 +1109,91 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         semantic_context="timiotera",
         expected_context_tone=4,
         match_number=6,
+    ),
+    # Papagiannis' digital Ode 9 «Μεγαλύνει» with the Timiotera refrain.  These
+    # follow the same local Melodos instruction and sixth refrain as the scans
+    # above, but are attached in addition to them (replace_scan=False): the
+    # tone-4 and plagal-fourth scans stay.  Tones without a scan get only the
+    # digital score.
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "papline-tim-1-private-draft",
+        semantic_context="timiotera",
+        expected_context_tone=1,
+        match_number=6,
+        replace_scan=False,
+        digital_title="Ὠδὴ θ΄ · Μεγαλύνει ἡ ψυχή μου · Ἡ Τιμιωτέρα · ἦχος α΄ · Κωνσταντίνου Παπαγιάννη (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "papline-tim-3-private-draft",
+        semantic_context="timiotera",
+        expected_context_tone=3,
+        match_number=6,
+        replace_scan=False,
+        digital_title="Ὠδὴ θ΄ · Μεγαλύνει ἡ ψυχή μου · Ἡ Τιμιωτέρα · ἦχος γ΄ · Κωνσταντίνου Παπαγιάννη (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "papline-tim-4-private-draft",
+        semantic_context="timiotera",
+        expected_context_tone=4,
+        match_number=6,
+        replace_scan=False,
+        digital_title="Ὠδὴ θ΄ · Μεγαλύνει ἡ ψυχή μου · Ἡ Τιμιωτέρα · ἦχος δ΄ · Κωνσταντίνου Παπαγιάννη (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "papline-tim-pl1-private-draft",
+        semantic_context="timiotera",
+        expected_context_tone=5,
+        match_number=6,
+        replace_scan=False,
+        digital_title="Ὠδὴ θ΄ · Μεγαλύνει ἡ ψυχή μου · Ἡ Τιμιωτέρα · ἦχος πλ. α΄ · Κωνσταντίνου Παπαγιάννη (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "papline-tim-pl2-private-draft",
+        semantic_context="timiotera",
+        expected_context_tone=6,
+        match_number=6,
+        replace_scan=False,
+        digital_title="Ὠδὴ θ΄ · Μεγαλύνει ἡ ψυχή μου · Ἡ Τιμιωτέρα · ἦχος πλ. β΄ · Κωνσταντίνου Παπαγιάννη (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "papline-tim-varys-private-draft",
+        semantic_context="timiotera",
+        expected_context_tone=7,
+        match_number=6,
+        replace_scan=False,
+        digital_title="Ὠδὴ θ΄ · Μεγαλύνει ἡ ψυχή μου · Ἡ Τιμιωτέρα · ἦχος βαρύς · Κωνσταντίνου Παπαγιάννη (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "papline-tim-pl4ga-private-draft",
+        semantic_context="timiotera",
+        expected_context_tone=8,
+        match_number=6,
+        replace_scan=False,
+        digital_title="Ὠδὴ θ΄ · Μεγαλύνει ἡ ψυχή μου · Ἡ Τιμιωτέρα · ἦχος πλ. δ΄ (ἐκ τοῦ Γα) · Κωνσταντίνου Παπαγιάννη (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
+        "papline-tim-pl4ni-private-draft",
+        semantic_context="timiotera",
+        expected_context_tone=8,
+        match_number=6,
+        replace_scan=False,
+        digital_title="Ὠδὴ θ΄ · Μεγαλύνει ἡ ψυχή μου · Ἡ Τιμιωτέρα · ἦχος πλ. δ΄ (ἐκ τοῦ Νη) · Κωνσταντίνου Παπαγιάννη (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
     ),
     # Owner-approved public drafts (25 Oct 2026): unreviewed digital scores that
     # the service page labels as automatic transcriptions.  They come before the
@@ -2349,9 +2438,10 @@ def enrich_service_html(
     attachment_count = 0
     unmatched: list[str] = []
     bookmarks: list[MusicBookmark] = []
-    # (anchor text node, inserted aside, is_digital): a digital score replaces
-    # the scanned setting attached to the same hymn (owner, 2026-10-30).
-    placed: list[tuple[object, Tag, bool]] = []
+    # (anchor text node, inserted aside, is_digital, replaces_scan): a digital
+    # score normally replaces the scanned setting attached to the same hymn
+    # (owner, 2026-10-30), unless the rule says the scan must stay.
+    placed: list[tuple[object, Tag, bool, bool]] = []
     normalized_document = _normalized(soup.get_text(" ", strip=True))
     weekly_tone = _weekly_tone_from_document(normalized_document)
 
@@ -2416,22 +2506,26 @@ def enrich_service_html(
                         pass
                     else:
                         instruction = _semantic_context_block(rule.semantic_context, preceding)
-                        decision = (
-                            semantic_reviewer.review_timiotera(instruction or "")
-                            if instruction
-                            else None
-                        )
                         expected_choice = {
                             "plagal4-timiotera": "plagal4_timiotera",
                             "tone4-timiotera": "tone4_timiotera",
-                        }[rule.piece_id]
+                        }.get(rule.piece_id)
+                        # The TypeSafe reviewer only knows the two scanned
+                        # alternatives. Digital rules (and any future member)
+                        # are intentionally not vetoed by this lookup.
+                        decision = (
+                            semantic_reviewer.review_timiotera(instruction or "")
+                            if instruction and expected_choice is not None
+                            else None
+                        )
                         # Jev can only confirm the explicit local instruction;
                         # it cannot invent a third score. An unavailable API
                         # leaves the deterministic Melodos instruction in
                         # force, while a high-confidence disagreement blocks
                         # an unsafe insertion.
                         if (
-                            decision is not None
+                            expected_choice is not None
+                            and decision is not None
                             and decision.confidence >= 0.95
                             and decision.choice != expected_choice
                         ):
@@ -2502,14 +2596,16 @@ def enrich_service_html(
                 _insertion_point_before(text_node).insert_before(fragment)
             else:
                 _insertion_point(text_node).insert_after(fragment)
-            placed.append((text_node, fragment, piece is None))
+            placed.append((text_node, fragment, piece is None, rule.replace_scan))
             if piece is None:
                 bookmarks.append(MusicBookmark(f"music-{rule.piece_id}-{instance}", rule.digital_title or rule.piece_id))
             else:
                 bookmarks.append(MusicBookmark(_bookmark_id(piece, instance), piece.title))
 
-    digital_nodes = {id(node) for node, _, digital in placed if digital}
-    for node, aside, digital in placed:
+    digital_nodes = {
+        id(node) for node, _, digital, replaces_scan in placed if digital and replaces_scan
+    }
+    for node, aside, digital, _ in placed:
         if not digital and id(node) in digital_nodes:
             aside.decompose()
 

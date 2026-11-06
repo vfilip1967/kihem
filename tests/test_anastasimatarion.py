@@ -798,6 +798,53 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertLess(result.html.rindex("σὲ μεγαλύνομεν"), result.html.index("tone4-timiotera"))
         self.assertLess(result.html.index("tone4-timiotera"), result.html.index("Εἰρμός θ΄"))
 
+    def test_first_tone_timiotera_shows_the_verified_digital_score_instead_of_a_missing_scan(self):
+        refrain = (
+            "Τὴν Τιμιωτέραν τῶν Χερουβείμ, καὶ ἐνδοξοτέραν ἀσυγκρίτως "
+            "τῶν Σεραφείμ, τὴν ἀδιαφθόρως Θεὸν Λόγον τεκοῦσαν, "
+            "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.<br>"
+        )
+        heading = "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο του Ειρμού. Ἦχος α΄<br>"
+        source = heading + refrain * 6 + "Εἰρμός θ΄ ᾠδής"
+        score_id = "papline-tim-1-private-draft"
+
+        without_digital = enrich_service_html(date(2026, 9, 14), "orthros", source)
+        self.assertNotIn(score_id, without_digital.html)
+
+        result = enrich_service_html(
+            date(2026, 9, 14), "orthros", source, verified_digital_scores={score_id}
+        )
+        self.assertEqual(result.attachment_count, 1)
+        self.assertIn(f'data-music-piece="{score_id}"', result.html)
+        self.assertIn(f'src="digital-scores/{score_id}/"', result.html)
+        self.assertLess(result.html.rindex("σὲ μεγαλύνομεν"), result.html.index(score_id))
+        self.assertLess(result.html.index(score_id), result.html.index("Εἰρμός θ΄"))
+        self.assertEqual(result.bookmarks[0].anchor_id, f"music-{score_id}-1")
+
+    def test_fourth_tone_timiotera_keeps_the_scan_and_adds_the_digital_score(self):
+        refrain = (
+            "Τὴν Τιμιωτέραν τῶν Χερουβείμ, καὶ ἐνδοξοτέραν ἀσυγκρίτως "
+            "τῶν Σεραφείμ, τὴν ἀδιαφθόρως Θεὸν Λόγον τεκοῦσαν, "
+            "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.<br>"
+        )
+        heading = "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο του Ειρμού. Ἦχος δ΄<br>"
+        source = heading + refrain * 6 + "Εἰρμός θ΄ ᾠδής"
+        score_id = "papline-tim-4-private-draft"
+
+        scan_only = enrich_service_html(date(2026, 9, 22), "orthros", source)
+        self.assertIn('data-music-piece="tone4-timiotera"', scan_only.html)
+        self.assertNotIn(score_id, scan_only.html)
+
+        result = enrich_service_html(
+            date(2026, 9, 22), "orthros", source, verified_digital_scores={score_id}
+        )
+        self.assertEqual(result.attachment_count, 2)
+        self.assertIn('data-music-piece="tone4-timiotera"', result.html)
+        self.assertIn(f'data-music-piece="{score_id}"', result.html)
+        self.assertIn(f'src="digital-scores/{score_id}/"', result.html)
+        self.assertLess(result.html.rindex("σὲ μεγαλύνομεν"), result.html.index(score_id))
+        self.assertLess(result.html.index(score_id), result.html.index("Εἰρμός θ΄"))
+
     def test_plagal_fourth_timiotera_uses_its_local_eirmos_tone_not_an_earlier_fourth_tone(self):
         refrain = (
             "Τὴν Τιμιωτέραν τῶν Χερουβείμ, καὶ ἐνδοξοτέραν ἀσυγκρίτως "
