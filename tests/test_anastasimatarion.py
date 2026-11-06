@@ -1053,6 +1053,64 @@ class AnastasimatarionTests(unittest.TestCase):
         for score_id in score_ids:
             self.assertNotIn(score_id, none.html)
 
+    def test_short_theotokos_digital_katavasies_join_the_scan_in_ode_order(self):
+        score_ids = [
+            "papline-kat-eisp-s-1-private-draft",
+            "papline-kat-eisp-s-3-private-draft",
+            "papline-kat-eisp-s-4-private-draft",
+            "papline-kat-eisp-s-5-private-draft",
+            "papline-kat-eisp-s-6-private-draft",
+            "papline-kat-eisp-s-7-private-draft",
+            "papline-kat-eisp-s-8-private-draft",
+            "papline-kat-eisp-s-9-private-draft",
+        ]
+        refrain = "Τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.<br>"
+        source = (
+            "Καταβασίες Τῆς Θεοτόκου<br>Ἦχος δ΄.<br>"
+            "Ἀνοίξω τὸ στόμα μου, καὶ πληρωθήσεται Πνεύματος.<br>"
+            "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
+            "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.<br>"
+            "Ἦχος δ΄<br>" + refrain * 6 +
+            "Κατόπιν ψάλλεται ἡ θ΄ Ωδή των καταβασιών"
+        )
+        result = enrich_service_html(
+            date(2026, 9, 26),
+            "orthros",
+            source,
+            verified_digital_scores=set(score_ids),
+        )
+
+        self.assertIn('data-music-piece="theotokos-katavasies-tone4"', result.html)
+        positions = [
+            result.html.index(f'data-music-piece="{score_id}"') for score_id in score_ids
+        ]
+        self.assertEqual(positions, sorted(positions))
+        for score_id in score_ids:
+            self.assertEqual(result.html.count(f'data-music-piece="{score_id}"'), 1)
+        self.assertLess(
+            max(positions),
+            result.html.index("Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός"),
+        )
+        self.assertLess(max(positions), result.html.index("θ΄ Ωδή"))
+
+        without = enrich_service_html(date(2026, 9, 26), "orthros", source)
+        self.assertEqual(without.attachment_count, 2)
+        for score_id in score_ids:
+            self.assertNotIn(score_id, without.html)
+
+        christmas = enrich_service_html(
+            date(2026, 11, 21),
+            "orthros",
+            source.replace(
+                "Ἀνοίξω τὸ στόμα μου, καὶ πληρωθήσεται Πνεύματος.<br>",
+                "Χριστὸς γεννᾶται, δοξάσατε.<br>"
+                "Ἀνοίξω τὸ στόμα μου, καὶ πληρωθήσεται Πνεύματος.<br>",
+            ),
+            verified_digital_scores=set(score_ids),
+        )
+        for score_id in score_ids:
+            self.assertNotIn(score_id, christmas.html)
+
     def test_litourgia_gets_pandekti_eisodikon_and_trisagion(self):
         source = (
             "Δεῦτε προσκυνήσωμεν καὶ προσπέσωμεν Χριστῷ.<br>"
