@@ -1053,6 +1053,57 @@ class AnastasimatarionTests(unittest.TestCase):
         for score_id in score_ids:
             self.assertNotIn(score_id, none.html)
 
+    def test_sunday_before_christmas_digital_katavasies_use_the_first_eirmos_in_ode_order(self):
+        score_ids = [
+            "papline-kat-kyrpx-s-1-private-draft",
+            "papline-kat-kyrpx-s-3-private-draft",
+            "papline-kat-kyrpx-s-4-private-draft",
+            "papline-kat-kyrpx-s-6-private-draft",
+            "papline-kat-kyrpx-s-7-private-draft",
+            "papline-kat-kyrpx-s-8-private-draft",
+            "papline-kat-kyrpx-s-9-private-draft",
+        ]
+        source = (
+            "Καταβασίες<br>"
+            "Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται.<br>"
+            "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
+            "Κατόπιν ψάλλεται ἡ θ΄ Ωδή των καταβασιών"
+        )
+        result = enrich_service_html(
+            date(2026, 12, 20),
+            "orthros",
+            source,
+            verified_digital_scores=set(score_ids),
+        )
+
+        self.assertEqual(result.attachment_count, len(score_ids))
+        positions = [
+            result.html.index(f'data-music-piece="{score_id}"') for score_id in score_ids
+        ]
+        self.assertEqual(positions, sorted(positions))
+        for score_id in score_ids:
+            self.assertEqual(result.html.count(f'data-music-piece="{score_id}"'), 1)
+        self.assertLess(
+            max(positions),
+            result.html.index("Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός"),
+        )
+
+        without_incipit = source.replace(
+            "Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται.<br>", ""
+        )
+        none = enrich_service_html(
+            date(2026, 12, 20),
+            "orthros",
+            without_incipit,
+            verified_digital_scores=set(score_ids),
+        )
+        for score_id in score_ids:
+            self.assertNotIn(score_id, none.html)
+
+        unverified = enrich_service_html(date(2026, 12, 20), "orthros", source)
+        for score_id in score_ids:
+            self.assertNotIn(score_id, unverified.html)
+
     def test_short_theotokos_digital_katavasies_join_the_scan_in_ode_order(self):
         score_ids = [
             "papline-kat-eisp-s-1-private-draft",

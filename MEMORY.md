@@ -62,6 +62,13 @@ This file records only durable implementation decisions.
   that exact setting, attach it before «Τὴν Θεοτόκον…», before the Timiotera
   and ninth ode (as on 26 September). Add other Katavasies only after the
   exact setting and score pages have been verified.
+- The short tone-1 Papachristos katavasies of the Sunday before Christmas
+  (`papline-kat-kyrpx-s-1/3/4/6/7/8/9-private-draft`; ode 5 is intentionally
+  absent) trigger on «Καταβασίες» plus the first eirmos «Χριστὸς ἐν πόλει
+  Βηθλεὲμ βρεφουργεῖται» and are inserted, in ode order, before «Τὴν
+  Θεοτόκον…». `_normalized()` ignores accents and punctuation, so comma and
+  breathing variants need no separate trigger. As with the other digital
+  rules, they appear only when the catalogue ids are approved for display.
 - Timiotera tone rules must use the nearby «Καὶ ψάλλεται…» and its own tone
   label. Never choose πλ. δ΄ merely because that tone occurs elsewhere in the
   daily Orthros; 26 September's local label is explicitly «Ἦχος δ΄».

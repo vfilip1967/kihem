@@ -1450,6 +1450,104 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         insert_before=True,
         digital_title="Καταβασία ᾠδῆς θ΄ · Μυστήριον ξένον · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
     ),
+    # Digital short katavasies of the Sunday before Christmas (tone 1,
+    # Papachristos).  Their Melodos text has no label matching the scanned
+    # Cross/Theotokos sets, so the first eirmos supplies the trigger.  Ode 5 is
+    # intentionally absent from the catalogue.  _normalized() ignores accents
+    # and punctuation, so the comma/breathing variants of the incipit match.
+    # The rules are listed in ode order because insertions at the same anchor
+    # keep their catalogue order.
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-kyrpx-s-1-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς α΄ · Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-kyrpx-s-3-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς γ΄ · Ὑψιμέδων ἄναρχε εὐμενὲς Λόγε · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-kyrpx-s-4-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς δ΄ · Ἀκηκοὼς ὁ προφήτης, Χριστέ, τὴν ἀκοήν σου · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-kyrpx-s-6-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς ς΄ · Εἰς βυθὸν ἀπωλείας ἡ ταλαίπωρος φύσις · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-kyrpx-s-7-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς ζ΄ · Ὡς οἱ παῖδες πάλαι σοι κράζομεν, Λόγε · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-kyrpx-s-8-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς η΄ · Νεουργὲ τοῦ σύμπαντος κόσμου καὶ σῶστα · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-kyrpx-s-9-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται",),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς θ΄ · Χαίροις, πάναγνε θεοδέγμον Μαρία · Κυριακὴ πρὸ Χριστοῦ Γεννήσεως · ἦχος α΄ · Ἀποστόλου Ε. Παπαχρήστου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
     AttachmentRule(
         "orthros",
         "ἐκ λύκων λυμαινομένων αὐτήν.",
