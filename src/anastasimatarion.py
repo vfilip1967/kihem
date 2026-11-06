@@ -923,6 +923,17 @@ for _tone, (
     )
 
 
+# Melodos words the plagal-second Great-Doxology instruction in two ways.  The
+# second is the «ἦχος τῆς ἡμέρας» wording used on the Archangels' Sunday
+# (8 November 2026); both name the πλ. β΄ setting explicitly, and the tone
+# marker is still required separately, so the score is never guessed from the
+# weekday.  Matching is accent- and punctuation-insensitive (see _normalized).
+_TONE6_DOXOLOGY_INSTRUCTIONS: Final[tuple[str, ...]] = (
+    "η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού",
+    "η δοξολογία σήμερα ψάλλεται στην ήχο της ημέρας δηλαδή ήχο πλ β",
+)
+
+
 PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
     AttachmentRule(
         "orthros",
@@ -1083,6 +1094,23 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         semantic_context="ainoi",
         expected_reviewer_choice="slow_ainoi",
         insert_before=True,
+    ),
+    # A feast Sunday can replace the Eothinon Doxastikon with the feast
+    # Doxastikon (Synaxis of the Archangels, 8 November 2026), so the
+    # «ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ» anchor above never appears.  The resurrectional
+    # Ainoi still belong immediately before the feast Prosomoia, exactly as on
+    # the Sunday of the Holy Fathers.  The exclusion keeps a normal Sunday from
+    # receiving the same score twice.
+    AttachmentRule(
+        "orthros",
+        "Στιχηρὰ Προσόμοια τῶν Ἀρχιστρατήγων.",
+        "tone6-ainoi",
+        weekly_tone=6,
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        semantic_context="ainoi",
+        expected_reviewer_choice="slow_ainoi",
+        insert_before=True,
+        excluded_text_any=("ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",),
     ),
     AttachmentRule(
         "orthros",
@@ -1648,10 +1676,8 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         # The Great Doxology can take the local Doxastikon's tone even when
         # the weekly tone is different (for example 28 September 2026).
         # Trust Melodos' explicit Doxology instruction, not the week's tone.
-        required_text=(
-            "η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού",
-            "Ἦχος πλ β΄",
-        ),
+        required_text=("Ἦχος πλ β΄",),
+        required_text_any=_TONE6_DOXOLOGY_INSTRUCTIONS,
         # The Great Doxology belongs immediately before the resurrectional
         # dismissal hymn, never at the opening Trisagion.
         insert_before=True,
@@ -1702,10 +1728,8 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "orthros",
         "γιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.",
         "tone6-great-doxology",
-        required_text=(
-            "η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού",
-            "Ἦχος πλ β΄",
-        ),
+        required_text=("Ἦχος πλ β΄",),
+        required_text_any=_TONE6_DOXOLOGY_INSTRUCTIONS,
         excluded_text_any=("Σήμερον σωτηρία τῷ κόσμῳ γέγονεν.",),
         preceding_text="ἐν τῷ φωτί σου ὀψόμεθα φῶς.",
     ),

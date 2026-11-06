@@ -687,6 +687,57 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertLess(result.html.index("Παράτεινον"), result.html.index("tone2-great-doxology"))
         self.assertLess(result.html.index("tone2-great-doxology"), result.html.index("Ἅγιος ὁ Θεός"))
 
+    def test_archangels_sunday_ainoi_precede_the_feast_prosomoia(self):
+        # 8 November 2026: the Synaxis of the Archangels replaces the Eothinon
+        # Doxastikon, so Melodos prints no «ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ» heading.  The
+        # resurrectional Ainoi of the week (plagal second, slow setting) still
+        # belong immediately before the feast Prosomoia.
+        source = (
+            "Ήχος εβδομάδος πλ. β΄.<br>"
+            "Στιχηρὰ Ἀναστάσιμα Ἦχος πλ β΄<br>"
+            "Ὁ Σταυρός σου Κύριε, ζωὴ καὶ ἀνάστασις.<br>"
+            "Στιχηρὰ Προσόμοια τῶν Ἀρχιστρατήγων.<br>"
+            "Ἦχος α’ Τῶν οὐρανίων.<br>"
+            "Τῶν οὐρανίων ταγμάτων ὡς προεξάρχοντα.<br>"
+        )
+        result = enrich_service_html(date(2026, 11, 8), "orthros", source)
+
+        self.assertIn('data-music-piece="tone6-ainoi"', result.html)
+        self.assertLess(result.html.index("tone6-ainoi"), result.html.index("Στιχηρὰ Προσόμοια"))
+        self.assertEqual(result.html.count('data-music-piece="tone6-ainoi"'), 1)
+
+    def test_feast_prosomoia_do_not_duplicate_the_eothinon_ainoi(self):
+        source = (
+            "Ήχος εβδομάδος πλ. β΄.<br>"
+            "Στιχηρὰ Ἀναστάσιμα Ἦχος πλ β΄<br>"
+            "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ<br>"
+            "Στιχηρὰ Προσόμοια τῶν Ἀρχιστρατήγων.<br>"
+        )
+        result = enrich_service_html(date(2026, 11, 8), "orthros", source)
+
+        self.assertEqual(result.html.count('data-music-piece="tone6-ainoi"'), 1)
+
+    def test_plagal_second_doxology_accepts_the_tone_of_the_day_wording(self):
+        # Melodos may state the same plagal-second instruction as «ψάλλεται
+        # στην ήχο της ημέρας δηλαδή ήχο πλ β΄ … κατα το ΤΜΕ στον ήχο του
+        # δοξαστικού» (8 November 2026).  The verified scan must still follow.
+        source = (
+            "Ήχος εβδομάδος πλ. β΄.<br>"
+            "Στιχηρὰ Ἀναστάσιμα Ἦχος πλ β΄<br>"
+            "Σύμφωνα με το άγραφο τυπικό, η δοξολογία σήμερα ψάλλεται "
+            "στην ήχο της ημέρας δηλαδή ήχο πλ β΄.<br>"
+            "Αλλά, κατα το ΤΜΕ στον ήχο του δοξαστικού.<br>"
+            "ΜΕΓΑΛΗ ΔΟΞΟΛΟΓΙΑ<br>"
+            "Δόξα σοὶ τῶ δείξαντι τὸ φῶς.<br>"
+            "Παράτεινον τὸ ἔλεός σου τοῖς γινώσκουσί σε.<br>"
+            "ἐν τῷ φωτὶ σου ὀψόμεθα φῶς.<br>"
+            "Ἅγιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
+        )
+        result = enrich_service_html(date(2026, 11, 8), "orthros", source)
+
+        self.assertIn('data-music-piece="tone6-great-doxology"', result.html)
+
+
     def test_sixth_eothinon_is_attached_only_after_its_own_doxastikon(self):
         source = (
             "Κύριε δόξα σοι.<br>"

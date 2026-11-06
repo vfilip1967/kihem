@@ -37,7 +37,17 @@ This file records only durable implementation decisions.
   weekly tone and placed immediately before the Eothinon Doxastikon. When a
   feast Sunday replaces it with its own Prosomoia/Doxastikon, place the same
   verified Ainoi immediately before that feast block instead; never omit
-  them merely because the Eothinon-Doxastikon heading is absent. The
+  them merely because the Eothinon-Doxastikon heading is absent.
+  The Archangels' Sunday (2026-11-08, weekly tone plagal second) is the first
+  concrete case: the feast prints «Στιχηρὰ Προσόμοια τῶν Ἀρχιστρατήγων» and no
+  Eothinon heading, so the tone-6 Ainoi are anchored on that feast block and
+  excluded whenever a «ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ» heading is present, which keeps a
+  normal Sunday from receiving the score twice.
+- The plagal-second Great Doxology instruction is recognised in both Melodos
+  wordings: «ψάλλεται στον ήχο του δοξαστικού» and «ψάλλεται στην ήχο της
+  ημέρας δηλαδή ήχο πλ β΄ … κατα το ΤΜΕ στον ήχο του δοξαστικού» (the
+  Archangels' Sunday wording). Both must still be accompanied by an explicit
+  πλ. β΄ tone marker; the setting is never guessed from the weekday. The
   verified Anastasimatario forms are invariant: tones 1, 2, 5 and 6 use the
   slow setting; tones 3, 4, 7 and 8 use the short setting. Verified printed
   ranges are respectively 39–43, 86–91, 244–251, 298–304 (slow) and
