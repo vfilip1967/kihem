@@ -1207,6 +1207,115 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         insert_before=True,
         digital_title="Καταβασίες Θεοτόκου · Ἀνοίξω τὸ στόμα μου · Πέτρου Λαμπαδαρίου (ψηφιακή)",
     ),
+    # Digital short Christmas katavasies for the Eisodia (21 Nov) and the
+    # Christmas pre-feast days.  Their Melodos text has no label matching the
+    # scanned Cross/Theotokos sets, so the first eirmos supplies the trigger.
+    # The rules are listed in ode order because insertions at the same anchor
+    # keep their catalogue order.
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-eis-s-1-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς α΄ · Χριστὸς γεννᾶται · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-eis-s-3-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς γ΄ · Τῷ πρὸ τῶν αἰώνων · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-eis-s-4-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς δ΄ · Ῥάβδος ἐκ τῆς ῥίζης · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-eis-s-5-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς ε΄ · Θεὸς ὢν εἰρήνης · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-eis-s-6-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς ς΄ · Σπλάγχνων Ἰωνᾶν · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-eis-s-7-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς ζ΄ · Οἱ Παῖδες · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-eis-s-8-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς η΄ · Θαύματος ὑπερφυοῦς · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.",
+        "papline-kat-eis-s-9-private-draft",
+        required_text=("Καταβασίες",),
+        required_text_any=("Χριστὸς γεννᾶται, δοξάσατε", "Χριστὸς γεννᾶται δοξάσατε"),
+        excluded_text_any=(
+            "Καταβασίες τῆς Ὑψώσεως τοῦ Τιμίου Σταυροῦ",
+            "Καταβασίες Τῆς Θεοτόκου",
+        ),
+        insert_before=True,
+        digital_title="Καταβασία ᾠδῆς θ΄ · Μυστήριον ξένον · Εἰσόδια Θεοτόκου · ἦχος α΄ · Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
     AttachmentRule(
         "orthros",
         "ἐκ λύκων λυμαινομένων αὐτήν.",

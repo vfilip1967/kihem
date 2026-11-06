@@ -1006,6 +1006,53 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertLess(result.html.index("cross-katavasies"), result.html.index("Ἡ Τιμιωτέρα"))
         self.assertLess(result.html.index("cross-katavasies"), result.html.index("Ὠδὴ θ΄"))
 
+    def test_eisodia_digital_katavasies_use_the_christmas_incipit_in_ode_order(self):
+        score_ids = [
+            "papline-kat-eis-s-1-private-draft",
+            "papline-kat-eis-s-3-private-draft",
+            "papline-kat-eis-s-4-private-draft",
+            "papline-kat-eis-s-5-private-draft",
+            "papline-kat-eis-s-6-private-draft",
+            "papline-kat-eis-s-7-private-draft",
+            "papline-kat-eis-s-8-private-draft",
+            "papline-kat-eis-s-9-private-draft",
+        ]
+        source = (
+            "Καταβασίες<br>"
+            "Χριστὸς γεννᾶται, δοξάσατε.<br>"
+            "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
+            "Κατόπιν ψάλλεται ἡ θ΄ Ωδή των καταβασιών"
+        )
+        result = enrich_service_html(
+            date(2026, 11, 21),
+            "orthros",
+            source,
+            verified_digital_scores=set(score_ids),
+        )
+
+        self.assertEqual(result.attachment_count, len(score_ids))
+        positions = [
+            result.html.index(f'data-music-piece="{score_id}"') for score_id in score_ids
+        ]
+        self.assertEqual(positions, sorted(positions))
+        for score_id in score_ids:
+            self.assertEqual(result.html.count(f'data-music-piece="{score_id}"'), 1)
+        self.assertLess(
+            max(positions),
+            result.html.index("Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός"),
+        )
+
+        without_incipit = source.replace("Χριστὸς γεννᾶται, δοξάσατε.<br>", "")
+        none = enrich_service_html(
+            date(2026, 11, 21),
+            "orthros",
+            without_incipit,
+            verified_digital_scores=set(score_ids),
+        )
+        self.assertEqual(none.attachment_count, 0)
+        for score_id in score_ids:
+            self.assertNotIn(score_id, none.html)
+
     def test_litourgia_gets_pandekti_eisodikon_and_trisagion(self):
         source = (
             "Δεῦτε προσκυνήσωμεν καὶ προσπέσωμεν Χριστῷ.<br>"
