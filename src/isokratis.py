@@ -54,6 +54,7 @@ ISON_UNISON = "Ison.Unison"
 # This table is the fallback when ``src/data/ison_genus.json`` has no genus
 # for a score; ``default_ison_for`` refines the ambiguous modes from it:
 #   * mode 2 uses the soft-chromatic base Δι and the hard-chromatic Πα;
+#   * mode 4 uses the opening note when it is Δι, Πα or Βου (see below);
 #   * mode 6 (πλ. β΄) uses the soft-chromatic Δι and the hard-chromatic Πα;
 #   * mode 7 uses the enharmonic Γα and the diatonic Ζω;
 #   * mode 8 (πλ. δ΄) uses Νη unless the piece is «ἐκ τοῦ Γα».
@@ -75,9 +76,31 @@ MODE_DEFAULT_ISON: dict[str, str] = {
 # agreement with the PDF's real isons in mode 4 (0.15->0.44, 0.19->0.52) and
 # πλ. δ΄ (0.17->0.22, 0.20->0.41), but lowered it in πλ. α΄ (0.83->0.61,
 # 0.69->0.58) and πλ. β΄ (0.66->0.51), where the real ison stays on Πα in
-# high segments.  Modes 1, 2, 3, 5, 6 and 7 therefore keep the plain
-# mode/genus default for the whole piece (a single mark at the first note).
+# high segments.  Modes 1, 3, 5, 6 and 7 therefore keep the plain mode/genus
+# default for the whole piece (a single mark at the first note).  Mode 4 with
+# a Δι default never changes above Δι because the rule is a no-op there.
 DI_RULE_MODES: tuple[str, ...] = ("4", "8")
+
+# Canonical opening-note names from ``ison_genus.json`` and Greek/Latin tone
+# labels.  Used only to refine modes whose ison depends on the opening note.
+_START_NOTE_NAMES: dict[str, str] = {
+    "pa": "Pa",
+    "πα": "Pa",
+    "vou": "Vou",
+    "βου": "Vou",
+    "ga": "Ga",
+    "γα": "Ga",
+    "thi": "Thi",
+    "θι": "Thi",
+    "δι": "Thi",
+    "di": "Thi",
+    "ke": "Ke",
+    "κε": "Ke",
+    "zo": "Zo",
+    "ζω": "Zo",
+    "ni": "Ni",
+    "νη": "Ni",
+}
 
 # Genus labels recorded beside a score's opening martyria in
 # ``src/data/ison_genus.json``.
@@ -113,6 +136,29 @@ def _start_is_ga(start: str | None) -> bool:
     if not isinstance(start, str):
         return False
     return _without_accents(start).strip() in {"ga", "γα"}
+
+
+def _start_note_name(start: str | None, tone_label: str | None) -> str | None:
+    """Return the canonical opening note from ``start`` or ``tone_label``.
+
+    ``start`` is the ``ison_genus.json`` value (``Thi``, ``Vou``, ``Ga``,
+    ``Pa`` …).  When it is absent, a standalone note token in the tone label
+    (for example «Ἦχος δ΄ · Δι · μαλακό χρωματικό») is used.  The tone numerals
+    themselves are not note names, so they never match.
+    """
+
+    if isinstance(start, str):
+        name = _START_NOTE_NAMES.get(_without_accents(start).strip())
+        if name is not None:
+            return name
+    if isinstance(tone_label, str):
+        text = _without_accents(tone_label)
+        text = re.sub(r"[\u0384\u00b4'’.,()/·\-]", " ", text)
+        for word in text.split():
+            name = _START_NOTE_NAMES.get(word)
+            if name is not None:
+                return name
+    return None
 
 
 def mode_key_from_tone_label(label: str | None) -> str | None:
@@ -153,10 +199,17 @@ def default_ison_for(
 
     ``mode_key`` comes from :func:`mode_key_from_tone_label`; ``genus`` and
     ``start`` come from ``src/data/ison_genus.json`` when the catalogue has
-    them.  Modes 1/3/4/5 keep their fixed basis.  The ambiguous modes use the
-    genus of the piece:
+    them.  Modes 1/3/5 keep their fixed basis.  The ambiguous modes use the
+    genus or opening note of the piece:
 
-    * β΄ and πλ. β΄: hard-chromatic → Πα, soft-chromatic → Δι;
+    * mode 4 (δ΄): opening Δι → Δι, opening Πα → Πα, opening Βου → Βου
+      (the last is the heirmologic default); any other opening keeps Βου.
+      The small sample of real marks (two pieces, mainly Lambadarios and
+      Nikolaidis) gives Δι 57 %, Πα 22 %, Βου 17 %, hence the opening-note
+      refinement; without usable data the heuristic Βου remains;
+    * β΄ and πλ. β΄: hard-chromatic → Πα, soft-chromatic → Δι.  Mode 2 with
+      the soft-chromatic genus is further refined per Martyria-segment by
+      :meth:`src.digital_scores.DigitalScoreCatalog.auto_ison_marks`;
     * βαρύς: enharmonic → Γα, diatonic → Ζω;
     * πλ. δ΄: Νη, unless the label says «ἐκ τοῦ Γα» or the start is Γα.
 
@@ -167,6 +220,13 @@ def default_ison_for(
     if mode_key not in MODE_DEFAULT_ISON:
         return None
     genus_key = genus.strip().lower() if isinstance(genus, str) else None
+    if mode_key == "4":
+        opening = _start_note_name(start, tone_label)
+        if opening == "Thi":
+            return "Ison.Thi"
+        if opening == "Pa":
+            return "Ison.Pa"
+        return "Ison.Vou"
     if mode_key in {"2", "6"}:
         if genus_key == "hard-chromatic":
             return "Ison.Pa"

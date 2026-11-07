@@ -907,13 +907,16 @@ This file records only durable implementation decisions.
   through a lazily created Web Audio `GainNode` (`createMediaElementSource`,
   `AudioContext.resume()`) only after a pointerdown/click/keydown or the
   slider's `input`, so a suspended context cannot mute it.
-- Automatic ison default (2026-11-07; genus refinement ISON5): when a digital
-  score has no real `ison` marks, `isokratis.default_ison_for` returns the
-  editorial default from the mode plus the optional genus/start record in
-  `src/data/ison_genus.json` (303 entries, read by
-  `digital_scores.load_ison_genus` / the cached `ison_genus_table`; a missing
-  file is `{}`). Modes 1/5 Pa, 3 Ga, 4 Vou stay fixed. Modes 2/6:
-  hard-chromatic Pa, soft-chromatic Thi; without a genus the old defaults
+- Automatic ison default (2026-11-07; genus refinement ISON5, data refinements
+  ISON7): when a digital score has no real `ison` marks,
+  `isokratis.default_ison_for` returns the editorial default from the mode
+  plus the optional genus/start record in `src/data/ison_genus.json` (303
+  entries, read by `digital_scores.load_ison_genus` / the cached
+  `ison_genus_table`; a missing file is `{}`). Modes 1/5 Pa and 3 Ga stay
+  fixed. Mode 4 now follows its opening note: Δι → Thi (real marks 57 %;
+  small sample of two pieces, mainly Lambadarios/Nikolaidis), Πα → Πα,
+  Βου → Vou (heirmologic theory, no data), any other opening → Vou. Modes
+  2/6: hard-chromatic Pa, soft-chromatic Thi; without a genus the old defaults
   (2 Thi, 6 Pa) apply. Mode 7: enharmonic Ga, diatonic Zo (else Ga). Mode 8:
   Ni, except a label «ἐκ τοῦ Γα» (accent/spacing/Latin Ga tolerant) or start
   Ga → Ga. `mode_key_from_tone_label` parses the Greek `tone_label` (plagal
@@ -921,16 +924,20 @@ This file records only durable implementation decisions.
   first note element with that default and splits at `Martyria` elements.
   Only in modes 4 and 8 (`DI_RULE_MODES` in `isokratis.py`), and only when
   the default is below Δι, it uses `Ison.Thi` for a segment whose median
-  written note (sidecar `physical`) is above Δι. Modes 1, 2, 3, 5, 6 and 7
-  keep the single mode/genus default for the whole piece; the hard-chromatic
-  Pa default therefore no longer switches. Evidence (22 real-marked papline
-  scores, 5109 notes): the rule raised agreement in mode 4 (0.15->0.44,
-  0.19->0.52) and πλ. δ΄ (0.17->0.22, 0.20->0.41) but lowered it in πλ. α΄
-  (0.83->0.61, 0.69->0.58) and πλ. β΄ (0.66->0.51), where the real ison
-  stays on Πα in high segments. Real marks always win; a missing sidecar
-  yields only the single default mark and never raises. The page keeps the
-  short control «Ίσον mp3: ναι/όχι» and the tooltip says the drone is an
-  automatic default, not from the PDF.
+  written note (sidecar `physical`) is above Δι; a mode-4 Δι default makes
+  this a no-op. Mode 2 with the soft-chromatic genus uses a separate segment
+  rule: median up to Γα → Vou, above → Thi, with the first mark taken from
+  the first segment (real marks Vou 44 % / Thi 56 %; leave-one-piece-out
+  accuracy 0.87 vs 0.56 for the best constant). The hard-chromatic Pa default
+  never alternates, and modes 1, 3, 5, 6 and 7 keep the single mode/genus
+  default for the whole piece. Evidence (22 real-marked papline scores, 5109
+  notes; small sample, mainly Lambadarios/Nikolaidis): the above-Δι rule
+  raised agreement in mode 4 (0.15->0.44, 0.19->0.52) and πλ. δ΄
+  (0.17->0.22, 0.20->0.41) but lowered it in πλ. α΄ (0.83->0.61, 0.69->0.58)
+  and πλ. β΄ (0.66->0.51), where the real ison stays on Πα in high segments.
+  Real marks always win; a missing sidecar yields only the single default
+  mark and never raises. The page keeps the short control «Ίσον mp3: ναι/όχι»
+  and the tooltip says the drone is an automatic default, not from the PDF.
 - The public player keeps speed, Neanes ison and mp3 ison on one compact
   flex row (`.player-controls`, wrapping only on narrow screens); the mp3
   volume slider uses a 🔊 label and is shown only in mp3 mode, and

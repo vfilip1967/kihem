@@ -315,6 +315,43 @@ class DigitalScoreCatalogTests(unittest.TestCase):
             with self.subTest(score_id=score_id, label=label):
                 self.assertEqual(catalog.auto_ison_marks(catalog.get(score_id)), [[0, expected]])
 
+    def test_soft_chromatic_mode_two_alternates_vou_and_thi_by_segment_median(self):
+        score_id = "papline-kat-kyrap-s-α-private-draft"
+        self.write_catalog([self.score(id=score_id, tone_label="Ἦχος β΄")])
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        score = catalog.get(score_id)
+        byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
+        elements = [{"elementType": "Martyria", "note": "Thi"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        elements += [{"elementType": "Martyria", "note": "Thi"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        elements += [{"elementType": "Martyria", "note": "Thi"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        byzx.write_text(json.dumps({"staff": {"elements": elements}}), encoding="utf-8")
+        byzx.with_suffix(".notes.json").write_text(
+            json.dumps(
+                {
+                    "schema": 1,
+                    "physical": {
+                        "1": ["Pa"],
+                        "2": ["Vou"],
+                        "3": ["Ga"],
+                        "5": ["NiHigh"],
+                        "6": ["PaHigh"],
+                        "7": ["ZoHigh"],
+                        "9": ["Pa"],
+                        "10": ["Ni"],
+                        "11": ["Pa"],
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.assertEqual(
+            catalog.auto_ison_marks(score),
+            [[1, "Ison.Vou"], [5, "Ison.Thi"], [9, "Ison.Vou"]],
+        )
+
     def test_hard_chromatic_pa_default_keeps_pa_above_di(self):
         self.write_catalog(
             [self.score(id="papline-cher-pl2-gregorios-private-draft", tone_label="Ἦχος β΄")]

@@ -142,8 +142,22 @@ class DefaultIsonForTests(unittest.TestCase):
             with self.subTest(label=label):
                 self.assertEqual(default_ison_for("8", "diatonic", label, "Ni"), "Ison.Ga")
 
-    def test_modes_one_three_four_five_and_unknown_are_unchanged(self):
-        for mode, expected in {"1": "Ison.Pa", "3": "Ison.Ga", "4": "Ison.Vou", "5": "Ison.Pa"}.items():
+    def test_mode_four_follows_its_opening_note(self):
+        cases = {
+            ("Ἦχος δ΄", None): "Ison.Vou",
+            ("Ἦχος δ΄ · Vou · Diatonic", "Vou"): "Ison.Vou",
+            ("Ἦχος δ΄ · Βου · διατονικός", None): "Ison.Vou",
+            ("Ἦχος δ΄ · Δι · μαλακό χρωματικό", None): "Ison.Thi",
+            ("Ἦχος δ΄ · Δι · διατονικός", "Thi"): "Ison.Thi",
+            ("Ἦχος δ΄ · Πα · διατονικός", None): "Ison.Pa",
+            ("Ἦχος δ΄", "Pa"): "Ison.Pa",
+        }
+        for (label, start), expected in cases.items():
+            with self.subTest(label=label, start=start):
+                self.assertEqual(default_ison_for("4", "diatonic", label, start), expected)
+
+    def test_modes_one_three_five_and_unknown_are_unchanged(self):
+        for mode, expected in {"1": "Ison.Pa", "3": "Ison.Ga", "5": "Ison.Pa"}.items():
             with self.subTest(mode=mode):
                 self.assertEqual(default_ison_for(mode, "diatonic", "Ἦχος", "Pa"), expected)
         self.assertIsNone(default_ison_for(None, "diatonic", "Δεν δηλώνεται ήχος", "Pa"))

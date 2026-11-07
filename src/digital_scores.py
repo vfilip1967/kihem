@@ -57,6 +57,7 @@ _ISON_NOTE_VALUES: Final[Mapping[str, int]] = {
     "PaHigh": 7,
 }
 _DI_VALUE: Final[int] = 3
+_GA_VALUE: Final[int] = 2
 
 # Optional editorial data: the genus and opening note read from the small
 # signs beside each score's martyria.  It is private project data, not part of
@@ -297,9 +298,16 @@ class DigitalScoreCatalog:
         refined default from ``src/data/ison_genus.json`` (loaded once,
         lazily) through :func:`src.isokratis.default_ison_for`; the first
         sounding note gets that ison.  The score is then split at its
-        Martyria elements: in modes 4 and 8 (:data:`src.isokratis.DI_RULE_MODES`)
+        Martyria elements.  In modes 4 and 8 (:data:`src.isokratis.DI_RULE_MODES`)
         a segment whose median written melody note lies above Δι uses Δι for
-        that segment, unless the mode default is already at or above Δι.  Other
+        that segment, unless the mode default is already at or above Δι.  In
+        mode 2 with the soft-chromatic genus the real ison alternates Βου and
+        Δι with the melody: a segment whose median is up to Γα uses Βου and a
+        higher segment uses Δι, so the first mark is the first segment's.
+        This rule comes from 22 real-marked papline scores (5109 notes; small
+        sample, mainly Lambadarios/Nikolaidis); leave-one-piece-out accuracy
+        was 0.87 versus 0.56 for the best constant, with real marks split
+        Βου 44 % / Δι 56 %.  Hard-chromatic mode 2 keeps constant Πα.  Other
         modes keep the plain mode/genus default for the whole piece.  Equal
         consecutive marks are merged.  Missing files, sidecars or genus data
         never raise; without the private ``.notes.json`` sidecar only the
@@ -312,9 +320,10 @@ class DigitalScoreCatalog:
         if mode is None:
             return []
         genus_entry = ison_genus_table().get(score.score_id, {})
+        genus = genus_entry.get("genus")
         default = default_ison_for(
             mode,
-            genus_entry.get("genus"),
+            genus,
             score.tone_label,
             genus_entry.get("start"),
         )
@@ -342,7 +351,9 @@ class DigitalScoreCatalog:
             return []
         marks: list[list[int | str]] = [[first_note, default]]
 
-        if mode not in DI_RULE_MODES:
+        genus_key = genus.strip().lower() if isinstance(genus, str) else None
+        soft_chromatic_mode_two = mode == "2" and genus_key == "soft-chromatic"
+        if mode not in DI_RULE_MODES and not soft_chromatic_mode_two:
             return marks
 
         try:
@@ -369,6 +380,19 @@ class DigitalScoreCatalog:
                     current.append((index, value))
         if current:
             segments.append(current)
+
+        if soft_chromatic_mode_two:
+            segment_marks: list[list[int | str]] = []
+            current_ison: str | None = None
+            for segment in segments:
+                if not segment:
+                    continue
+                median = statistics.median(value for _, value in segment)
+                wanted = "Ison.Vou" if median <= _GA_VALUE else "Ison.Thi"
+                if wanted != current_ison:
+                    segment_marks.append([segment[0][0], wanted])
+                    current_ison = wanted
+            return segment_marks or marks
 
         default_value = _ISON_NOTE_VALUES.get(default[5:])
         if default_value is None or default_value >= _DI_VALUE:
