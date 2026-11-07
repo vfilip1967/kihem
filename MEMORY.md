@@ -114,6 +114,11 @@ This file records only durable implementation decisions.
   choices `slow_ainoi`, `short_ainoi` or `no_score`. It receives the parsed
   weekly tone and the local Eothinon boundary, not an arbitrary scan; the
   deterministic tone-to-form rule above remains authoritative.
+- Vespers music uses `src/vespers_music.py`: a catalogue piece is attached
+  only when its own incipit appears in the hymn paragraphs of the
+  «Ἀπολυτίκιον» section (dialogue responses are excluded, generic incipits
+  such as «Κύριε ἐλέησον» are blocked). Never choose a Vespers piece from the
+  date or the tone alone.
 - Vespers («Εσπερινός») is the one service that does not come from Melodos:
   Melodos publishes no Vespers page, so `src/dcs.py` fetches the daily Greek
   page of the Digital Chant Stand (dcs.goarch.org) and renders it from a small

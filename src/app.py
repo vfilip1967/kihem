@@ -24,6 +24,7 @@ from src.isokratis import ISON_MARK_NUMBERS, ISON_NOTES, MODE_LABELS, IsokratisL
 from src.music_labels import short_music_label
 from src.scripture_interpretations import ScriptureInterpretationService, add_reading_bookmarks
 from src.typesafe_decisions import TypesafeDecisionService
+from src.vespers_music import attach_music
 
 
 def create_app(config: dict | None = None) -> Flask:
@@ -163,19 +164,31 @@ def create_app(config: dict | None = None) -> Flask:
             for item in composition.documents:
                 if item.service == "esperinos":
                     # DCS documents arrive already rendered and escaped; the
-                    # Melodos-specific score matcher and the scripture
-                    # interpretation cache do not apply to them.
+                    # Melodos-specific matcher does not apply, so Vespers uses
+                    # its own content-based hook (incipit of the hymn).
+                    vespers_html, vespers_bookmarks, vespers_pieces = attach_music(
+                        item.service_html, instance_start=attachment_count
+                    )
+                    attachment_count += len(vespers_pieces)
+                    music_bookmarks.extend(
+                        {
+                            "anchor_id": bookmark["anchor_id"],
+                            "label": short_music_label(bookmark["title"]),
+                            "title": bookmark["title"],
+                        }
+                        for bookmark in vespers_bookmarks
+                    )
                     documents.append(
                         {
                             "service": item.service,
                             "label": item.label,
-                            "html": Markup(item.service_html),
+                            "html": Markup(vespers_html),
                             "tone_label": item.tone_label,
                             "source_day_label": item.source_day_label,
                             "source_tone_label": item.source_tone_label,
                             "day_title": item.day_title,
                             "fetched_at": item.fetched_at,
-                            "attachment_count": 0,
+                            "attachment_count": len(vespers_pieces),
                             "source_url": getattr(item, "source_url", "") or "",
                             "source_name": "Digital Chant Stand (GOARCH)",
                         }
