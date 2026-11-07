@@ -179,10 +179,13 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         )
         self.assertEqual(catalog.auto_ison_marks(score), [])
 
-    def test_auto_ison_marks_switch_to_di_on_a_high_segment_and_back(self):
-        self.write_catalog([self.score()])
+    def test_auto_ison_marks_switch_to_di_on_a_high_segment_and_back_in_modes_four_and_eight(self):
+        cases = (
+            ("mode-four", "Ἦχος δ΄", "Ison.Vou"),
+            ("mode-eight", "Ἦχος πλ. δ΄", "Ison.Ni"),
+        )
+        self.write_catalog([self.score(id=score_id, tone_label=label) for score_id, label, _ in cases])
         catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
-        score = catalog.get("lithou-sfragisthentos-tone1")
         byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
         elements = [{"elementType": "Martyria", "note": "Pa"}]
         elements += [{"elementType": "Note"} for _ in range(3)]
@@ -210,10 +213,47 @@ class DigitalScoreCatalogTests(unittest.TestCase):
             ),
             encoding="utf-8",
         )
-        self.assertEqual(
-            catalog.auto_ison_marks(score),
-            [[1, "Ison.Pa"], [5, "Ison.Thi"], [9, "Ison.Pa"]],
+        for score_id, _, default in cases:
+            with self.subTest(score_id=score_id):
+                self.assertEqual(
+                    catalog.auto_ison_marks(catalog.get(score_id)),
+                    [[1, default], [5, "Ison.Thi"], [9, default]],
+                )
+
+    def test_auto_ison_marks_keep_the_mode_default_for_modes_without_the_di_rule(self):
+        cases = (
+            ("mode-one", "Ἦχος α΄", "Ison.Pa"),
+            ("mode-five", "Ἦχος πλ. α΄", "Ison.Pa"),
+            ("mode-six", "Ἦχος πλ. β΄", "Ison.Pa"),
+            ("mode-seven", "Ἦχος βαρύς", "Ison.Ga"),
         )
+        self.write_catalog([self.score(id=score_id, tone_label=label) for score_id, label, _ in cases])
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
+        elements = [{"elementType": "Martyria", "note": "Pa"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        elements += [{"elementType": "Martyria", "note": "Pa"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        byzx.write_text(json.dumps({"staff": {"elements": elements}}), encoding="utf-8")
+        byzx.with_suffix(".notes.json").write_text(
+            json.dumps(
+                {
+                    "schema": 1,
+                    "physical": {
+                        "1": ["Pa"],
+                        "2": ["Vou"],
+                        "3": ["Ga"],
+                        "5": ["NiHigh"],
+                        "6": ["PaHigh"],
+                        "7": ["ZoHigh"],
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+        for score_id, _, default in cases:
+            with self.subTest(score_id=score_id):
+                self.assertEqual(catalog.auto_ison_marks(catalog.get(score_id)), [[1, default]])
 
     def test_auto_ison_marks_do_not_raise_without_a_sidecar_or_for_unknown_modes(self):
         self.write_catalog([self.score(), self.score(id="unknown-tone", tone_label="Δεν δηλώνεται ήχος")])
@@ -275,7 +315,7 @@ class DigitalScoreCatalogTests(unittest.TestCase):
             with self.subTest(score_id=score_id, label=label):
                 self.assertEqual(catalog.auto_ison_marks(catalog.get(score_id)), [[0, expected]])
 
-    def test_hard_chromatic_pa_default_still_switches_to_di_above_di(self):
+    def test_hard_chromatic_pa_default_keeps_pa_above_di(self):
         self.write_catalog(
             [self.score(id="papline-cher-pl2-gregorios-private-draft", tone_label="Ἦχος β΄")]
         )
@@ -305,7 +345,7 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         )
         self.assertEqual(
             catalog.auto_ison_marks(score),
-            [[1, "Ison.Pa"], [5, "Ison.Thi"]],
+            [[1, "Ison.Pa"]],
         )
 
     def test_genus_loader_never_raises_for_an_absent_file(self):

@@ -69,6 +69,16 @@ MODE_DEFAULT_ISON: dict[str, str] = {
     "8": "Ison.Ni",
 }
 
+# Modes whose automatic ison may follow a melody segment whose median written
+# note is above Δι.  Checked against the 22 real-marked papline scores
+# (5109 notes): the «segment mostly above Δι -> Ison.Thi» rule raised
+# agreement with the PDF's real isons in mode 4 (0.15->0.44, 0.19->0.52) and
+# πλ. δ΄ (0.17->0.22, 0.20->0.41), but lowered it in πλ. α΄ (0.83->0.61,
+# 0.69->0.58) and πλ. β΄ (0.66->0.51), where the real ison stays on Πα in
+# high segments.  Modes 1, 2, 3, 5, 6 and 7 therefore keep the plain
+# mode/genus default for the whole piece (a single mark at the first note).
+DI_RULE_MODES: tuple[str, ...] = ("4", "8")
+
 # Genus labels recorded beside a score's opening martyria in
 # ``src/data/ison_genus.json``.
 ISON_GENUS_VALUES: frozenset[str] = frozenset(

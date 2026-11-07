@@ -17,7 +17,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Final, Literal, Mapping
 
-from src.isokratis import default_ison_for, mode_key_from_tone_label
+from src.isokratis import DI_RULE_MODES, default_ison_for, mode_key_from_tone_label
 
 
 REVIEW_STATES: Final[frozenset[str]] = frozenset({"draft", "needs_review", "verified"})
@@ -297,11 +297,13 @@ class DigitalScoreCatalog:
         refined default from ``src/data/ison_genus.json`` (loaded once,
         lazily) through :func:`src.isokratis.default_ison_for`; the first
         sounding note gets that ison.  The score is then split at its
-        Martyria elements: a segment whose median written melody note lies
-        above Δι uses Δι for that segment, unless the mode default is already
-        at or above Δι.  Equal consecutive marks are merged.  Missing files,
-        sidecars or genus data never raise; without the private
-        ``.notes.json`` sidecar only the single default mark is returned.
+        Martyria elements: in modes 4 and 8 (:data:`src.isokratis.DI_RULE_MODES`)
+        a segment whose median written melody note lies above Δι uses Δι for
+        that segment, unless the mode default is already at or above Δι.  Other
+        modes keep the plain mode/genus default for the whole piece.  Equal
+        consecutive marks are merged.  Missing files, sidecars or genus data
+        never raise; without the private ``.notes.json`` sidecar only the
+        single default mark is returned.
         """
 
         if self.ison_marks(score):
@@ -339,6 +341,9 @@ class DigitalScoreCatalog:
         if first_note is None:
             return []
         marks: list[list[int | str]] = [[first_note, default]]
+
+        if mode not in DI_RULE_MODES:
+            return marks
 
         try:
             sidecar = json.loads(byzx.with_suffix(".notes.json").read_text(encoding="utf-8"))

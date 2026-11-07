@@ -918,10 +918,16 @@ This file records only durable implementation decisions.
   Ni, except a label «ἐκ τοῦ Γα» (accent/spacing/Latin Ga tolerant) or start
   Ga → Ga. `mode_key_from_tone_label` parses the Greek `tone_label` (plagal
   before plain; barys = 7). `DigitalScoreCatalog.auto_ison_marks` marks the
-  first note element with that default, splits at `Martyria` elements and,
-  only when the default is below Δι, uses `Ison.Thi` for a segment whose
-  median written note (sidecar `physical`) is above Δι; this also applies to
-  the hard-chromatic Pa default. Real marks always win; a missing sidecar
+  first note element with that default and splits at `Martyria` elements.
+  Only in modes 4 and 8 (`DI_RULE_MODES` in `isokratis.py`), and only when
+  the default is below Δι, it uses `Ison.Thi` for a segment whose median
+  written note (sidecar `physical`) is above Δι. Modes 1, 2, 3, 5, 6 and 7
+  keep the single mode/genus default for the whole piece; the hard-chromatic
+  Pa default therefore no longer switches. Evidence (22 real-marked papline
+  scores, 5109 notes): the rule raised agreement in mode 4 (0.15->0.44,
+  0.19->0.52) and πλ. δ΄ (0.17->0.22, 0.20->0.41) but lowered it in πλ. α΄
+  (0.83->0.61, 0.69->0.58) and πλ. β΄ (0.66->0.51), where the real ison
+  stays on Πα in high segments. Real marks always win; a missing sidecar
   yields only the single default mark and never raises. The page keeps the
   short control «Ίσον mp3: ναι/όχι» and the tooltip says the drone is an
   automatic default, not from the PDF.
