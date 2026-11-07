@@ -51,12 +51,13 @@ ISON_UNISON = "Ison.Unison"
 # in the local ison research: byzantinechant.org's *Reading Psalmodia*
 # (Melling), analogion.com's *Isokratema*, *IsonSecondMode*,
 # *EnharmonicPlagalFirstMode* and *Barys*, and kelfar.net's *byzmusic.pdf*.
-# Practice is school-dependent for the ambiguous cases:
-#   * mode 2 uses the soft-chromatic base Δι; the hard-chromatic Πα base is
-#     not auto-detected;
-#   * mode 7 uses the enharmonic Γα; the diatonic Ζω is the documented
-#     alternative.
-# The optional plurals (πλ. α΄/β΄/δ΄) keep the same basis as their modes.
+# This table is the fallback when ``src/data/ison_genus.json`` has no genus
+# for a score; ``default_ison_for`` refines the ambiguous modes from it:
+#   * mode 2 uses the soft-chromatic base Δι and the hard-chromatic Πα;
+#   * mode 6 (πλ. β΄) uses the soft-chromatic Δι and the hard-chromatic Πα;
+#   * mode 7 uses the enharmonic Γα and the diatonic Ζω;
+#   * mode 8 (πλ. δ΄) uses Νη unless the piece is «ἐκ τοῦ Γα».
+# The optional plurals (πλ. α΄/δ΄) keep the same basis as their modes.
 MODE_DEFAULT_ISON: dict[str, str] = {
     "1": "Ison.Pa",
     "2": "Ison.Thi",
@@ -68,8 +69,40 @@ MODE_DEFAULT_ISON: dict[str, str] = {
     "8": "Ison.Ni",
 }
 
+# Genus labels recorded beside a score's opening martyria in
+# ``src/data/ison_genus.json``.
+ISON_GENUS_VALUES: frozenset[str] = frozenset(
+    {"diatonic", "soft-chromatic", "hard-chromatic", "enharmonic", "unknown"}
+)
+
 _NUMERAL_MODES = {"α": "1", "β": "2", "γ": "3", "δ": "4"}
 _PLAGAL_MODES = {"α": "5", "β": "6", "δ": "8"}
+
+
+def _without_accents(value: str) -> str:
+    text = unicodedata.normalize("NFD", value)
+    text = "".join(char for char in text if not unicodedata.combining(char))
+    return text.lower().replace("ς", "σ")
+
+
+def _is_ek_tou_ga(label: str | None) -> bool:
+    """True when a tone label says the piece is «ἐκ τοῦ Γα».
+
+    Accents, punctuation, spacing and the Latin spelling ``Ga`` are tolerated.
+    """
+
+    if not isinstance(label, str):
+        return False
+    text = _without_accents(label)
+    text = re.sub(r"[\u0384\u00b4'’.,()/·\-]", " ", text)
+    text = re.sub(r"\s+", " ", text)
+    return bool(re.search(r"εκ\s*του\s*(?:γα|ga)(?![α-ωa-z])", text))
+
+
+def _start_is_ga(start: str | None) -> bool:
+    if not isinstance(start, str):
+        return False
+    return _without_accents(start).strip() in {"ga", "γα"}
 
 
 def mode_key_from_tone_label(label: str | None) -> str | None:
@@ -98,6 +131,47 @@ def mode_key_from_tone_label(label: str | None) -> str | None:
     if plain:
         return _NUMERAL_MODES.get(plain.group(1))
     return None
+
+
+def default_ison_for(
+    mode_key: str | None,
+    genus: str | None,
+    tone_label: str | None,
+    start: str | None,
+) -> str | None:
+    """Return the editorial automatic ison for one digital score.
+
+    ``mode_key`` comes from :func:`mode_key_from_tone_label`; ``genus`` and
+    ``start`` come from ``src/data/ison_genus.json`` when the catalogue has
+    them.  Modes 1/3/4/5 keep their fixed basis.  The ambiguous modes use the
+    genus of the piece:
+
+    * β΄ and πλ. β΄: hard-chromatic → Πα, soft-chromatic → Δι;
+    * βαρύς: enharmonic → Γα, diatonic → Ζω;
+    * πλ. δ΄: Νη, unless the label says «ἐκ τοῦ Γα» or the start is Γα.
+
+    Without usable genus information the old mode defaults apply.  An unknown
+    or mode-less score yields ``None`` rather than a guess.
+    """
+
+    if mode_key not in MODE_DEFAULT_ISON:
+        return None
+    genus_key = genus.strip().lower() if isinstance(genus, str) else None
+    if mode_key in {"2", "6"}:
+        if genus_key == "hard-chromatic":
+            return "Ison.Pa"
+        if genus_key == "soft-chromatic":
+            return "Ison.Thi"
+        return MODE_DEFAULT_ISON[mode_key]
+    if mode_key == "7":
+        if genus_key == "diatonic":
+            return "Ison.Zo"
+        return "Ison.Ga"
+    if mode_key == "8":
+        if _start_is_ga(start) or _is_ek_tou_ga(tone_label):
+            return "Ison.Ga"
+        return "Ison.Ni"
+    return MODE_DEFAULT_ISON[mode_key]
 
 
 MODE_LABELS = {

@@ -3,7 +3,9 @@ import unicodedata
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest import mock
 
+from src import digital_scores as digital_scores_module
 from src.digital_scores import DigitalScoreCatalog, DigitalScoreReviewStore, parallage_label
 
 
@@ -252,6 +254,71 @@ class DigitalScoreCatalogTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.assertEqual(catalog.auto_ison_marks(score), [[1, "Ison.Thi"]])
+
+    def test_auto_ison_marks_use_the_genus_data_for_ambiguous_modes(self):
+        cases = (
+            ("papline-cher-pl2-gregorios-private-draft", "Ἦχος β΄", "Ison.Pa"),
+            ("papline-kat-kyrap-s-α-private-draft", "Ἦχος β΄", "Ison.Thi"),
+            ("papline-kat-megsab-s-α-private-draft", "Ἦχος πλ. β΄", "Ison.Thi"),
+            ("papline-kat-pent-s-α-private-draft", "Ἦχος βαρύς", "Ison.Ga"),
+            ("papline-kat-sabva-s-α-private-draft", "Ἦχος πλ. δ΄", "Ison.Ga"),
+            ("not-in-genus", "Ἦχος πλ. δ΄", "Ison.Ni"),
+        )
+        self.write_catalog([self.score(id=score_id, tone_label=label) for score_id, label, _ in cases])
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
+        byzx.write_text(
+            json.dumps({"staff": {"elements": [{"elementType": "Note"}]}}),
+            encoding="utf-8",
+        )
+        for score_id, label, expected in cases:
+            with self.subTest(score_id=score_id, label=label):
+                self.assertEqual(catalog.auto_ison_marks(catalog.get(score_id)), [[0, expected]])
+
+    def test_hard_chromatic_pa_default_still_switches_to_di_above_di(self):
+        self.write_catalog(
+            [self.score(id="papline-cher-pl2-gregorios-private-draft", tone_label="Ἦχος β΄")]
+        )
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        score = catalog.get("papline-cher-pl2-gregorios-private-draft")
+        byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
+        elements = [{"elementType": "Martyria", "note": "Pa"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        elements += [{"elementType": "Martyria", "note": "Pa"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        byzx.write_text(json.dumps({"staff": {"elements": elements}}), encoding="utf-8")
+        byzx.with_suffix(".notes.json").write_text(
+            json.dumps(
+                {
+                    "schema": 1,
+                    "physical": {
+                        "1": ["Pa"],
+                        "2": ["Vou"],
+                        "3": ["Ga"],
+                        "5": ["NiHigh"],
+                        "6": ["PaHigh"],
+                        "7": ["ZoHigh"],
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.assertEqual(
+            catalog.auto_ison_marks(score),
+            [[1, "Ison.Pa"], [5, "Ison.Thi"]],
+        )
+
+    def test_genus_loader_never_raises_for_an_absent_file(self):
+        digital_scores_module.ison_genus_table.cache_clear()
+        try:
+            with mock.patch.object(
+                digital_scores_module,
+                "ISON_GENUS_PATH",
+                self.root / "missing-ison-genus.json",
+            ):
+                self.assertEqual(digital_scores_module.ison_genus_table(), {})
+        finally:
+            digital_scores_module.ison_genus_table.cache_clear()
 
     def test_source_scan_paths_are_catalogued_and_cannot_escape_storage(self):
         self.write_catalog([self.score()])

@@ -13,10 +13,11 @@ import os
 import statistics
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from functools import lru_cache
 from pathlib import Path
 from typing import Final, Literal, Mapping
 
-from src.isokratis import MODE_DEFAULT_ISON, mode_key_from_tone_label
+from src.isokratis import default_ison_for, mode_key_from_tone_label
 
 
 REVIEW_STATES: Final[frozenset[str]] = frozenset({"draft", "needs_review", "verified"})
@@ -56,6 +57,45 @@ _ISON_NOTE_VALUES: Final[Mapping[str, int]] = {
     "PaHigh": 7,
 }
 _DI_VALUE: Final[int] = 3
+
+# Optional editorial data: the genus and opening note read from the small
+# signs beside each score's martyria.  It is private project data, not part of
+# the public catalogue schema.
+ISON_GENUS_PATH: Final = Path(__file__).resolve().parent / "data" / "ison_genus.json"
+
+
+def load_ison_genus(path: str | Path | None = None) -> dict[str, dict[str, str]]:
+    """Read ``{score_id: {"genus": ..., "start": ...}}`` without ever raising.
+
+    A missing, unreadable or malformed file yields an empty mapping, and
+    malformed rows are ignored.  The caller treats absent data as unknown.
+    """
+
+    try:
+        payload = json.loads(Path(path or ISON_GENUS_PATH).read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return {}
+    if not isinstance(payload, dict):
+        return {}
+    result: dict[str, dict[str, str]] = {}
+    for score_id, entry in payload.items():
+        if not isinstance(score_id, str) or not isinstance(entry, dict):
+            continue
+        row = {
+            key: value.strip()
+            for key, value in entry.items()
+            if key in {"genus", "start"} and isinstance(value, str) and value.strip()
+        }
+        if row:
+            result[score_id] = row
+    return result
+
+
+@lru_cache(maxsize=1)
+def ison_genus_table() -> dict[str, dict[str, str]]:
+    """Load the genus table once, lazily; an absent file yields ``{}``."""
+
+    return load_ison_genus(ISON_GENUS_PATH)
 
 
 def parallage_label(scale_note: str) -> str | None:
@@ -253,19 +293,29 @@ class DigitalScoreCatalog:
         """Return automatic ison marks for a score with no marks of its own.
 
         This is a deliberately simple editorial default, not a claim about
-        what the PDF says.  The mode comes from ``tone_label``; the first
-        sounding note gets the mode's default ison.  The score is then split
-        at its Martyria elements: a segment whose median written melody note
-        lies above Δι uses Δι for that segment, unless the mode default is
-        already at or above Δι.  Equal consecutive marks are merged.  Missing
-        files or sidecars never raise; without the private ``.notes.json``
-        sidecar only the single default mark is returned.
+        what the PDF says.  The mode comes from ``tone_label`` and the
+        refined default from ``src/data/ison_genus.json`` (loaded once,
+        lazily) through :func:`src.isokratis.default_ison_for`; the first
+        sounding note gets that ison.  The score is then split at its
+        Martyria elements: a segment whose median written melody note lies
+        above Δι uses Δι for that segment, unless the mode default is already
+        at or above Δι.  Equal consecutive marks are merged.  Missing files,
+        sidecars or genus data never raise; without the private
+        ``.notes.json`` sidecar only the single default mark is returned.
         """
 
         if self.ison_marks(score):
             return []
         mode = mode_key_from_tone_label(score.tone_label)
-        default = MODE_DEFAULT_ISON.get(mode) if mode else None
+        if mode is None:
+            return []
+        genus_entry = ison_genus_table().get(score.score_id, {})
+        default = default_ison_for(
+            mode,
+            genus_entry.get("genus"),
+            score.tone_label,
+            genus_entry.get("start"),
+        )
         if default is None:
             return []
         byzx = self.asset_path(score, "byzx")

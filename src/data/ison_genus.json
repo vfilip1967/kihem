@@ -1,0 +1,1214 @@
+{
+ "papline-cher-pl2-gregorios-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-anal-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-anal-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-anal-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-anal-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-anal-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-anal-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-anal-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-anal-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-analp-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Ke"
+ },
+ "papline-kat-analp-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ke"
+ },
+ "papline-kat-analp-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ke"
+ },
+ "papline-kat-analp-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ke"
+ },
+ "papline-kat-analp-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ke"
+ },
+ "papline-kat-analp-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ke"
+ },
+ "papline-kat-analp-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Ke"
+ },
+ "papline-kat-asot-s-α-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-asot-s-γ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-asot-s-δ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-asot-s-ε-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-asot-s-ζ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-asot-s-η-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-asot-s-θ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-asot-s-ς-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-eis-s-1-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-eis-s-3-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-eis-s-4-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-eis-s-5-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-eis-s-6-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-eis-s-7-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-eis-s-8-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-eis-s-9-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-eisp-s-1-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-eisp-s-3-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-eisp-s-4-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-eisp-s-5-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-eisp-s-6-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-eisp-s-7-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-eisp-s-8-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-eisp-s-9-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-evang-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-evang-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-evang-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-evang-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-evang-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-evang-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-evang-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-evang-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-gen-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-gen-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-gen-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-gen-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-koim-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koim-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koim-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koim-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koim-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koim-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koim-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koimm-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koimm-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koimm-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koimm-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koimm-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koimm-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koimm-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-koimp-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-koimp-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-koimp-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-koimp-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-koimp-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-koimp-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-koimp-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-koimp-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrap-s-α-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-kyrap-s-γ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrap-s-δ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrap-s-ε-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrap-s-ζ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrap-s-η-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrap-s-θ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-kyrap-s-ς-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrn1-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrn1-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrn1-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrn1-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrn1-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrn1-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrn1-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrn1-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrpx-s-1-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-kyrpx-s-3-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-kyrpx-s-4-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-kyrpx-s-6-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-kyrpx-s-7-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-kyrpx-s-8-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-kyrpx-s-9-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-megsab-s-α-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-megsab-s-δ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-megsab-s-ε-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-megsab-s-ζ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-megsab-s-η-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-megsab-s-θ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-mesop-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-mesop-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-mesop-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-mesop-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-mesop-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-mesop-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-mesop-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-mesop-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-metam-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-metam-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-metam-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-metam-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-metam-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-metamp-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-metamp-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-metamp-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-metamp-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-metamp-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-metamp-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-metamp-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-metamp-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-pasxa-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-pasxa-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-pasxa-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-pasxa-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-pasxa-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-pasxa-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-pasxa-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-pasxa-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-pent-s-α-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-pent-s-γ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-pent-s-δ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-pent-s-ε-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-pent-s-ζ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-pent-s-η-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-pent-s-θ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-pent-s-ς-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-penti-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-penti-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-penti-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-penti-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-penti-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-penti-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-penti-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-penti-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-perit-s-ε-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-perit-s-η-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-perit-s-θ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-sabap-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-sabap-s-β-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-sabap-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-sabap-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-sabap-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-sabap-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-sabap-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-sabap-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-sabpen-s-α-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-sabpen-s-γ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-sabpen-s-δ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-sabpen-s-ε-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-sabpen-s-ζ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-sabpen-s-θ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-sabpen-s-ς-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-sabva-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Ga"
+ },
+ "papline-kat-sabva-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ga"
+ },
+ "papline-kat-sabva-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ga"
+ },
+ "papline-kat-sabva-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ga"
+ },
+ "papline-kat-sabva-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ga"
+ },
+ "papline-kat-sabva-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Zo"
+ },
+ "papline-kat-stavro-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-stavro-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-stavro-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-stavro-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-stavro-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-stavro-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-stavro-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-stavro-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-telos-s-α-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-telos-s-γ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-telos-s-δ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-telos-s-ε-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-telos-s-ζ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-telos-s-η-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-telos-s-θ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-telos-s-ς-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-theof-s-ε-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theof-s-η-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theof-s-θ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theofi-s-α-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-theofi-s-γ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-theofi-s-δ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-theofi-s-ε-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-theofi-s-ζ-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-theofi-s-η-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-theofi-s-ς-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Vou"
+ },
+ "papline-kat-theofp-s-α-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theofp-s-γ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theofp-s-δ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theofp-s-ε-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theofp-s-ζ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theofp-s-η-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theofp-s-θ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-theofp-s-ς-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-kat-theot-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot2-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot2-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot2-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot2-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot2-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot2-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot2-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-theot2-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-thoma-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-thoma-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-thoma-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-thoma-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-thoma-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-thoma-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-thoma-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-thoma-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-vaion-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-vaion-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-vaion-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-vaion-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-vaion-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-vaion-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-vaion-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-vaion-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-kat-xrist-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xrist-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xrist-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xrist-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xrist-s-ζ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-xrist-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xrist-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xrist-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristi-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristi-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristi-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristi-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristi-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristi-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristi-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristp-s-α-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristp-s-γ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristp-s-δ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristp-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristp-s-ζ-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-kat-xristp-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristp-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-xristp-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-kat-ypap-s-γ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypap-s-δ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypap-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypap-s-ζ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypap-s-η-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypap-s-θ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypap-s-ς-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ke"
+ },
+ "papline-kat-ypapp-s-γ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypapp-s-δ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypapp-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypapp-s-ζ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypapp-s-η-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypapp-s-θ-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-kat-ypapp-s-ς-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ke"
+ },
+ "papline-kat-yps-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-yps-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-yps-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-yps-s-θ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-yps-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-ypsp-s-ε-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-ypsp-s-ζ-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-ypsp-s-η-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-kat-ypsp-s-ς-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-koin-pl2-karakasis-private-draft": {
+  "genus": "hard-chromatic",
+  "start": "Pa"
+ },
+ "papline-lit1-axion-dikaion-private-draft": {
+  "genus": "diatonic",
+  "start": "Thi"
+ },
+ "papline-lit1-axion-estin-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-lit1-kyrie-parashou-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-lit1-patera-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-lit1-se-ymnoumen-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-lit2-axion-dikaion-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Zo"
+ },
+ "papline-lit2-axion-estin-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Zo"
+ },
+ "papline-lit2-kyrie-parashou-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-lit2-patera-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-lit2-se-ymnoumen-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-tim-1-private-draft": {
+  "genus": "diatonic",
+  "start": "Pa"
+ },
+ "papline-tim-3-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ },
+ "papline-tim-4-private-draft": {
+  "genus": "diatonic",
+  "start": "Vou"
+ },
+ "papline-tim-pl1-private-draft": {
+  "genus": "diatonic",
+  "start": "Ke"
+ },
+ "papline-tim-pl2-private-draft": {
+  "genus": "soft-chromatic",
+  "start": "Thi"
+ },
+ "papline-tim-pl4ga-private-draft": {
+  "genus": "diatonic",
+  "start": "Ga"
+ },
+ "papline-tim-pl4ni-private-draft": {
+  "genus": "diatonic",
+  "start": "Ni"
+ },
+ "papline-tim-varys-private-draft": {
+  "genus": "enharmonic",
+  "start": "Ga"
+ }
+}

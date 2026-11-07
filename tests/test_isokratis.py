@@ -1,12 +1,15 @@
+import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from src.isokratis import (
+    ISON_GENUS_VALUES,
     ISON_MARK_NUMBERS,
     ISON_NOTES,
     MODE_DEFAULT_ISON,
     IsokratisLibrary,
+    default_ison_for,
     mode_key_from_tone_label,
 )
 
@@ -95,6 +98,70 @@ class ModeDefaultIsonTests(unittest.TestCase):
         self.assertIsNone(mode_key_from_tone_label("Δεν δηλώνεται μαρτυρία/ήχος στην απομονωμένη φόρμουλα"))
         self.assertIsNone(mode_key_from_tone_label(""))
         self.assertIsNone(mode_key_from_tone_label(None))
+
+
+class DefaultIsonForTests(unittest.TestCase):
+    def test_modes_two_and_six_follow_the_genus(self):
+        cases = {
+            ("2", "hard-chromatic"): "Ison.Pa",
+            ("2", "soft-chromatic"): "Ison.Thi",
+            ("2", "unknown"): "Ison.Thi",
+            ("2", None): "Ison.Thi",
+            ("6", "hard-chromatic"): "Ison.Pa",
+            ("6", "soft-chromatic"): "Ison.Thi",
+            ("6", "unknown"): "Ison.Pa",
+            ("6", None): "Ison.Pa",
+        }
+        for (mode, genus), expected in cases.items():
+            with self.subTest(mode=mode, genus=genus):
+                self.assertEqual(default_ison_for(mode, genus, "Ἦχος β΄", None), expected)
+
+    def test_barys_follows_the_genus(self):
+        cases = {
+            "enharmonic": "Ison.Ga",
+            "diatonic": "Ison.Zo",
+            "unknown": "Ison.Ga",
+            None: "Ison.Ga",
+        }
+        for genus, expected in cases.items():
+            with self.subTest(genus=genus):
+                self.assertEqual(default_ison_for("7", genus, "Ἦχος βαρύς", "Ga"), expected)
+
+    def test_plagal_fourth_is_ni_except_when_it_is_ek_tou_ga(self):
+        self.assertEqual(default_ison_for("8", "diatonic", "Ἦχος πλ. δ΄ · Ni", "Ni"), "Ison.Ni")
+        self.assertEqual(default_ison_for("8", None, "Ἦχος πλ. δ΄", None), "Ison.Ni")
+        self.assertEqual(default_ison_for("8", "diatonic", "Ἦχος πλ. δ΄ · Ga", "Ga"), "Ison.Ga")
+        self.assertEqual(default_ison_for("8", "diatonic", "Ἦχος πλ. δ΄ · Γα", "Γα"), "Ison.Ga")
+        labels = (
+            "Ἦχος πλ. δ΄ (ἐκ τοῦ Γα) · Γα · διατονικός",
+            "Ηχος πλ.δ΄ εκ του Γα",
+            "Ἦχος πλ. δ΄ ἐκ τοῦ ga · Ga · Diatonic",
+            "Ἦχος πλ. δ΄ εκ του  Γα",
+        )
+        for label in labels:
+            with self.subTest(label=label):
+                self.assertEqual(default_ison_for("8", "diatonic", label, "Ni"), "Ison.Ga")
+
+    def test_modes_one_three_four_five_and_unknown_are_unchanged(self):
+        for mode, expected in {"1": "Ison.Pa", "3": "Ison.Ga", "4": "Ison.Vou", "5": "Ison.Pa"}.items():
+            with self.subTest(mode=mode):
+                self.assertEqual(default_ison_for(mode, "diatonic", "Ἦχος", "Pa"), expected)
+        self.assertIsNone(default_ison_for(None, "diatonic", "Δεν δηλώνεται ήχος", "Pa"))
+        self.assertIsNone(default_ison_for("9", "diatonic", "Ἦχος", "Pa"))
+
+
+class IsonGenusDataTests(unittest.TestCase):
+    def test_the_real_genus_table_matches_the_catalogue(self):
+        data = Path(__file__).resolve().parents[1] / "src" / "data"
+        genus = json.loads((data / "ison_genus.json").read_text(encoding="utf-8"))
+        catalogue = json.loads((data / "digital_scores.json").read_text(encoding="utf-8"))
+        catalogue_ids = {score["id"] for score in catalogue["scores"]}
+
+        self.assertEqual(sorted(set(genus) - catalogue_ids), [])
+        for score_id, entry in genus.items():
+            with self.subTest(score_id=score_id):
+                self.assertIn(entry.get("genus"), ISON_GENUS_VALUES)
+                self.assertIsInstance(entry.get("start"), str)
 
 
 class IsonMarkMappingTests(unittest.TestCase):

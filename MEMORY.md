@@ -907,17 +907,24 @@ This file records only durable implementation decisions.
   through a lazily created Web Audio `GainNode` (`createMediaElementSource`,
   `AudioContext.resume()`) only after a pointerdown/click/keydown or the
   slider's `input`, so a suspended context cannot mute it.
-- Automatic ison default (2026-11-07): when a digital score has no real
-  `ison` marks, `isokratis.MODE_DEFAULT_ISON` supplies a chosen editorial
-  default per mode (1/5/6 Pa, 2 Thi, 3/7 Ga, 4 Vou, 8 Ni) and
-  `mode_key_from_tone_label` parses the Greek `tone_label` (plagal before
-  plain; barys = 7). `DigitalScoreCatalog.auto_ison_marks` marks the first
-  note element with that default, splits at `Martyria` elements and, only
-  when the default is below Δι, uses `Ison.Thi` for a segment whose median
-  written note (sidecar `physical`) is above Δι. Real marks always win; a
-  missing sidecar yields only the single default mark and never raises. The
-  page then keeps the short control «Ίσον mp3: ναι/όχι» and the tooltip says
-  the drone is an automatic default, not from the PDF.
+- Automatic ison default (2026-11-07; genus refinement ISON5): when a digital
+  score has no real `ison` marks, `isokratis.default_ison_for` returns the
+  editorial default from the mode plus the optional genus/start record in
+  `src/data/ison_genus.json` (303 entries, read by
+  `digital_scores.load_ison_genus` / the cached `ison_genus_table`; a missing
+  file is `{}`). Modes 1/5 Pa, 3 Ga, 4 Vou stay fixed. Modes 2/6:
+  hard-chromatic Pa, soft-chromatic Thi; without a genus the old defaults
+  (2 Thi, 6 Pa) apply. Mode 7: enharmonic Ga, diatonic Zo (else Ga). Mode 8:
+  Ni, except a label «ἐκ τοῦ Γα» (accent/spacing/Latin Ga tolerant) or start
+  Ga → Ga. `mode_key_from_tone_label` parses the Greek `tone_label` (plagal
+  before plain; barys = 7). `DigitalScoreCatalog.auto_ison_marks` marks the
+  first note element with that default, splits at `Martyria` elements and,
+  only when the default is below Δι, uses `Ison.Thi` for a segment whose
+  median written note (sidecar `physical`) is above Δι; this also applies to
+  the hard-chromatic Pa default. Real marks always win; a missing sidecar
+  yields only the single default mark and never raises. The page keeps the
+  short control «Ίσον mp3: ναι/όχι» and the tooltip says the drone is an
+  automatic default, not from the PDF.
 - The public player keeps speed, Neanes ison and mp3 ison on one compact
   flex row (`.player-controls`, wrapping only on narrow screens); the mp3
   volume slider uses a 🔊 label and is shown only in mp3 mode, and
