@@ -26,6 +26,24 @@ ISON_NOTES: tuple[dict[str, int | str], ...] = (
     {"label": "Και", "base": 144},
 )
 
+# Ison marks written in a digital score (Neanes ``Ison.*`` values) map to the
+# same numbered MP3 files as the manual note buttons, at register 0 and
+# semitone 0.  ``Ison.Unison`` is not a pitch: it keeps the current drone.
+# Unknown marks are ignored.  Kept here so the mapping is tested together with
+# the media catalogue instead of being duplicated in the browser.
+ISON_MARK_NUMBERS: dict[str, int] = {
+    "Ison.Pa": 102,
+    "Ison.Ni": 90,
+    "Ison.Zo": 82,
+    "Ison.Vou": 112,
+    "Ison.Ga": 120,
+    "Ison.Thi": 132,
+    "Ison.Ke": 144,
+    "Ison.KeLow": 72,
+    "Ison.ThiLow": 60,
+}
+ISON_UNISON = "Ison.Unison"
+
 MODE_LABELS = {
     "1": "Α΄ ήχος",
     "2": "Β΄ ήχος",

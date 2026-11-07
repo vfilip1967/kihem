@@ -182,6 +182,36 @@ class DigitalScoreCatalog:
             return []
         return sorted({index for index in hidden if isinstance(index, int) and not isinstance(index, bool) and index >= 0})
 
+    def ison_marks(self, score: DigitalScore) -> list[list[int | str]]:
+        """Return ``[[element index, ison name], ...]`` from the private ``.byzx``.
+
+        A score carries its ison marks (``ison: "Ison.Pa"``) on staff elements.
+        The element index is the zero-based position in ``staff.elements``,
+        the same number used by the Neanes ``element-N`` boxes and the
+        ``.notes.json`` sidecar keys.  Only the tiny mark list is exposed; the
+        score file itself is never served here.  Missing or malformed files
+        yield an empty list and never raise.
+        """
+
+        byzx = self.asset_path(score, "byzx")
+        if byzx is None:
+            return []
+        try:
+            payload = json.loads(byzx.read_text(encoding="utf-8"))
+            elements = payload["staff"]["elements"]
+        except (OSError, ValueError, KeyError, TypeError):
+            return []
+        if not isinstance(elements, list):
+            return []
+        marks: list[list[int | str]] = []
+        for index, element in enumerate(elements):
+            if not isinstance(element, dict):
+                continue
+            name = element.get("ison")
+            if isinstance(name, str) and name.strip():
+                marks.append([index, name.strip()])
+        return marks
+
     def source_scan_path(self, score: DigitalScore, position: int) -> Path | None:
         """Return one reviewed-source image without permitting path traversal."""
         if position < 0 or position >= len(score.source_scan_filenames):

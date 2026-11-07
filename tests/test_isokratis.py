@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from src.isokratis import IsokratisLibrary
+from src.isokratis import ISON_MARK_NUMBERS, ISON_NOTES, IsokratisLibrary
 
 
 class IsokratisLibraryTests(unittest.TestCase):
@@ -47,3 +47,34 @@ class IsokratisLibraryTests(unittest.TestCase):
         )
         self.assertIsNone(self.library.prosomia_path("book.pdf"))
         self.assertIsNone(self.library.prosomia_path("../isokratis/60.mp3"))
+
+
+class IsonMarkMappingTests(unittest.TestCase):
+    def test_mark_numbers_use_the_ison_bases_at_register_and_semitone_zero(self):
+        bases = {note["label"]: note["base"] for note in ISON_NOTES}
+        self.assertEqual(
+            ISON_MARK_NUMBERS,
+            {
+                "Ison.Pa": bases["Πα"],
+                "Ison.Ni": bases["Νη"],
+                "Ison.Zo": bases["Ζω"],
+                "Ison.Vou": bases["Βου"],
+                "Ison.Ga": bases["Γα"],
+                "Ison.Thi": bases["Δι"],
+                "Ison.Ke": bases["Και"],
+                "Ison.KeLow": bases["Κε"],
+                "Ison.ThiLow": bases["Δη"],
+            },
+        )
+
+    def test_every_mark_number_exists_in_the_installed_media_library(self):
+        byz = Path(__file__).resolve().parents[1] / "byz"
+        if not (byz / "isokratis").is_dir():
+            self.skipTest("ison media library is not installed")
+        library = IsokratisLibrary(byz)
+        missing = {
+            name: number
+            for name, number in ISON_MARK_NUMBERS.items()
+            if number not in library.ison_numbers
+        }
+        self.assertEqual(missing, {})

@@ -47,27 +47,55 @@
         <p id="neanes-load-status" class="playback-status" role="status">Φορτώνεται η παρτιτούρα στο Neanes…</p>
         <button id="neanes-retry" class="quiet-button playback-retry" type="button" hidden>Επανάληψη φόρτωσης παρτιτούρας</button>
         <button id="ison-toggle" class="quiet-button ison-toggle" type="button" aria-pressed="true" title="Άκουσμα με ή χωρίς ισοκράτημα">Ισοκράτημα: ναι</button>
+        {% if ison_marks %}
+        <button id="ison-mp3-toggle" class="quiet-button ison-toggle" type="button" aria-pressed="false" title="Ισοκράτης από τα mp3 που ακολουθεί τις ενδείξεις της παρτιτούρας">Ισοκράτης mp3 από το PDF: όχι</button>
+        <label id="ison-mp3-volume-label" class="ison-mp3-volume" hidden>Ένταση <input id="ison-mp3-volume" type="range" min="0" max="100" value="70" aria-label="Ένταση ισοκράτη mp3"></label>
+        <span id="ison-mp3-status" class="playback-status ison-mp3-status" role="status" hidden></span>
+        {% endif %}
         <script>
           /* The ison drone is a separate Neanes synth.  A melody note on the drone's
              pitch merges with it, so students can switch the drone off.  Neanes reads
              its saved audio options only when it starts; the player is same-origin, so
-             the choice is written to its storage before the iframe loads. */
+             the choice is written to its storage before the iframe loads.  The mp3
+             isokratis mode always mutes Neanes' own drone: its numbered MP3 carries
+             the ison instead. */
           (() => {
-            const key = 'kihem-ison-drone';
+            const droneKey = 'kihem-ison-drone';
+            const mp3Key = 'kihem-ison-mp3';
             let off = false;
+            let mp3 = false;
             try {
-              off = localStorage.getItem(key) === 'off';
+              off = localStorage.getItem(droneKey) === 'off';
+              {% if ison_marks %}mp3 = localStorage.getItem(mp3Key) === 'on';{% endif %}
               const saved = JSON.parse(localStorage.getItem('audioOptionsDefault') || '{}') || {};
-              if (off) saved.volumeIson = null;
+              if (off || mp3) saved.volumeIson = null;
               else if (typeof saved.volumeIson !== 'number') saved.volumeIson = -8;
               localStorage.setItem('audioOptionsDefault', JSON.stringify(saved));
             } catch (error) { /* storage unavailable: Neanes keeps its defaults */ }
             const button = document.getElementById('ison-toggle');
-            if (!button) return;
-            button.textContent = off ? 'Ισοκράτημα: όχι' : 'Ισοκράτημα: ναι';
-            button.setAttribute('aria-pressed', off ? 'false' : 'true');
-            button.addEventListener('click', () => {
-              try { localStorage.setItem(key, off ? 'on' : 'off'); } catch (error) { return; }
+            if (button) {
+              button.textContent = (off || mp3) ? 'Ισοκράτημα: όχι' : 'Ισοκράτημα: ναι';
+              button.setAttribute('aria-pressed', (off || mp3) ? 'false' : 'true');
+              button.addEventListener('click', () => {
+                try { localStorage.setItem(droneKey, off ? 'on' : 'off'); } catch (error) { return; }
+                window.location.reload();
+              });
+            }
+            const mp3Button = document.getElementById('ison-mp3-toggle');
+            if (!mp3Button) return;
+            const renderMp3 = () => {
+              mp3Button.textContent = mp3 ? 'Ισοκράτης mp3 από το PDF: ναι' : 'Ισοκράτης mp3 από το PDF: όχι';
+              mp3Button.setAttribute('aria-pressed', mp3 ? 'true' : 'false');
+            };
+            renderMp3();
+            const volumeLabel = document.getElementById('ison-mp3-volume-label');
+            const status = document.getElementById('ison-mp3-status');
+            if (mp3) {
+              if (volumeLabel) volumeLabel.hidden = false;
+              if (status) status.hidden = false;
+            }
+            mp3Button.addEventListener('click', () => {
+              try { localStorage.setItem(mp3Key, mp3 ? 'off' : 'on'); } catch (error) { return; }
               window.location.reload();
             });
           })();
@@ -208,6 +236,118 @@
         if (Number.isFinite(n)) elementIdBase = n;
         window.kihemElementBase = () => elementIdBase;
       };
+
+      // The score itself can carry ison marks (Ison.Pa, Ison.Thi…).  When the
+      // mp3 isokratis mode is on, a separate looping Audio follows them: it
+      // reads the playing element from the same-origin iframe and selects the
+      // last mark at or before it.  Neanes' own drone is muted before the
+      // iframe boots (see the toggle above).
+      const isonMarks = {{ ison_marks|tojson }};
+      const isonNumbers = new Set({{ available_ison|tojson }});
+      const isonMarkNumbers = {{ ison_mark_numbers|tojson }};
+      const isonUrlPrefix = {{ ison_url_prefix|tojson }};
+      const isonStatus = document.getElementById('ison-mp3-status');
+      const isonVolume = document.getElementById('ison-mp3-volume');
+      const isonAudio = new Audio();
+      isonAudio.loop = true;
+      isonAudio.preload = 'auto';
+      let isonEnabled = false;
+      try { isonEnabled = localStorage.getItem('kihem-ison-mp3') === 'on'; } catch (error) { /* storage unavailable */ }
+      if (isonVolume) {
+        let savedVolume = 70;
+        try {
+          const value = Number.parseInt(localStorage.getItem('kihem-ison-mp3-volume') || '', 10);
+          if (Number.isFinite(value)) savedVolume = Math.min(100, Math.max(0, value));
+        } catch (error) { /* keep the default */ }
+        isonVolume.value = String(savedVolume);
+        isonAudio.volume = savedVolume / 100;
+        isonVolume.addEventListener('input', () => {
+          isonAudio.volume = Number(isonVolume.value) / 100;
+          try { localStorage.setItem('kihem-ison-mp3-volume', isonVolume.value); } catch (error) { /* ignore */ }
+        });
+      }
+      let isonWantedNumber = null;
+      let isonPlaying = false;
+      let isonMissing = 0;
+      let isonStatusText = '';
+      const isonShowStatus = (message) => {
+        if (!isonStatus || message === isonStatusText) return;
+        isonStatusText = message;
+        isonStatus.textContent = message;
+      };
+      const isonStop = () => {
+        isonPlaying = false;
+        isonAudio.pause();
+        try { isonAudio.currentTime = 0; } catch (error) { /* not ready */ }
+      };
+      const isonStart = () => {
+        if (isonWantedNumber == null) return;
+        isonPlaying = true;
+        isonAudio.play().catch(() => {
+          isonPlaying = false;
+          isonShowStatus('Ο browser χρειάζεται πάτημα στο ▶ του Neanes για τον ισοκράτη mp3.');
+        });
+      };
+      // Marks are sorted by element index.  Before the first mark use the
+      // first one; Ison.Unison keeps whatever drone is already sounding.
+      const isonChosenMark = (index) => {
+        if (!isonMarks.length) return null;
+        let chosen = isonMarks[0];
+        for (const mark of isonMarks) {
+          if (mark[0] <= index) chosen = mark;
+          else break;
+        }
+        return chosen;
+      };
+      const isonTick = () => {
+        if (!isonEnabled) return;
+        const frameDocument = player.contentDocument;
+        if (!frameDocument || elementIdBase == null) return;
+        const highlighted = frameDocument.querySelector('.audio-selected');
+        const box = highlighted && highlighted.closest('.element-box');
+        const n = box ? elementNumber(box) : NaN;
+        if (!Number.isFinite(n)) {
+          // A short gap between notes is normal; a real stop resets the drone.
+          const stopped = frameDocument.querySelector('button[aria-label="Play audio"]');
+          isonMissing += 1;
+          if ((stopped || isonMissing >= 8) && isonPlaying) isonStop();
+          return;
+        }
+        isonMissing = 0;
+        const mark = isonChosenMark(n - elementIdBase);
+        if (!mark) return;
+        const name = mark[1];
+        let changed = false;
+        if (name !== 'Ison.Unison') {
+          const number = isonMarkNumbers[name];
+          if (number == null) return; // unknown mark: ignore
+          if (!isonNumbers.has(number)) {
+            isonShowStatus(`Το mp3 ${number} του ισοκράτη δεν είναι διαθέσιμο.`);
+            if (isonPlaying) isonStop();
+            return;
+          }
+          if (number !== isonWantedNumber) {
+            isonWantedNumber = number;
+            isonAudio.src = `${isonUrlPrefix}${number}.mp3`;
+            isonAudio.load();
+            changed = true;
+          }
+          isonShowStatus(`Ισοκράτης mp3: ${name.replace('Ison.', '')} · ${number}.mp3`);
+        }
+        if (document.hidden) { isonStop(); return; }
+        if (isonPlaying) {
+          if (changed) isonStart();
+        } else {
+          isonStart();
+        }
+      };
+      if (isonEnabled && isonMarks.length) {
+        window.setInterval(isonTick, 150);
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) isonStop();
+          else isonTick();
+        });
+      }
       const watchParallage = () => {
         const frameDocument = player.contentDocument;
         if (!noteLabels || !frameDocument || !frameDocument.body || parallageObserver) return;

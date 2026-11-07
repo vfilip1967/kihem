@@ -19,7 +19,7 @@ from src.composer import ServiceComposer
 from src.digital_scores import DigitalScoreCatalog, DigitalScoreReviewStore
 from src.liturgical_calendar import LiturgicalCalendar
 from src.melodos import MELODOS_HOME, MelodosClient, MelodosError
-from src.isokratis import ISON_NOTES, MODE_LABELS, IsokratisLibrary
+from src.isokratis import ISON_MARK_NUMBERS, ISON_NOTES, MODE_LABELS, IsokratisLibrary
 from src.music_labels import short_music_label
 from src.scripture_interpretations import ScriptureInterpretationService, add_reading_bookmarks
 from src.typesafe_decisions import TypesafeDecisionService
@@ -336,6 +336,10 @@ def create_app(config: dict | None = None) -> Flask:
                 score_url=asset_urls.get("byzx"),
                 note_labels=digital_score_catalog.note_labels(score),
                 hidden_elements=digital_score_catalog.hidden_elements(score),
+                ison_marks=digital_score_catalog.ison_marks(score),
+                ison_mark_numbers=ISON_MARK_NUMBERS,
+                available_ison=sorted(media_library.ison_numbers),
+                ison_url_prefix=f"{base_url}/isokratis/ison/",
             ),
             mimetype="text/html",
         )

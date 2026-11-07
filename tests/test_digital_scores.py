@@ -102,6 +102,45 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         sidecar.write_text("not json", encoding="utf-8")
         self.assertEqual(catalog.hidden_elements(score), [])
 
+    def test_ison_marks_come_from_the_private_byzx(self):
+        self.write_catalog([self.score()])
+        byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        score = catalog.get("lithou-sfragisthentos-tone1")
+
+        self.assertEqual(catalog.ison_marks(score), [])
+        byzx.write_text(
+            json.dumps(
+                {
+                    "staff": {
+                        "elements": [
+                            {"elementType": "Martyria", "note": "Pa"},
+                            {"elementType": "Note", "ison": "Ison.Pa"},
+                            {"elementType": "Note"},
+                            {"elementType": "Empty"},
+                            {"elementType": "Note", "ison": "Ison.Thi"},
+                            {"elementType": "Note", "ison": "Ison.Unison"},
+                            "not an object",
+                            {"elementType": "Note", "ison": 7},
+                            {"elementType": "Note", "ison": "  "},
+                        ]
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.assertEqual(
+            catalog.ison_marks(score),
+            [[1, "Ison.Pa"], [4, "Ison.Thi"], [5, "Ison.Unison"]],
+        )
+
+        byzx.write_text("not json", encoding="utf-8")
+        self.assertEqual(catalog.ison_marks(score), [])
+        byzx.write_text(json.dumps({"staff": {}}), encoding="utf-8")
+        self.assertEqual(catalog.ison_marks(score), [])
+        byzx.unlink()
+        self.assertEqual(catalog.ison_marks(score), [])
+
     def test_source_scan_paths_are_catalogued_and_cannot_escape_storage(self):
         self.write_catalog([self.score()])
         (self.storage / "source-1.png").write_bytes(b"source")

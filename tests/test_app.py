@@ -329,6 +329,80 @@ class AppTests(unittest.TestCase):
         self.assertTrue(note["checks"]["lyrics"])
         self.assertFalse(note["checks"]["neumes"])
 
+    def test_public_score_shows_ison_mp3_controls_only_when_marks_exist(self):
+        digital_assets = Path(self.temporary.name) / "digital-scores"
+        digital_assets.mkdir()
+        catalog_path = Path(self.temporary.name) / "digital-scores.json"
+
+        def score(score_id):
+            return {
+                "id": score_id,
+                "title": "Δοκιμή ισοκράτη",
+                "incipit": "Δοκιμή",
+                "tone_label": "Ἦχος α΄",
+                "source_description": "Πρωτότυπη σάρωση",
+                "transcription_by": "Δοκιμή",
+                "review_state": "verified",
+                "reviewed_by": "Πρωτοψάλτης δοκιμής",
+                "byzx_filename": f"{score_id}.byzx",
+            }
+
+        catalog_path.write_text(
+            json.dumps(
+                {"schema": 1, "scores": [score("with-ison"), score("without-ison")]},
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+        (digital_assets / "with-ison.byzx").write_text(
+            json.dumps(
+                {
+                    "staff": {
+                        "elements": [
+                            {"elementType": "Martyria", "note": "Pa"},
+                            {"elementType": "Note", "ison": "Ison.Pa"},
+                            {"elementType": "Note"},
+                            {"elementType": "Note", "ison": "Ison.Thi"},
+                        ]
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        (digital_assets / "without-ison.byzx").write_text(
+            json.dumps({"staff": {"elements": [{"elementType": "Martyria", "note": "Pa"}]}}),
+            encoding="utf-8",
+        )
+        neanes_web = Path(self.temporary.name) / "neanes-web"
+        neanes_web.mkdir()
+        (neanes_web / "index.html").write_text("<!doctype html><title>Neanes</title>", encoding="utf-8")
+        app = create_app(
+            {
+                "TESTING": True,
+                "CACHE_DIR": self.temporary.name,
+                "BYZ_DIR": str(Path(self.temporary.name) / "byz"),
+                "COMPOSER": FakeComposer(),
+                "DIGITAL_SCORES_CATALOG": str(catalog_path),
+                "DIGITAL_SCORES_DIR": str(digital_assets),
+                "NEANES_WEB_DIR": str(neanes_web),
+            }
+        )
+        client = app.test_client()
+
+        with_marks = client.get("/digital-scores/with-ison/")
+        self.assertEqual(with_marks.status_code, 200)
+        text = with_marks.get_data(as_text=True)
+        self.assertIn('id="ison-mp3-toggle"', text)
+        self.assertIn("Ισοκράτης mp3 από το PDF: όχι", text)
+        self.assertIn("'kihem-ison-mp3'", text)
+        self.assertIn('id="ison-mp3-volume"', text)
+        self.assertIn('"Ison.Pa"', text)
+        self.assertIn("const isonMarkNumbers =", text)
+
+        without_marks = client.get("/digital-scores/without-ison/")
+        self.assertEqual(without_marks.status_code, 200)
+        self.assertNotIn('id="ison-mp3-toggle"', without_marks.get_data(as_text=True))
+
     def test_isokratis_audio_routes_only_serve_catalogued_mp3_files(self):
         ison = self.client.get("/isokratis/ison/60.mp3")
         self.assertEqual(ison.status_code, 200)
