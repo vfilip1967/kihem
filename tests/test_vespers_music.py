@@ -24,6 +24,17 @@ MISS = """
 """
 
 
+DOXASTIKON = """
+<h3 class="dcs-heading">Δοξαστικόν.</h3>
+<p class="dcs-hymn">Αὕτη ἡ ἡμέρα Κυρίου, ἀγαλλιάσθε λαοί.</p>
+"""
+
+LITURGY_TEXT_IN_APOLYTIKION = """
+<h3 class="dcs-heading">Ἀπολυτίκιον.</h3>
+<p class="dcs-hymn">Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον.</p>
+"""
+
+
 class AttachTests(unittest.TestCase):
     def test_attaches_the_verified_apolytikion(self):
         html, bookmarks, pieces = attach_music(HIT)
@@ -52,6 +63,20 @@ class AttachTests(unittest.TestCase):
         _, bookmarks, _ = attach_music(HIT, instance_start=4)
 
         self.assertEqual(bookmarks[0]["anchor_id"], "music-tone6-apolytikion-5")
+
+    def test_doxastikon_family_attaches_under_its_own_section(self):
+        html, bookmarks, pieces = attach_music(DOXASTIKON)
+
+        self.assertEqual(pieces, ["kypseli-08-doxastikon"])
+        self.assertEqual(bookmarks[0]["anchor_id"], "music-kypseli-08-doxastikon-1")
+
+    def test_section_families_block_cross_service_pieces(self):
+        # A Liturgy setting of the Trinitarian formula must never land in the
+        # Apolytikion just because its incipit appears there.
+        html, bookmarks, pieces = attach_music(LITURGY_TEXT_IN_APOLYTIKION)
+
+        self.assertEqual(pieces, [])
+        self.assertNotIn("data-music-piece", html)
 
     def test_empty_document_is_safe(self):
         self.assertEqual(attach_music(""), ("", [], []))

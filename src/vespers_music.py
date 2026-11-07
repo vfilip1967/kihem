@@ -17,9 +17,18 @@ from bs4 import BeautifulSoup, Tag
 
 from src.anastasimatarion import PIECES, MusicPiece, _music_markup
 
-# Only these sections may receive a piece for now.  The Apolytikion is the one
-# Vespers hymn for which the local catalogue has verified settings.
-ATTACHABLE_HEADINGS: tuple[str, ...] = ("Ἀπολυτίκιον",)
+# A section accepts only the piece families that belong to it.  This is the
+# guard that keeps, for example, a Liturgy setting of «Πατέρα, Υἱὸν…» out of
+# the Vespers prayer of the entrance: a piece may not float to any text that
+# happens to contain its incipit.
+SECTION_FAMILIES: Final[tuple[tuple[str, tuple[str, ...]], ...]] = (
+    ("Ἀπολυτίκιον", ("apolytikion",)),
+    ("Δοξαστικόν", ("doxastikon",)),
+    ("Ἀπόστιχα", ("aposticha", "doxastikon")),
+    ("Στιχηρά", ("sticheron", "stichera", "doxastikon")),
+)
+# Very short incipits are liturgical formulae and would match noise.
+MIN_INCIPIT_LENGTH: Final = 12
 
 
 def _normalized(value: str) -> str:
@@ -53,12 +62,25 @@ def _section_text(heading: Tag) -> list[Tag]:
     return nodes
 
 
-def _candidates(section_text: str) -> list[MusicPiece]:
+def _families_for(title: str) -> tuple[str, ...]:
+    normalized = _normalized(title)
+    families: list[str] = []
+    for prefix, allowed in SECTION_FAMILIES:
+        if normalized.startswith(_normalized(prefix)):
+            for family in allowed:
+                if family not in families:
+                    families.append(family)
+    return tuple(families)
+
+
+def _candidates(section_text: str, families: tuple[str, ...]) -> list[MusicPiece]:
     haystack = _normalized(section_text)
     matches = []
     for piece in PIECES.values():
+        if not any(family in piece.piece_id for family in families):
+            continue
         needle = _normalized(piece.incipit)
-        if not needle or needle in GENERIC_INCIPITS:
+        if not needle or needle in GENERIC_INCIPITS or len(needle) < MIN_INCIPIT_LENGTH:
             continue
         if needle in haystack:
             matches.append(piece)
@@ -88,16 +110,17 @@ def attach_music(
     instance = instance_start
 
     for heading in root.find_all("h3", class_="dcs-heading"):
-        title = _normalized(heading.get_text(" ", strip=True))
+        raw_title = heading.get_text(" ", strip=True)
         # Compare accent-insensitively: DCS prints «Ἀπολυτίκιον» with a different
         # iota codepoint than a plain Greek keyboard produces.
-        if not any(title.startswith(_normalized(prefix)) for prefix in ATTACHABLE_HEADINGS):
+        families = _families_for(raw_title)
+        if not families:
             continue
         paragraphs = _section_text(heading)
         text = " ".join(node.get_text(" ", strip=True) for node in paragraphs)
         if not text.strip():
             continue
-        for piece in _candidates(text):
+        for piece in _candidates(text, families):
             if piece.piece_id in attached:
                 continue
             instance += 1
