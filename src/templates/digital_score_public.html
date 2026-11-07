@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ score.incipit }} · ψηφιακή παρτιτούρα</title>
-  <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261104-short-music-menu">
+  <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261107-compact-player-controls">
   <style>
     /* Inside the service page the score is only a player: no headings or notes. */
     html.embedded .public-score-header, html.embedded .public-score-card,
@@ -46,10 +46,15 @@
         <p>Η παρτιτούρα φορτώνεται αυτόματα. Πάτησε το ▶ μέσα στο Neanes για να αρχίσει η συνθετική ακρόαση, χωρίς λήψη ή μεταφόρτωση αρχείου.</p>
         <p id="neanes-load-status" class="playback-status" role="status">Φορτώνεται η παρτιτούρα στο Neanes…</p>
         <button id="neanes-retry" class="quiet-button playback-retry" type="button" hidden>Επανάληψη φόρτωσης παρτιτούρας</button>
-        <button id="ison-toggle" class="quiet-button ison-toggle" type="button" aria-pressed="true" title="Άκουσμα με ή χωρίς ισοκράτημα">Ισοκράτημα: ναι</button>
+        <div class="player-controls">
+          {% include "_neanes_speed.html" %}
+          <button id="ison-toggle" class="quiet-button ison-toggle" type="button" aria-pressed="true" title="Άκουσμα με ή χωρίς ισοκράτημα (Neanes)">Ίσον: ναι</button>
+          {% if ison_marks %}
+          <button id="ison-mp3-toggle" class="quiet-button ison-toggle" type="button" aria-pressed="false" title="{% if ison_auto %}Αυτόματη προεπιλογή ισοκράτη ανά ήχο· δεν προέρχεται από το PDF{% else %}Ισοκράτης από τα mp3 που ακολουθεί τις ενδείξεις της παρτιτούρας{% endif %}">Ίσον mp3: όχι</button>
+          <label id="ison-mp3-volume-label" class="ison-mp3-volume" hidden>🔊 <input id="ison-mp3-volume" type="range" min="0" max="100" value="70" aria-label="Ένταση ισοκράτη mp3"></label>
+          {% endif %}
+        </div>
         {% if ison_marks %}
-        <button id="ison-mp3-toggle" class="quiet-button ison-toggle" type="button" aria-pressed="false" title="{% if ison_auto %}Αυτόματη προεπιλογή ισοκράτη ανά ήχο· δεν προέρχεται από το PDF{% else %}Ισοκράτης από τα mp3 που ακολουθεί τις ενδείξεις της παρτιτούρας{% endif %}">{% if ison_auto %}Ισοκράτης mp3 (αυτόματος ανά ήχο): όχι{% else %}Ισοκράτης mp3 από το PDF: όχι{% endif %}</button>
-        <label id="ison-mp3-volume-label" class="ison-mp3-volume" hidden>Ένταση <input id="ison-mp3-volume" type="range" min="0" max="100" value="70" aria-label="Ένταση ισοκράτη mp3"></label>
         <span id="ison-mp3-status" class="playback-status ison-mp3-status" role="status" hidden></span>
         {% endif %}
         <script>
@@ -74,7 +79,7 @@
             } catch (error) { /* storage unavailable: Neanes keeps its defaults */ }
             const button = document.getElementById('ison-toggle');
             if (button) {
-              button.textContent = (off || mp3) ? 'Ισοκράτημα: όχι' : 'Ισοκράτημα: ναι';
+              button.textContent = (off || mp3) ? 'Ίσον: όχι' : 'Ίσον: ναι';
               button.setAttribute('aria-pressed', (off || mp3) ? 'false' : 'true');
               button.addEventListener('click', () => {
                 try { localStorage.setItem(droneKey, off ? 'on' : 'off'); } catch (error) { return; }
@@ -83,11 +88,7 @@
             }
             const mp3Button = document.getElementById('ison-mp3-toggle');
             if (!mp3Button) return;
-            const isonAuto = {{ ison_auto|tojson }};
-            const mp3Label = (on) => {
-              if (isonAuto) return `Ισοκράτης mp3 (αυτόματος ανά ήχο): ${on ? 'ναι' : 'όχι'}`;
-              return `Ισοκράτης mp3 από το PDF: ${on ? 'ναι' : 'όχι'}`;
-            };
+            const mp3Label = (on) => `Ίσον mp3: ${on ? 'ναι' : 'όχι'}`;
             const renderMp3 = () => {
               mp3Button.textContent = mp3Label(mp3);
               mp3Button.setAttribute('aria-pressed', mp3 ? 'true' : 'false');
@@ -105,7 +106,6 @@
             });
           })();
         </script>
-{% include "_neanes_speed.html" %}
 {% include "_neanes_isolate.html" %}
         <iframe id="neanes-player" class="neanes-player" src="{{ neanes_url }}" title="Neanes player για {{ score.incipit }}" allow="autoplay"></iframe>
 {% include "_neanes_practice.html" %}

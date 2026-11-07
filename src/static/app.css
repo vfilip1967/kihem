@@ -677,10 +677,20 @@ button:hover { background: var(--wine-dark); }
   .music-page { break-inside: avoid; }
 }
 
+/* Compact single row of player controls above the Neanes player. */
+.player-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 8px; }
+.player-controls .ison-toggle, .player-controls .speed-controls, .player-controls .ison-mp3-volume { margin: 0; }
+.player-controls button, .player-controls select { font-size: .85rem; padding: 3px 7px; }
 /* Switch for the ison drone above the Neanes player. */
 .ison-toggle { margin: 0 0 8px; }
 .ison-toggle[aria-pressed="false"] { opacity: .75; }
-.speed-select { display: inline-block; margin: 0 0 8px 8px; }
+.speed-controls { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 8px 8px; }
+.speed-select { display: inline-flex; align-items: center; gap: 4px; margin: 0; }
+.ison-mp3-volume { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 8px; font: 700 .85rem Arial, sans-serif; }
+.ison-mp3-volume[hidden] { display: none; }
+.ison-mp3-volume input[type="range"] { width: 90px; margin: 0; }
+.ison-mp3-status { display: block; margin: 0 0 8px; padding: 4px 8px; font-size: .82rem; }
+.ison-mp3-status[hidden] { display: none; }
 .practice-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 8px 0; }
 .practice-status { color: #5b3a06; font-weight: 600; }
 .practice-bar label { display: inline-flex; align-items: center; gap: 4px; }

@@ -756,7 +756,7 @@ This file records only durable implementation decisions.
   the optional private sidecar `<score>.notes.json` next to the `.byzx`
   (loaded by `DigitalScoreCatalog.note_labels`). The tag is positioned from the
   highlighted box in the same-origin iframe; it maps the `.element-box` DOM
-  order to Neanes' element index. A switch "Ισοκράτημα: ναι/όχι" writes
+  order to Neanes' element index. A switch "Ίσον: ναι/όχι" writes
   `volumeIson` into the shared `audioOptionsDefault` localStorage before the
   iframe loads (`null` = mute, Neanes' own serialisation of -Infinity) and
   reloads the page; the default drone volume is -8 dB.
@@ -768,7 +768,7 @@ This file records only durable implementation decisions.
   first box right after loading (the opening martyria). Verified headless by
   playing spans from 300 and 440 against the sidecar.
 - Playback speed (2026-10-14, user: "στα κοινωνικά παίζει πιο αργά"): the
-  shared partial `_neanes_speed.html` adds a "Ταχύτητα" select (40–125%) the
+  shared partial `_neanes_speed.html` adds a "Ταχ." select (40–125%) the
   same way, writing Neanes' `audioOptions.speed` (tempo multiplier, 0.1–3)
   before the iframe loads. The default comes from the optional catalogue field
   `playback_speed` (Koinonikon «Αἰνεῖτε» = 0.6); a student's choice is kept
@@ -894,7 +894,7 @@ This file records only durable implementation decisions.
   `.notes.json` sidecar keys. `ISON_MARK_NUMBERS` in `isokratis.py` maps
   Pa 102, Ni 90, Zo 82, Vou 112, Ga 120, Thi 132, Ke 144, KeLow 72,
   ThiLow 60 at register/semitone 0; unknown names are ignored. The page shows
-  «Ισοκράτης mp3 από το PDF: όχι/ναι» (`kihem-ison-mp3`) only when marks exist;
+  «Ίσον mp3: όχι/ναι» (`kihem-ison-mp3`) only when marks exist;
   ON forces Neanes' `volumeIson = null` before the iframe boots and a 150 ms
   watcher follows the last mark at or before `.audio-selected`. It follows
   Neanes' own rules: no drone before the first mark, a mark lasts until the
@@ -916,8 +916,12 @@ This file records only durable implementation decisions.
   when the default is below Δι, uses `Ison.Thi` for a segment whose median
   written note (sidecar `physical`) is above Δι. Real marks always win; a
   missing sidecar yields only the single default mark and never raises. The
-  page then labels the control «Ισοκράτης mp3 (αυτόματος ανά ήχο)» and says
+  page then keeps the short control «Ίσον mp3: ναι/όχι» and the tooltip says
   the drone is an automatic default, not from the PDF.
+- The public player keeps speed, Neanes ison and mp3 ison on one compact
+  flex row (`.player-controls`, wrapping only on narrow screens); the mp3
+  volume slider uses a 🔊 label and is shown only in mp3 mode, and
+  `#ison-mp3-status` stays as a small line below the row.
 - Selecting a prosomia mode starts its first curated recording immediately;
   selecting a different MP3 also starts it immediately. Only the icon-only
   `Ⅱ` stop control remains. The fixed `isokratis.py` catalog follows the VLC

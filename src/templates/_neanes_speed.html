@@ -1,10 +1,12 @@
-    <label class="speed-select" for="speed-select">Ταχύτητα:
-      <select id="speed-select">
-        {% for value in (0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25) %}<option value="{{ value }}">{{ (value * 100)|round|int }}%</option>{% endfor %}
-      </select>
-    </label>
-    <button type="button" id="speed-slower" class="speed-step" title="5% πιο αργά, και κατά την εκτέλεση" aria-label="Πιο αργά">−</button>
-    <button type="button" id="speed-faster" class="speed-step" title="5% πιο γρήγορα, και κατά την εκτέλεση" aria-label="Πιο γρήγορα">+</button>
+    <span class="speed-controls">
+      <label class="speed-select" for="speed-select" title="Ταχύτητα αναπαραγωγής">Ταχ.
+        <select id="speed-select" aria-label="Ταχύτητα αναπαραγωγής">
+          {% for value in (0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25) %}<option value="{{ value }}">{{ (value * 100)|round|int }}%</option>{% endfor %}
+        </select>
+      </label>
+      <button type="button" id="speed-slower" class="speed-step" title="5% πιο αργά, και κατά την εκτέλεση" aria-label="Πιο αργά">−</button>
+      <button type="button" id="speed-faster" class="speed-step" title="5% πιο γρήγορα, και κατά την εκτέλεση" aria-label="Πιο γρήγορα">+</button>
+    </span>
     <script>
       /* Neanes multiplies the score's tempo by audioOptions.speed and, like the
          ison volume, reads it only when it starts.  Each score has a catalogue
