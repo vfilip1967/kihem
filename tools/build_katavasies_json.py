@@ -2,9 +2,12 @@
 
 The registry (kat_registry_src.json) describes 40 feast sets of short
 katavasies.  Only odes marked as passing review and present in the public
-digital-score catalogue become attachment candidates.  Several sets share the
-same eirmos, so entries are de-duplicated by normalized incipit.  The output is
-consumed by src/anastasimatarion.py to generate the Orthros attachment rules.
+digital-score catalogue become attachment candidates.  Both the set's first
+eirmos and the ode's own incipit must have at least three words; shorter
+incipits are too likely to occur in ordinary psalm or hymn text, so they are
+left to the printed scan.  Several sets share the same eirmos, so entries are
+de-duplicated by normalized incipit.  The output is consumed by
+src/anastasimatarion.py to generate the Orthros attachment rules.
 
 Run from the repository root:
 
@@ -47,6 +50,10 @@ def _normalized(value: str) -> str:
     return " ".join(cleaned.split())
 
 
+def _word_count(value: str) -> int:
+    return len(_normalized(value).split())
+
+
 def _catalogue_id(set_name: str, ode: str, registry_id: str, catalogue_ids: set[str]) -> str | None:
     if registry_id in catalogue_ids:
         return registry_id
@@ -66,9 +73,15 @@ def build_entries() -> tuple[list[dict[str, str]], int]:
 
     candidates: list[dict[str, object]] = []
     for set_index, (set_name, set_data) in enumerate(registry.items()):
+        first_incipit = set_data["first_incipit"]
+        if _word_count(first_incipit) < 3:
+            # A short first eirmos cannot safely identify its feast set.
+            continue
         for ode_index, (ode, ode_data) in enumerate(set_data["odes"].items()):
             status = ode_data.get("status", "")
             if not status.startswith("pass"):
+                continue
+            if _word_count(ode_data["incipit"]) < 3:
                 continue
             score_id = _catalogue_id(set_name, ode, ode_data["id"], set(catalogue_by_id))
             if score_id is None:
@@ -80,7 +93,7 @@ def build_entries() -> tuple[list[dict[str, str]], int]:
                     "ode": ode,
                     "id": score_id,
                     "incipit": ode_data["incipit"],
-                    "first_incipit": set_data["first_incipit"],
+                    "first_incipit": first_incipit,
                     "feast": set_data["title"],
                     "composer": set_data["composer"],
                     "tone": set_data["tone"],

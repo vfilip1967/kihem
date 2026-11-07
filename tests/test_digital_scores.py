@@ -234,5 +234,15 @@ class DigitalScoreCatalogTests(unittest.TestCase):
             self.assertIn(entry["id"], catalogue_ids)
             for field in ("set", "ode", "incipit", "first_incipit", "feast", "composer", "tone", "title"):
                 self.assertTrue(entry[field], f"{entry['id']} has no {field}")
+            self.assertGreaterEqual(
+                len(normalized(entry["incipit"]).split()),
+                3,
+                f"{entry['id']} has a short ode incipit",
+            )
+            self.assertGreaterEqual(
+                len(normalized(entry["first_incipit"]).split()),
+                3,
+                f"{entry['id']} has a short first incipit",
+            )
         incipits = [normalized(entry["incipit"]) for entry in entries]
         self.assertEqual(len(incipits), len(set(incipits)))

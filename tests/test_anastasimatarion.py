@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 from datetime import date
 from pathlib import Path
@@ -1059,7 +1060,10 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertLess(result.html.index("cross-katavasies"), result.html.index("Ἡ Τιμιωτέρα"))
         self.assertLess(result.html.index("cross-katavasies"), result.html.index("Ὠδὴ θ΄"))
 
-    def test_eisodia_digital_katavasies_use_the_christmas_incipit_in_ode_order(self):
+    def test_short_first_eirmos_set_is_left_to_the_printed_scan(self):
+        # The Eisodia set's first eirmos «Χριστὸς γεννᾶται» has only two
+        # words.  A phrase that short cannot safely identify the feast, so the
+        # generator leaves the set out and the printed scan stays.
         score_ids = [
             "papline-kat-eis-s-1-private-draft",
             "papline-kat-eis-s-3-private-draft",
@@ -1083,28 +1087,9 @@ class AnastasimatarionTests(unittest.TestCase):
             verified_digital_scores=set(score_ids),
         )
 
-        self.assertEqual(result.attachment_count, len(score_ids))
-        positions = [
-            result.html.index(f'data-music-piece="{score_id}"') for score_id in score_ids
-        ]
-        self.assertEqual(positions, sorted(positions))
+        self.assertEqual(result.attachment_count, 0)
         for score_id in score_ids:
-            self.assertEqual(result.html.count(f'data-music-piece="{score_id}"'), 1)
-        self.assertLess(
-            max(positions),
-            result.html.index("Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός"),
-        )
-
-        without_incipit = source.replace("Χριστὸς γεννᾶται, δοξάσατε.<br>", "")
-        none = enrich_service_html(
-            date(2026, 11, 21),
-            "orthros",
-            without_incipit,
-            verified_digital_scores=set(score_ids),
-        )
-        self.assertEqual(none.attachment_count, 0)
-        for score_id in score_ids:
-            self.assertNotIn(score_id, none.html)
+            self.assertNotIn(score_id, result.html)
 
     def test_sunday_before_christmas_digital_katavasies_use_the_first_eirmos_in_ode_order(self):
         score_ids = [
@@ -1119,6 +1104,12 @@ class AnastasimatarionTests(unittest.TestCase):
         source = (
             "Καταβασίες<br>"
             "Χριστὸς ἐν πόλει Βηθλεὲμ βρεφουργεῖται.<br>"
+            "Ὑψιμέδων ἄναρχε εὐμενὲς Λόγε.<br>"
+            "Ἀκηκοὼς ὁ προφήτης, Χριστέ, τὴν ἀκοήν σου.<br>"
+            "Εἰς βυθὸν ἀπωλείας ἡ ταλαίπωρος φύσις.<br>"
+            "Ὡς οἱ παῖδες πάλαι σοι κράζομεν, Λόγε.<br>"
+            "Νεουργὲ τοῦ σύμπαντος κόσμου καὶ σῶστα.<br>"
+            "Χαίροις, πάναγνε θεοδέγμον Μαρία.<br>"
             "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
             "Κατόπιν ψάλλεται ἡ θ΄ Ωδή των καταβασιών"
         )
@@ -1172,6 +1163,13 @@ class AnastasimatarionTests(unittest.TestCase):
         source = (
             "Καταβασίες Τῆς Θεοτόκου<br>Ἦχος δ΄.<br>"
             "Ἀνοίξω τὸ στόμα μου, καὶ πληρωθήσεται Πνεύματος.<br>"
+            "Τοὺς σοὺς ὑμνολόγους, Θεοτόκε.<br>"
+            "Τὴν ἀνεξιχνίαστον θείαν βουλήν.<br>"
+            "Ἐξέστη τὰ σύμπαντα.<br>"
+            "Τὴν θείαν ταύτην.<br>"
+            "Οὐκ ἐλάτρευσαν τῇ κτίσει.<br>"
+            "Παῖδας εὐαγεῖς ἐν τῇ καμίνῳ.<br>"
+            "Ἅπας γηγενής σκιρτάτω τῷ πνεύματι.<br>"
             "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
             "Καὶ ψάλλεται ἡ Τιμιωτέρα στον ίδιο ήχο των καταβασιών.<br>"
             "Ἦχος δ΄<br>" + refrain * 6 +
@@ -1221,12 +1219,14 @@ class AnastasimatarionTests(unittest.TestCase):
             (project_root / "src" / "data" / "katavasies.json").read_text(encoding="utf-8")
         )
         theophany = [entry for entry in entries if entry["set"] == "theofp"]
-        self.assertEqual([entry["ode"] for entry in theophany], ["α", "γ", "δ", "ς", "ζ"])
+        # «Νέους εὐσεβεῖς» has only two words, so the generator leaves it to
+        # the printed scan.
+        self.assertNotIn("ζ", [entry["ode"] for entry in theophany])
         score_ids = [entry["id"] for entry in theophany]
         source = (
             "Καταβασίες<br>"
-            f"{theophany[0]['first_incipit']}.<br>"
-            "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
+            + "".join(f"{entry['incipit']}.<br>" for entry in theophany)
+            + "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
             "Κατόπιν ψάλλεται ἡ θ΄ Ωδή των καταβασιών"
         )
         result = enrich_service_html(
@@ -1260,6 +1260,76 @@ class AnastasimatarionTests(unittest.TestCase):
         unverified = enrich_service_html(date(2026, 1, 6), "orthros", source)
         for score_id in score_ids:
             self.assertNotIn(score_id, unverified.html)
+
+    def test_real_katavasia_pages_attach_only_the_eisp_set_on_2026_11_08(self):
+        project_root = Path(__file__).resolve().parents[1]
+        localfix = project_root / "localfix"
+        if not localfix.is_dir():
+            self.skipTest("localfix cached Melodos pages are not installed")
+        catalogue_ids = {
+            score["id"]
+            for score in json.loads(
+                (project_root / "src" / "data" / "digital_scores.json").read_text(
+                    encoding="utf-8"
+                )
+            )["scores"]
+        }
+        expected_1108 = [
+            "papline-kat-eisp-s-1-private-draft",
+            "papline-kat-eisp-s-3-private-draft",
+            "papline-kat-eisp-s-4-private-draft",
+            "papline-kat-eisp-s-5-private-draft",
+            "papline-kat-eisp-s-6-private-draft",
+            "papline-kat-eisp-s-7-private-draft",
+            "papline-kat-eisp-s-8-private-draft",
+            "papline-kat-eisp-s-9-private-draft",
+        ]
+        for day in range(8, 13):
+            pages = sorted(localfix.glob(f"2026-11-{day:02d}-orthros-*.html"))
+            if not pages:
+                self.skipTest(f"no cached Melodos page for 2026-11-{day:02d}")
+            result = enrich_service_html(
+                date(2026, 11, day),
+                "orthros",
+                pages[0].read_text(encoding="utf-8"),
+                verified_digital_scores=catalogue_ids,
+            )
+            attached = re.findall(
+                r'data-music-piece="(papline-kat-[^"]+)"', result.html
+            )
+            if day == 8:
+                self.assertEqual(attached, expected_1108)
+                self.assertEqual(len(attached), len(set(attached)))
+            else:
+                self.assertEqual(attached, [])
+
+    def test_short_incipits_in_unrelated_text_attach_no_katavasia(self):
+        project_root = Path(__file__).resolve().parents[1]
+        catalogue_ids = {
+            score["id"]
+            for score in json.loads(
+                (project_root / "src" / "data" / "digital_scores.json").read_text(
+                    encoding="utf-8"
+                )
+            )["scores"]
+        }
+        source = (
+            "Καταβασίες<br>"
+            "Ἴδετε ἴδετε ὅτι ἐγώ εἰμι ὁ Θεός.<br>"
+            "Θεὸς Κύριος καὶ ἐπέφανεν ἡμῖν.<br>"
+            "Στερέωσον τὴν καρδίαν μου ἐν σοί.<br>"
+            "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν.<br>"
+            "Κατόπιν ψάλλεται ἡ θ΄ Ωδή των καταβασιών"
+        )
+        result = enrich_service_html(
+            date(2026, 11, 8),
+            "orthros",
+            source,
+            verified_digital_scores=catalogue_ids,
+        )
+        attached = re.findall(r'data-music-piece="(papline-kat-[^"]+)"', result.html)
+        self.assertEqual(attached, [])
+        self.assertEqual(result.attachment_count, 0)
 
     def test_litourgia_gets_pandekti_eisodikon_and_trisagion(self):
         source = (

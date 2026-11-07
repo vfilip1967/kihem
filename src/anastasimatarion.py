@@ -165,6 +165,15 @@ class AttachmentRule:
     occurrences: Literal["first", "all"] = "first"
     required_text: tuple[str, ...] = ()
     required_text_any: tuple[str, ...] = ()
+    # Every group must match; at least one variant inside a group is enough.
+    # This is used by the katavasies rules, where a decorated initial letter
+    # can split the first word (e.g. «Ἀ νοίξω»), so both the plain and the
+    # first-letter-dropped forms are accepted.
+    required_text_groups: tuple[tuple[str, ...], ...] = ()
+    # Check required_text/required_text_groups only after the first occurrence
+    # of one of these markers (e.g. the first «Καταβασίες» heading).  When the
+    # marker is absent, the whole document is searched.
+    required_after_any: tuple[str, ...] = ()
     excluded_text_any: tuple[str, ...] = ()
     weekdays: tuple[int, ...] = ()
     # The weekly tone is read from the returned Melodos document. It is never
@@ -934,6 +943,22 @@ _TONE6_DOXOLOGY_INSTRUCTIONS: Final[tuple[str, ...]] = (
     "η δοξολογία σήμερα ψάλλεται στην ήχο της ημέρας δηλαδή ήχο πλ β",
 )
 
+# Matching is accent- and punctuation-insensitive; the stored polytonic text
+# and the HTML delivered to the browser are never altered.
+def _normalized(value: str) -> str:
+    value = unicodedata.normalize("NFD", value.casefold())
+    # Melodos alternates commas, Greek ano teleia, apostrophes and full stops
+    # between otherwise identical liturgical lines.  Strip punctuation for
+    # matching only; the source HTML and all displayed polytonic text remain
+    # untouched.
+    cleaned = "".join(
+        ch
+        for ch in value
+        if unicodedata.category(ch) not in {"Mn", "Pc", "Pd", "Pe", "Pf", "Pi", "Po", "Ps"}
+    )
+    return " ".join(cleaned.split())
+
+
 # The short katavasies of the whole year come from the catalogue registry. They
 # are all inserted before the invitation to the Timiotera, in the order the data
 # file lists them (sets in registry order, odes in liturgical order). The old
@@ -943,6 +968,23 @@ KATAVASIES_DATA_PATH: Final = Path(__file__).resolve().parent / "data" / "katava
 _KATAVASIES_ANCHOR: Final = (
     "Τὴν Θεοτόκον καὶ Μητέρα τοῦ Φωτός, ἐν ὕμνοις τιμῶντες μεγαλύνωμεν."
 )
+# The main heading is «Καταβασίες»; the ninth-ode block says «Καταβασία».
+# These complete word forms deliberately do not match «συγκατάβασιν», which
+# occurs in ordinary hymn text (e.g. the 2026-11-09 Orthros).
+_KATAVASIA_HEADING_MARKERS: Final[tuple[str, ...]] = (
+    "καταβασιεσ",
+    "καταβασια",
+    "καταβασιων",
+)
+# The tone-4 «Ἀνοίξω τὸ στόμα μου» family shares its eirmoi across several
+# feasts.  Require the feast-specific heading wording so an Eisodia page does
+# not also attach the Triodion Theotokos or Annunciation odes that quote the
+# same lines.  Other sets are already distinguished by their first eirmos.
+_KATAVASIA_SET_HEADING_GROUPS: Final[dict[str, tuple[tuple[str, ...], ...]]] = {
+    "eisp": (("καταβασιεσ εισοδιων", "καταβασιεσ τησ θεοτοκου"),),
+    "theot": (("εορτασ τησ θεοτοκου", "τριωδι"),),
+    "evang": (("ευαγγελισμ",),),
+}
 # The scanned Cross and Theotokos katavasies remain authoritative on their own
 # services; the short digital odes must not replace them.
 _CROSS_THEOTOKOS_SCAN_HEADERS: Final[tuple[str, ...]] = (
@@ -957,14 +999,38 @@ _CHRISTMAS_KATAVASIES_INCIPITS: Final[tuple[str, ...]] = (
 )
 
 
+def _katavasia_variants(value: str) -> tuple[str, ...]:
+    """Return the plain incipit and its decorated-initial-letter form."""
+    normalized = _normalized(value)
+    variants = [normalized]
+    tokens = normalized.split()
+    if tokens:
+        dropped = tokens[:]
+        dropped[0] = dropped[0][1:]
+        candidate = " ".join(token for token in dropped if token)
+        if candidate and candidate not in variants:
+            variants.append(candidate)
+    return tuple(variants)
+
+
 def _generated_katavasies_rules() -> tuple[AttachmentRule, ...]:
     entries = json.loads(KATAVASIES_DATA_PATH.read_text(encoding="utf-8"))
     rules: list[AttachmentRule] = []
     for entry in entries:
-        # Melodos often names only the set's first eirmos; the old rules used
-        # that same trigger for every ode of the set. Keep it alongside the
-        # ode's own incipit so both the set heading and a full text match.
-        triggers = tuple(dict.fromkeys((entry["incipit"], entry["first_incipit"])))
+        # Melodos often quotes the set's first eirmos and the ode's own
+        # incipit.  Both must be present; a short incipit alone would match
+        # ordinary psalm text.  The generator already drops shorter incipits,
+        # but keep the guard here for a stale data file.
+        if len(_normalized(entry["incipit"]).split()) < 3:
+            continue
+        if len(_normalized(entry["first_incipit"]).split()) < 3:
+            continue
+        required_groups = (
+            _KATAVASIA_HEADING_MARKERS,
+            _katavasia_variants(entry["incipit"]),
+            _katavasia_variants(entry["first_incipit"]),
+            *_KATAVASIA_SET_HEADING_GROUPS.get(entry["set"], ()),
+        )
         if entry["set"] == "eisp":
             # The short Theotokos setting sits beside the verified full
             # Theotokos scan, so the scan stays and the digital odes are added.
@@ -978,8 +1044,8 @@ def _generated_katavasies_rules() -> tuple[AttachmentRule, ...]:
                 "orthros",
                 _KATAVASIES_ANCHOR,
                 entry["id"],
-                required_text=("Καταβασίες",),
-                required_text_any=triggers,
+                required_text_groups=required_groups,
+                required_after_any=_KATAVASIA_HEADING_MARKERS,
                 excluded_text_any=excluded,
                 insert_before=True,
                 digital_title=entry["title"],
@@ -2307,20 +2373,6 @@ def get_piece(book_id: str, piece_id: str) -> MusicPiece:
     return PIECES[piece_id]
 
 
-def _normalized(value: str) -> str:
-    value = unicodedata.normalize("NFD", value.casefold())
-    # Melodos alternates commas, Greek ano teleia, apostrophes and full stops
-    # between otherwise identical liturgical lines.  Strip punctuation for
-    # matching only; the source HTML and all displayed polytonic text remain
-    # untouched.
-    cleaned = "".join(
-        ch
-        for ch in value
-        if unicodedata.category(ch) not in {"Mn", "Pc", "Pd", "Pe", "Pf", "Pi", "Po", "Ps"}
-    )
-    return " ".join(cleaned.split())
-
-
 def _weekly_tone_from_document(normalized_document: str) -> int | None:
     """Read the current weekly tone from Melodos' own heading."""
     # `casefold()` normalizes final sigmas to σ.
@@ -2560,7 +2612,21 @@ def enrich_service_html(
         if rule.weekly_tone is not None and weekly_tone != rule.weekly_tone:
             continue
         needle = _normalized(rule.after_text)
-        if any(_normalized(required) not in normalized_document for required in rule.required_text):
+        required_scope = normalized_document
+        if rule.required_after_any:
+            marker_positions = [
+                normalized_document.find(_normalized(marker))
+                for marker in rule.required_after_any
+            ]
+            marker_positions = [position for position in marker_positions if position >= 0]
+            if marker_positions:
+                required_scope = normalized_document[min(marker_positions) :]
+        if any(_normalized(required) not in required_scope for required in rule.required_text):
+            continue
+        if rule.required_text_groups and not all(
+            any(_normalized(variant) in required_scope for variant in group)
+            for group in rule.required_text_groups
+        ):
             continue
         if rule.excluded_text_any and any(
             _normalized(excluded) in normalized_document for excluded in rule.excluded_text_any
