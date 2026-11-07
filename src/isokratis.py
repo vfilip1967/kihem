@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 import re
+import unicodedata
 
 
 ISON_NOTES: tuple[dict[str, int | str], ...] = (
@@ -43,6 +44,61 @@ ISON_MARK_NUMBERS: dict[str, int] = {
     "Ison.ThiLow": 60,
 }
 ISON_UNISON = "Ison.Unison"
+
+# Chosen default ison for a score that carries no ison marks.  This is an
+# editorial default, not a rule encoded by Neanes (which has no mode->ison
+# table).  The main note of each mode is consistent in the sources summarised
+# in the local ison research: byzantinechant.org's *Reading Psalmodia*
+# (Melling), analogion.com's *Isokratema*, *IsonSecondMode*,
+# *EnharmonicPlagalFirstMode* and *Barys*, and kelfar.net's *byzmusic.pdf*.
+# Practice is school-dependent for the ambiguous cases:
+#   * mode 2 uses the soft-chromatic base Δι; the hard-chromatic Πα base is
+#     not auto-detected;
+#   * mode 7 uses the enharmonic Γα; the diatonic Ζω is the documented
+#     alternative.
+# The optional plurals (πλ. α΄/β΄/δ΄) keep the same basis as their modes.
+MODE_DEFAULT_ISON: dict[str, str] = {
+    "1": "Ison.Pa",
+    "2": "Ison.Thi",
+    "3": "Ison.Ga",
+    "4": "Ison.Vou",
+    "5": "Ison.Pa",
+    "6": "Ison.Pa",
+    "7": "Ison.Ga",
+    "8": "Ison.Ni",
+}
+
+_NUMERAL_MODES = {"α": "1", "β": "2", "γ": "3", "δ": "4"}
+_PLAGAL_MODES = {"α": "5", "β": "6", "δ": "8"}
+
+
+def mode_key_from_tone_label(label: str | None) -> str | None:
+    """Return the eight-mode catalogue key for a Greek ``tone_label``.
+
+    Examples such as ``Ἦχος δ΄ · Vou · διατονικός``, ``Ἦχος πλ.δ΄ · Ni``,
+    ``Ἦχος πλ. α΄``, ``Ἦχος βαρύς · Γα`` and ``Ἦχος β΄ · Δι`` are recognised.
+    Plagal labels are checked before the plain tones.  Accents, the Greek
+    keraia and spacing are tolerated; an unknown or mode-less label yields
+    ``None`` rather than a guess.
+    """
+
+    if not isinstance(label, str):
+        return None
+    text = unicodedata.normalize("NFD", label)
+    text = "".join(char for char in text if not unicodedata.combining(char))
+    text = text.lower().replace("ς", "σ")
+    text = re.sub(r"[\u0384\u00b4'’.,()/·\-]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    if "βαρυ" in text:
+        return "7"
+    plagal = re.search(r"πλ\s*([αβγδ])", text)
+    if plagal:
+        return _PLAGAL_MODES.get(plagal.group(1))
+    plain = re.search(r"ηχοσ\s*([αβγδ])", text)
+    if plain:
+        return _NUMERAL_MODES.get(plain.group(1))
+    return None
+
 
 MODE_LABELS = {
     "1": "Α΄ ήχος",

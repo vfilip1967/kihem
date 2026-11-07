@@ -325,6 +325,9 @@ def create_app(config: dict | None = None) -> Flask:
         }
         neanes_dir = os.fspath(app.config["NEANES_WEB_DIR"])
         player_available = "byzx" in asset_urls and os.path.isfile(os.path.join(neanes_dir, "index.html"))
+        real_ison_marks = digital_score_catalog.ison_marks(score)
+        auto_ison_marks = digital_score_catalog.auto_ison_marks(score) if not real_ison_marks else []
+        ison_marks = real_ison_marks or auto_ison_marks
         response = Response(
             render_template(
                 "digital_score_public.html",
@@ -336,7 +339,8 @@ def create_app(config: dict | None = None) -> Flask:
                 score_url=asset_urls.get("byzx"),
                 note_labels=digital_score_catalog.note_labels(score),
                 hidden_elements=digital_score_catalog.hidden_elements(score),
-                ison_marks=digital_score_catalog.ison_marks(score),
+                ison_marks=ison_marks,
+                ison_auto=bool(auto_ison_marks) and not real_ison_marks,
                 ison_mark_numbers=ISON_MARK_NUMBERS,
                 available_ison=sorted(media_library.ison_numbers),
                 ison_url_prefix=f"{base_url}/isokratis/ison/",

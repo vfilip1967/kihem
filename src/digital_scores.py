@@ -10,10 +10,13 @@ from __future__ import annotations
 
 import json
 import os
+import statistics
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Final, Literal, Mapping
+
+from src.isokratis import MODE_DEFAULT_ISON, mode_key_from_tone_label
 
 
 REVIEW_STATES: Final[frozenset[str]] = frozenset({"draft", "needs_review", "verified"})
@@ -31,6 +34,29 @@ _PARALLAGE_NAMES: Final[Mapping[str, str]] = {
     "Ke": "Κε",
 }
 
+# Written ScaleNote names to the seven-step scale used by the automatic ison:
+# Pa = 0, Δι (Thi) = 3.  The names come from Neanes' private note-name sidecar.
+_ISON_NOTE_VALUES: Final[Mapping[str, int]] = {
+    "ZoLow": -9,
+    "NiLow": -8,
+    "PaLow": -7,
+    "VouLow": -6,
+    "GaLow": -5,
+    "ThiLow": -4,
+    "KeLow": -3,
+    "Zo": -2,
+    "Ni": -1,
+    "Pa": 0,
+    "Vou": 1,
+    "Ga": 2,
+    "Thi": 3,
+    "Ke": 4,
+    "ZoHigh": 5,
+    "NiHigh": 6,
+    "PaHigh": 7,
+}
+_DI_VALUE: Final[int] = 3
+
 
 def parallage_label(scale_note: str) -> str | None:
     """Return the Greek note name for a Neanes ScaleNote, with its octave."""
@@ -40,6 +66,17 @@ def parallage_label(scale_note: str) -> str | None:
         if (not suffix or scale_note.endswith(suffix)) and base in _PARALLAGE_NAMES:
             return _PARALLAGE_NAMES[base] + octave
     return None
+
+
+def _physical_note_value(physical: object, index: int) -> int | None:
+    """Return the first written ScaleNote value for one element index."""
+
+    if not isinstance(physical, dict):
+        return None
+    notes = physical.get(str(index))
+    if not isinstance(notes, list) or not notes or not isinstance(notes[0], str):
+        return None
+    return _ISON_NOTE_VALUES.get(notes[0])
 
 
 @dataclass(frozen=True)
@@ -210,6 +247,87 @@ class DigitalScoreCatalog:
             name = element.get("ison")
             if isinstance(name, str) and name.strip():
                 marks.append([index, name.strip()])
+        return marks
+
+    def auto_ison_marks(self, score: DigitalScore) -> list[list[int | str]]:
+        """Return automatic ison marks for a score with no marks of its own.
+
+        This is a deliberately simple editorial default, not a claim about
+        what the PDF says.  The mode comes from ``tone_label``; the first
+        sounding note gets the mode's default ison.  The score is then split
+        at its Martyria elements: a segment whose median written melody note
+        lies above Δι uses Δι for that segment, unless the mode default is
+        already at or above Δι.  Equal consecutive marks are merged.  Missing
+        files or sidecars never raise; without the private ``.notes.json``
+        sidecar only the single default mark is returned.
+        """
+
+        if self.ison_marks(score):
+            return []
+        mode = mode_key_from_tone_label(score.tone_label)
+        default = MODE_DEFAULT_ISON.get(mode) if mode else None
+        if default is None:
+            return []
+        byzx = self.asset_path(score, "byzx")
+        if byzx is None:
+            return []
+        try:
+            payload = json.loads(byzx.read_text(encoding="utf-8"))
+            elements = payload["staff"]["elements"]
+        except (OSError, ValueError, KeyError, TypeError):
+            return []
+        if not isinstance(elements, list):
+            return []
+        first_note = next(
+            (
+                index
+                for index, element in enumerate(elements)
+                if isinstance(element, dict) and element.get("elementType") == "Note"
+            ),
+            None,
+        )
+        if first_note is None:
+            return []
+        marks: list[list[int | str]] = [[first_note, default]]
+
+        try:
+            sidecar = json.loads(byzx.with_suffix(".notes.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return marks
+        physical = sidecar.get("physical") if isinstance(sidecar, dict) and sidecar.get("schema") == 1 else None
+        if not isinstance(physical, dict):
+            return marks
+
+        segments: list[list[tuple[int, int]]] = []
+        current: list[tuple[int, int]] = []
+        for index, element in enumerate(elements):
+            if not isinstance(element, dict):
+                continue
+            element_type = element.get("elementType")
+            if element_type == "Martyria":
+                if current:
+                    segments.append(current)
+                    current = []
+            elif element_type == "Note":
+                value = _physical_note_value(physical, index)
+                if value is not None:
+                    current.append((index, value))
+        if current:
+            segments.append(current)
+
+        default_value = _ISON_NOTE_VALUES.get(default[5:])
+        if default_value is None or default_value >= _DI_VALUE:
+            return marks
+        current_ison = default
+        # The first segment already starts with the default mark above.
+        for segment in segments[1:]:
+            if not segment:
+                continue
+            median = statistics.median(value for _, value in segment)
+            wanted = "Ison.Thi" if median > _DI_VALUE else default
+            if wanted != current_ison:
+                marks.append([segment[0][0], wanted])
+                current_ison = wanted
         return marks
 
     def source_scan_path(self, score: DigitalScore, position: int) -> Path | None:

@@ -141,6 +141,118 @@ class DigitalScoreCatalogTests(unittest.TestCase):
         byzx.unlink()
         self.assertEqual(catalog.ison_marks(score), [])
 
+    def test_auto_ison_marks_use_the_mode_default_and_never_override_real_marks(self):
+        self.write_catalog([self.score(), self.score(id="with-real-marks")])
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        score = catalog.get("lithou-sfragisthentos-tone1")
+        byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
+        byzx.write_text(
+            json.dumps(
+                {
+                    "staff": {
+                        "elements": [
+                            {"elementType": "Martyria", "note": "Pa"},
+                            {"elementType": "Note"},
+                            {"elementType": "Note"},
+                        ]
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.assertEqual(catalog.auto_ison_marks(score), [[1, "Ison.Pa"]])
+
+        byzx.write_text(
+            json.dumps(
+                {
+                    "staff": {
+                        "elements": [
+                            {"elementType": "Martyria", "note": "Pa"},
+                            {"elementType": "Note", "ison": "Ison.Pa"},
+                        ]
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.assertEqual(catalog.auto_ison_marks(score), [])
+
+    def test_auto_ison_marks_switch_to_di_on_a_high_segment_and_back(self):
+        self.write_catalog([self.score()])
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        score = catalog.get("lithou-sfragisthentos-tone1")
+        byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
+        elements = [{"elementType": "Martyria", "note": "Pa"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        elements += [{"elementType": "Martyria", "note": "Pa"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        elements += [{"elementType": "Martyria", "note": "Pa"}]
+        elements += [{"elementType": "Note"} for _ in range(3)]
+        byzx.write_text(json.dumps({"staff": {"elements": elements}}), encoding="utf-8")
+        byzx.with_suffix(".notes.json").write_text(
+            json.dumps(
+                {
+                    "schema": 1,
+                    "physical": {
+                        "1": ["Pa"],
+                        "2": ["Vou"],
+                        "3": ["Ga"],
+                        "5": ["NiHigh"],
+                        "6": ["PaHigh"],
+                        "7": ["ZoHigh"],
+                        "9": ["Pa"],
+                        "10": ["Ni"],
+                        "11": ["Pa"],
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.assertEqual(
+            catalog.auto_ison_marks(score),
+            [[1, "Ison.Pa"], [5, "Ison.Thi"], [9, "Ison.Pa"]],
+        )
+
+    def test_auto_ison_marks_do_not_raise_without_a_sidecar_or_for_unknown_modes(self):
+        self.write_catalog([self.score(), self.score(id="unknown-tone", tone_label="Δεν δηλώνεται ήχος")])
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
+        byzx.write_text(
+            json.dumps({"staff": {"elements": [{"elementType": "Note"}, {"elementType": "Note"}]}}),
+            encoding="utf-8",
+        )
+        score = catalog.get("lithou-sfragisthentos-tone1")
+        self.assertEqual(catalog.auto_ison_marks(score), [[0, "Ison.Pa"]])
+        byzx.with_suffix(".notes.json").write_text("not json", encoding="utf-8")
+        self.assertEqual(catalog.auto_ison_marks(score), [[0, "Ison.Pa"]])
+        self.assertEqual(catalog.auto_ison_marks(catalog.get("unknown-tone")), [])
+
+    def test_auto_ison_marks_do_not_replace_a_default_already_at_or_above_di(self):
+        self.write_catalog([self.score(id="tone-two", tone_label="Ἦχος β΄")])
+        catalog = DigitalScoreCatalog(self.catalog_path, self.storage)
+        score = catalog.get("tone-two")
+        byzx = self.storage / "lithou-sfragisthentos-tone1.byzx"
+        byzx.write_text(
+            json.dumps(
+                {
+                    "staff": {
+                        "elements": [
+                            {"elementType": "Martyria", "note": "Thi"},
+                            {"elementType": "Note"},
+                            {"elementType": "Martyria", "note": "Thi"},
+                            {"elementType": "Note"},
+                        ]
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        byzx.with_suffix(".notes.json").write_text(
+            json.dumps({"schema": 1, "physical": {"1": ["Pa"], "3": ["PaHigh"]}}),
+            encoding="utf-8",
+        )
+        self.assertEqual(catalog.auto_ison_marks(score), [[1, "Ison.Thi"]])
+
     def test_source_scan_paths_are_catalogued_and_cannot_escape_storage(self):
         self.write_catalog([self.score()])
         (self.storage / "source-1.png").write_bytes(b"source")

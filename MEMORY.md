@@ -907,6 +907,17 @@ This file records only durable implementation decisions.
   through a lazily created Web Audio `GainNode` (`createMediaElementSource`,
   `AudioContext.resume()`) only after a pointerdown/click/keydown or the
   slider's `input`, so a suspended context cannot mute it.
+- Automatic ison default (2026-11-07): when a digital score has no real
+  `ison` marks, `isokratis.MODE_DEFAULT_ISON` supplies a chosen editorial
+  default per mode (1/5/6 Pa, 2 Thi, 3/7 Ga, 4 Vou, 8 Ni) and
+  `mode_key_from_tone_label` parses the Greek `tone_label` (plagal before
+  plain; barys = 7). `DigitalScoreCatalog.auto_ison_marks` marks the first
+  note element with that default, splits at `Martyria` elements and, only
+  when the default is below Δι, uses `Ison.Thi` for a segment whose median
+  written note (sidecar `physical`) is above Δι. Real marks always win; a
+  missing sidecar yields only the single default mark and never raises. The
+  page then labels the control «Ισοκράτης mp3 (αυτόματος ανά ήχο)» and says
+  the drone is an automatic default, not from the PDF.
 - Selecting a prosomia mode starts its first curated recording immediately;
   selecting a different MP3 also starts it immediately. Only the icon-only
   `Ⅱ` stop control remains. The fixed `isokratis.py` catalog follows the VLC

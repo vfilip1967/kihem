@@ -409,6 +409,73 @@ class AppTests(unittest.TestCase):
         self.assertNotIn("const isonUnisonMark", without_text)
         self.assertNotIn("createMediaElementSource", without_text)
 
+    def test_public_score_without_marks_renders_the_automatic_ison_label(self):
+        digital_assets = Path(self.temporary.name) / "digital-scores"
+        digital_assets.mkdir()
+        catalog_path = Path(self.temporary.name) / "digital-scores.json"
+        catalog_path.write_text(
+            json.dumps(
+                {
+                    "schema": 1,
+                    "scores": [
+                        {
+                            "id": "auto-ison",
+                            "title": "Δοκιμή αυτόματου ισοκράτη",
+                            "incipit": "Δοκιμή",
+                            "tone_label": "Ἦχος α΄",
+                            "source_description": "Πρωτότυπη σάρωση",
+                            "transcription_by": "Δοκιμή",
+                            "review_state": "verified",
+                            "reviewed_by": "Πρωτοψάλτης δοκιμής",
+                            "byzx_filename": "auto-ison.byzx",
+                        }
+                    ],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+        (digital_assets / "auto-ison.byzx").write_text(
+            json.dumps(
+                {
+                    "staff": {
+                        "elements": [
+                            {"elementType": "Martyria", "note": "Pa"},
+                            {"elementType": "Note"},
+                            {"elementType": "Note"},
+                        ]
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        (digital_assets / "auto-ison.notes.json").write_text(
+            json.dumps({"schema": 1, "physical": {"1": ["Pa"], "2": ["Vou"]}}),
+            encoding="utf-8",
+        )
+        neanes_web = Path(self.temporary.name) / "neanes-web"
+        neanes_web.mkdir()
+        (neanes_web / "index.html").write_text("<!doctype html><title>Neanes</title>", encoding="utf-8")
+        app = create_app(
+            {
+                "TESTING": True,
+                "CACHE_DIR": self.temporary.name,
+                "BYZ_DIR": str(Path(self.temporary.name) / "byz"),
+                "COMPOSER": FakeComposer(),
+                "DIGITAL_SCORES_CATALOG": str(catalog_path),
+                "DIGITAL_SCORES_DIR": str(digital_assets),
+                "NEANES_WEB_DIR": str(neanes_web),
+            }
+        )
+        response = app.test_client().get("/digital-scores/auto-ison/")
+        self.assertEqual(response.status_code, 200)
+        text = response.get_data(as_text=True)
+        self.assertIn('id="ison-mp3-toggle"', text)
+        self.assertIn("Ισοκράτης mp3 (αυτόματος ανά ήχο): όχι", text)
+        self.assertIn('"Ison.Pa"', text)
+        self.assertIn("αυτόματη προεπιλογή, όχι από το PDF", text)
+        self.assertIn("const isonAuto = true", text)
+
     def test_isokratis_audio_routes_only_serve_catalogued_mp3_files(self):
         ison = self.client.get("/isokratis/ison/60.mp3")
         self.assertEqual(ison.status_code, 200)

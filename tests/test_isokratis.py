@@ -2,7 +2,13 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from src.isokratis import ISON_MARK_NUMBERS, ISON_NOTES, IsokratisLibrary
+from src.isokratis import (
+    ISON_MARK_NUMBERS,
+    ISON_NOTES,
+    MODE_DEFAULT_ISON,
+    IsokratisLibrary,
+    mode_key_from_tone_label,
+)
 
 
 class IsokratisLibraryTests(unittest.TestCase):
@@ -47,6 +53,48 @@ class IsokratisLibraryTests(unittest.TestCase):
         )
         self.assertIsNone(self.library.prosomia_path("book.pdf"))
         self.assertIsNone(self.library.prosomia_path("../isokratis/60.mp3"))
+
+
+class ModeDefaultIsonTests(unittest.TestCase):
+    def test_default_ison_table_covers_all_eight_modes(self):
+        self.assertEqual(
+            MODE_DEFAULT_ISON,
+            {
+                "1": "Ison.Pa",
+                "2": "Ison.Thi",
+                "3": "Ison.Ga",
+                "4": "Ison.Vou",
+                "5": "Ison.Pa",
+                "6": "Ison.Pa",
+                "7": "Ison.Ga",
+                "8": "Ison.Ni",
+            },
+        )
+
+    def test_tone_labels_are_parsed_including_plagal_and_barys(self):
+        cases = {
+            "Ἦχος α΄": "1",
+            "Ἦχος β΄": "2",
+            "Ἦχος γ΄": "3",
+            "Ἦχος δ΄": "4",
+            "Ἦχος πλ. α΄": "5",
+            "Ἦχος πλ.β΄": "6",
+            "Ἦχος βαρύς": "7",
+            "Ἦχος πλ. δ΄": "8",
+            "Ἦχος δ΄ · Vou · διατονικός": "4",
+            "Ἦχος πλ.δ΄ · Ni · Diatonic": "8",
+            "Ἦχος πλ. α΄ · Πα · διατονικός": "5",
+            "Ἦχος βαρύς · Γα · διατονικός": "7",
+            "Ἦχος β΄ · Δι · μαλακό χρωματικό": "2",
+            "Ἦχος πλ. δ΄ (ἐκ τοῦ Γα) · Γα · διατονικός": "8",
+            "Βαρύς · Γα · διατονικός": "7",
+        }
+        for label, expected in cases.items():
+            with self.subTest(label=label):
+                self.assertEqual(mode_key_from_tone_label(label), expected)
+        self.assertIsNone(mode_key_from_tone_label("Δεν δηλώνεται μαρτυρία/ήχος στην απομονωμένη φόρμουλα"))
+        self.assertIsNone(mode_key_from_tone_label(""))
+        self.assertIsNone(mode_key_from_tone_label(None))
 
 
 class IsonMarkMappingTests(unittest.TestCase):
