@@ -867,6 +867,14 @@ This file records only durable implementation decisions.
 - Deployment reminder: the auto-mode classifier blocks production writes by
   Claude even with the user's consent; the user ran the first deploy with `!`,
   and later identical deploys were allowed.
+- Plagal-second (tone 6) Divine Liturgy: `_LITURGY_DIGITAL_DRAFTS` rows are
+  `(anchor, score_id, title, preceding_text, weekdays)`. The tone-6
+  `papline-cher-pl2-gregorios-private-draft` (Cheroubikon) attaches at
+  «Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες» and replaces the tone-6 scan; the
+  Sunday `papline-koin-pl2-karakasis-private-draft` (Koinonikon) attaches at
+  «Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν» with `weekdays=(6,)` and the
+  «Τῇ Κυριακῇ ψάλλεται το Κοινωνικόν» gate, so weekday tone-6 liturgies get
+  no Koinonikon digital. Tones 1 and 2 keep their empty weekday tuples.
 
 ## Isokratis
 

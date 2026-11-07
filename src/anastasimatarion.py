@@ -2180,37 +2180,44 @@ PILOT_RULES += (
 # Liturgy digital scores by tone.  On a day whose local Melodos instruction
 # selects that tone they replace the scanned setting of the same hymn at the
 # very same anchor, so every other tone keeps its existing behaviour.
-_LITURGY_DIGITAL_DRAFTS: Final[dict[int, tuple[tuple[str, str, str, str | None], ...]]] = {
+_LITURGY_DIGITAL_DRAFTS: Final[
+    dict[int, tuple[tuple[str, str, str, str | None, tuple[int, ...]], ...]]
+] = {
     1: (
         (
             "Παράσχου Κύριε.",
             "papline-lit1-kyrie-parashou-private-draft",
             "Κύριε ἐλέησον καὶ Παράσχου Κύριε · ἦχος α΄ · Βασιλείου Νικολαΐδου (ψηφιακή)",
             "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν",
+            (),
         ),
         (
             "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.",
             "papline-lit1-patera-private-draft",
             "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα · ἦχος α΄ · Βασιλείου Νικολαΐδου (ψηφιακή)",
             None,
+            (),
         ),
         (
             _LITOURGIA_SANCTUS,
             "papline-lit1-axion-dikaion-private-draft",
             "Ἄξιον καὶ δίκαιον · ἦχος α΄ · Βασιλείου Νικολαΐδου (ψηφιακή)",
             None,
+            (),
         ),
         (
             "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν",
             "papline-lit1-se-ymnoumen-private-draft",
             "Ἀμήν… Σὲ ὑμνοῦμεν · ἦχος α΄ · Βασιλείου Νικολαΐδου (ψηφιακή)",
             None,
+            (),
         ),
         (
             _LITOURGIA_AXION_ESTIN,
             "papline-lit1-axion-estin-private-draft",
             "Ἄξιόν ἐστιν · ἦχος α΄ · Γρηγορίου Πρωτοψάλτου (ψηφιακή)",
             None,
+            (),
         ),
     ),
     2: (
@@ -2219,30 +2226,51 @@ _LITURGY_DIGITAL_DRAFTS: Final[dict[int, tuple[tuple[str, str, str, str | None],
             "papline-lit2-kyrie-parashou-private-draft",
             "Κύριε ἐλέησον καὶ Παράσχου Κύριε · ἦχος β΄ · Βασιλείου Νικολαΐδου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
             "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν",
+            (),
         ),
         (
             "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.",
             "papline-lit2-patera-private-draft",
             "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα · ἦχος β΄ · Βασιλείου Νικολαΐδου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
             None,
+            (),
         ),
         (
             _LITOURGIA_SANCTUS,
             "papline-lit2-axion-dikaion-private-draft",
             "Ἄξιον καὶ δίκαιον · ἦχος β΄ · Βασιλείου Νικολαΐδου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
             None,
+            (),
         ),
         (
             "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν",
             "papline-lit2-se-ymnoumen-private-draft",
             "Ἀμήν… Σὲ ὑμνοῦμεν · ἦχος β΄ · Βασιλείου Νικολαΐδου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
             None,
+            (),
         ),
         (
             _LITOURGIA_AXION_ESTIN,
             "papline-lit2-axion-estin-private-draft",
             "Ἄξιόν ἐστιν · ἦχος β΄ · Γρηγορίου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
             None,
+            (),
+        ),
+    ),
+    6: (
+        (
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+            "papline-cher-pl2-gregorios-private-draft",
+            "Χερουβικὸν · ἦχος πλ. β΄ · Γρηγορίου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
+        ),
+        (
+            "Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν",
+            "papline-koin-pl2-karakasis-private-draft",
+            "Κοινωνικὸν Κυριακῆς · Αἰνεῖτε τὸν Κύριον · ἦχος πλ. β΄ · Γεωργίου Καρακάση (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            "Τῇ Κυριακῇ ψάλλεται το Κοινωνικόν",
+            (6,),
         ),
     ),
 }
@@ -2253,10 +2281,11 @@ PILOT_RULES += tuple(
         _score_id,
         required_text_any=_TONE_REQUIREMENTS[_tone],
         preceding_text=_preceding,
+        weekdays=_weekdays,
         digital_title=_title,
     )
     for _tone, _drafts in _LITURGY_DIGITAL_DRAFTS.items()
-    for _anchor, _score_id, _title, _preceding in _drafts
+    for _anchor, _score_id, _title, _preceding, _weekdays in _drafts
 )
 # Fixed Monogenes (Lambadarios, Pandekti 1851) and the Axion Estin in the tone of
 # the day's Leitourgika.  Both sit beside the scanned settings of the same piece.

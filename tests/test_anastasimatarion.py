@@ -512,6 +512,49 @@ class AnastasimatarionTests(unittest.TestCase):
         for score_id in ids:
             self.assertNotIn(score_id, result.html)
 
+    def test_plagal_second_liturgy_digital_scores_replace_the_scans(self):
+        page = Path(
+            "/tmp/kihem-cache/melodos/"
+            "2026-11-08-litourgia-gregorian-defaults-c53fe2c732a0.html"
+        )
+        if not page.is_file():
+            self.skipTest("cached Melodos page for 2026-11-08 is not installed")
+        score_ids = {
+            "papline-cher-pl2-gregorios-private-draft",
+            "papline-koin-pl2-karakasis-private-draft",
+        }
+        source = page.read_text(encoding="utf-8")
+
+        without_digital = enrich_service_html(date(2026, 11, 8), "litourgia", source)
+        self.assertIn('data-music-piece="litourgia-tone-6-cherouvikon"', without_digital.html)
+        self.assertIn('data-music-piece="litourgia-tone-6-koinonikon"', without_digital.html)
+
+        result = enrich_service_html(
+            date(2026, 11, 8), "litourgia", source, verified_digital_scores=score_ids
+        )
+        for score_id in score_ids:
+            self.assertEqual(result.html.count(f'data-music-piece="{score_id}"'), 1)
+        self.assertNotIn('data-music-piece="litourgia-tone-6-cherouvikon"', result.html)
+        self.assertNotIn('data-music-piece="litourgia-tone-6-koinonikon"', result.html)
+        self.assertLess(
+            result.html.index('data-music-piece="papline-cher-pl2-gregorios-private-draft"'),
+            result.html.index('data-music-piece="papline-koin-pl2-karakasis-private-draft"'),
+        )
+
+    def test_weekday_tone6_liturgy_gets_no_sunday_koinonikon_digital(self):
+        score_id = "papline-koin-pl2-karakasis-private-draft"
+        source = (
+            "Ήχος εβδομάδος πλ β΄.<br>"
+            "Σήμερα, απλή Δευτέρα, ψάλλονται σε ήχο πλ β΄.<br>"
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες.<br>"
+            "Τῇ Κυριακῇ ψάλλεται το Κοινωνικόν "
+            "Αἰνεῖτε τὸν Κύριον ἐκ τῶν οὐρανῶν.<br>"
+        )
+        result = enrich_service_html(
+            date(2026, 11, 9), "litourgia", source, verified_digital_scores={score_id}
+        )
+        self.assertNotIn(f'data-music-piece="{score_id}"', result.html)
+
     def test_sunday_eothinon_doxastikon_uses_the_verified_digital_score(self):
         source = (
             "Ήχος εβδομάδος δ΄.<br>ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ Ι'<br>Ἦχος πλ β' Ἰδιόμελον<br>"
