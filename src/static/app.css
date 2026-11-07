@@ -695,3 +695,23 @@ button:hover { background: var(--wine-dark); }
 .practice-status { color: #5b3a06; font-weight: 600; }
 .practice-bar label { display: inline-flex; align-items: center; gap: 4px; }
 .practice-bar input[type="checkbox"] { width: auto; height: auto; margin: 0; }
+
+/* Vespers documents come from the Digital Chant Stand, not Melodos.  They are
+   rendered from a small block model, so they need their own typographic scale
+   inside the same .service-text container. */
+.service-text .dcs-heading {
+  margin: 26px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--paper-deep);
+  color: var(--wine-dark);
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+.service-text .dcs-heading:first-child { margin-top: 0; }
+.service-text .dcs-mode { color: var(--muted); font-size: 0.9rem; }
+.service-text .dcs-rubric { color: #8a3b2a; font-style: italic; font-size: 0.93rem; }
+.service-text .dcs-actor { font-weight: 700; font-size: 0.9rem; color: var(--wine); }
+.service-text .dcs-verse { color: #3d3a35; }
+.service-text .dcs-reading { font-size: 0.97rem; }
+.service-text .dcs-source { color: var(--muted); font-size: 0.84rem; }
+.service-text .dcs-text { font-size: 0.97rem; }

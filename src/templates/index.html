@@ -31,6 +31,7 @@
         <label>
           <span>Ακολουθίες</span>
           <select name="services">
+            <option value="esperinos" {{ 'selected' if selected_services == 'esperinos' else '' }}>Σελίδα Εσπερινού</option>
             <option value="orthros" {{ 'selected' if selected_services == 'orthros' else '' }}>Σελίδα Όρθρου</option>
             <option value="litourgia" {{ 'selected' if selected_services == 'litourgia' else '' }}>Σελίδα Θείας Λειτουργίας</option>
           </select>
@@ -136,6 +137,7 @@
 
       <nav class="service-nav" aria-label="Περιεχόμενα ακολουθίας">
         <div class="reader-nav-row">
+          <a class="service-switch-link {{ 'active' if selected_services == 'esperinos' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=esperinos">Εσπερινός</a>
           <a class="service-switch-link {{ 'active' if selected_services == 'orthros' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=orthros">Όρθρος</a>
           <a class="service-switch-link {{ 'active' if selected_services == 'litourgia' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=litourgia">Θεία Λειτουργία</a>
           {% if music_bookmarks %}
@@ -164,7 +166,7 @@
         </div>
       </nav>
 
-      {% if not attachment_count %}
+      {% if not attachment_count and selected_services != 'esperinos' %}
         <section class="pilot-note">
           Το πλήρες κείμενο βάσης ανακτήθηκε από τον Μελωδό. Δεν βρέθηκε ακόμη επαληθευμένο μουσικό απόσπασμα στα διαθέσιμα σαρωμένα βιβλία για τα μέλη αυτής της ακολουθίας.
         </section>
@@ -178,7 +180,8 @@
           </header>
           <div class="service-text">{{ document.html }}</div>
           <footer>
-            Πηγή κειμένου: <a href="{{ melodos_url }}" target="_blank" rel="noreferrer">Μελωδός — Ακολουθίες</a>
+            Πηγή κειμένου:
+            <a href="{{ document.source_url or melodos_url }}" target="_blank" rel="noreferrer">{{ document.source_name or 'Μελωδός — Ακολουθίες' }}</a>
           </footer>
         </article>
       {% endfor %}

@@ -114,6 +114,13 @@ This file records only durable implementation decisions.
   choices `slow_ainoi`, `short_ainoi` or `no_score`. It receives the parsed
   weekly tone and the local Eothinon boundary, not an arbitrary scan; the
   deterministic tone-to-form rule above remains authoritative.
+- Vespers («Εσπερινός») is the one service that does not come from Melodos:
+  Melodos publishes no Vespers page, so `src/dcs.py` fetches the daily Greek
+  page of the Digital Chant Stand (dcs.goarch.org) and renders it from a small
+  block model (`heading`/`mode`/`rubric`/`hymn`/`verse`/`reading`/`dialog`).
+  It prefers `ve2` (with Litia and Artoklasia) over `ve`, caches under the same
+  `KIHEM_CACHE_DIR`, and never runs the Melodos score matcher on its output.
+  The DCS date is the evening itself, so the page is «διὰ τὴν» the next day.
 - «Ὑπερευλογημένη» always uses the fixed second-tone Petros Lampadarios
   setting from the separate Pemptousia source, because the 1905 local
   Anastasimatario does not contain a usable engraved setting for it.

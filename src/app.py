@@ -11,6 +11,7 @@ from markupsafe import Markup
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from src.audio_cache import InvalidMelodosAudioUrl, MelodosAudioCache
+from src.dcs import DcsClient, DcsError
 from src.anastasimatarion import (
     AnastasimatarionRenderer,
     enrich_service_html,
@@ -56,7 +57,8 @@ def create_app(config: dict | None = None) -> Flask:
         app.config.update(config)
 
     composer = app.config.get("COMPOSER") or ServiceComposer(
-        MelodosClient(cache_dir=app.config["CACHE_DIR"])
+        MelodosClient(cache_dir=app.config["CACHE_DIR"]),
+        DcsClient(cache_dir=app.config["CACHE_DIR"]),
     )
     music_renderer = app.config.get("MUSIC_RENDERER") or AnastasimatarionRenderer(
         app.config["CACHE_DIR"], app.config["BOOKS_DIR"]
@@ -120,7 +122,11 @@ def create_app(config: dict | None = None) -> Flask:
         # very long page.  Treat the old ``services=both`` links as the Orthros
         # page so existing bookmarks continue to open a useful result.
         requested_services = request.args.get("services", "orthros")
-        selected_services = requested_services if requested_services in {"orthros", "litourgia"} else "orthros"
+        selected_services = (
+            requested_services
+            if requested_services in {"orthros", "litourgia", "esperinos"}
+            else "orthros"
+        )
         refresh = request.args.get("refresh") == "1"
         error = None
         composition = None
@@ -141,7 +147,7 @@ def create_app(config: dict | None = None) -> Flask:
                 composition = composer.compose(
                     calendar.current_date, services=services, refresh=refresh
                 )
-            except (MelodosError, ValueError) as exc:
+            except (MelodosError, DcsError, ValueError) as exc:
                 error = str(exc)
 
         documents = []
@@ -155,6 +161,26 @@ def create_app(config: dict | None = None) -> Flask:
                 verified_digital_ids = set()
                 unreviewed_digital_ids = set()
             for item in composition.documents:
+                if item.service == "esperinos":
+                    # DCS documents arrive already rendered and escaped; the
+                    # Melodos-specific score matcher and the scripture
+                    # interpretation cache do not apply to them.
+                    documents.append(
+                        {
+                            "service": item.service,
+                            "label": item.label,
+                            "html": Markup(item.service_html),
+                            "tone_label": item.tone_label,
+                            "source_day_label": item.source_day_label,
+                            "source_tone_label": item.source_tone_label,
+                            "day_title": item.day_title,
+                            "fetched_at": item.fetched_at,
+                            "attachment_count": 0,
+                            "source_url": getattr(item, "source_url", "") or "",
+                            "source_name": "Digital Chant Stand (GOARCH)",
+                        }
+                    )
+                    continue
                 enriched = enrich_service_html(
                     composition.selected_date,
                     item.service,
@@ -201,6 +227,8 @@ def create_app(config: dict | None = None) -> Flask:
                         "day_title": item.day_title,
                         "fetched_at": item.fetched_at,
                         "attachment_count": enriched.attachment_count,
+                        "source_url": MELODOS_HOME,
+                        "source_name": "Μελωδός — Ακολουθίες",
                     }
                 )
 
@@ -568,7 +596,11 @@ def create_app(config: dict | None = None) -> Flask:
 
     @app.get("/health")
     def health():
-        return {"status": "ok", "calendar": "gregorian", "services": ["orthros", "litourgia"]}
+        return {
+            "status": "ok",
+            "calendar": "gregorian",
+            "services": ["orthros", "litourgia", "esperinos"],
+        }
 
     return app
 
