@@ -398,10 +398,16 @@ class AppTests(unittest.TestCase):
         self.assertIn('id="ison-mp3-volume"', text)
         self.assertIn('"Ison.Pa"', text)
         self.assertIn("const isonMarkNumbers =", text)
+        self.assertIn("const isonUnisonMark = 'Ison.Unison'", text)
+        self.assertIn("createMediaElementSource", text)
+        self.assertIn("kihemIsonGesture", text)
 
         without_marks = client.get("/digital-scores/without-ison/")
         self.assertEqual(without_marks.status_code, 200)
-        self.assertNotIn('id="ison-mp3-toggle"', without_marks.get_data(as_text=True))
+        without_text = without_marks.get_data(as_text=True)
+        self.assertNotIn('id="ison-mp3-toggle"', without_text)
+        self.assertNotIn("const isonUnisonMark", without_text)
+        self.assertNotIn("createMediaElementSource", without_text)
 
     def test_isokratis_audio_routes_only_serve_catalogued_mp3_files(self):
         ison = self.client.get("/isokratis/ison/60.mp3")

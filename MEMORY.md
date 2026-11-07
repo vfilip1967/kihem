@@ -893,12 +893,20 @@ This file records only durable implementation decisions.
   `staff.elements` position, matching the Neanes `element-N` offset and the
   `.notes.json` sidecar keys. `ISON_MARK_NUMBERS` in `isokratis.py` maps
   Pa 102, Ni 90, Zo 82, Vou 112, Ga 120, Thi 132, Ke 144, KeLow 72,
-  ThiLow 60 at register/semitone 0; `Ison.Unison` keeps the current drone and
-  unknown names are ignored. The page shows «Ισοκράτης mp3 από το PDF:
-  όχι/ναι» (`kihem-ison-mp3`) only when marks exist; ON forces Neanes'
-  `volumeIson = null` before the iframe boots and a 150 ms watcher follows the
-  last mark at or before `.audio-selected`, pausing/resetting on stop or a
-  hidden page and starting only when the mp3 number is in `available_ison`.
+  ThiLow 60 at register/semitone 0; unknown names are ignored. The page shows
+  «Ισοκράτης mp3 από το PDF: όχι/ναι» (`kihem-ison-mp3`) only when marks exist;
+  ON forces Neanes' `volumeIson = null` before the iframe boots and a 150 ms
+  watcher follows the last mark at or before `.audio-selected`. It follows
+  Neanes' own rules: no drone before the first mark, a mark lasts until the
+  next mark, `Ison.Unison` silences the mp3 drone until the next pitch mark,
+  and the `src` changes only when the pitch mark changes (no per-note
+  retrigger); stopping/hiding pauses it and resuming uses the mark in force.
+  The «Ένταση» slider (default 70, persisted) is shown whenever mp3 mode is
+  on. Since iOS/iPadOS Safari ignores `HTMLMediaElement.volume`, support is
+  probed by writing/reading `0.5`; when unsupported the element is routed
+  through a lazily created Web Audio `GainNode` (`createMediaElementSource`,
+  `AudioContext.resume()`) only after a pointerdown/click/keydown or the
+  slider's `input`, so a suspended context cannot mute it.
 - Selecting a prosomia mode starts its first curated recording immediately;
   selecting a different MP3 also starts it immediately. Only the icon-only
   `Ⅱ` stop control remains. The fixed `isokratis.py` catalog follows the VLC
