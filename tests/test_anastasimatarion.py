@@ -1853,3 +1853,24 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn('data-music-piece="papline-dox-2-lambadarios-private-draft"', result.html)
         self.assertNotIn('data-music-piece="tone6-great-doxology"', result.html)
         self.assertNotIn('data-music-piece="tone2-great-doxology"', result.html)
+
+    def test_apostles_koinonikon_pl2_skips_the_identical_antiphon_verse(self):
+        # 14/11/2026: the same verse is the Γ΄ Antiphon stichos; the Communion
+        # hymn follows the Melodos instruction about the Koinonikon.
+        score_id = "papline-koin-wk-eis-pasan-pl2-private-draft"
+        source = (
+            "Τα Λειτουργικά ψάλλονται στον κύριο ήχο της ημέρας, ήχο πλ β΄.<br>"
+            "Στίχ. Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν ὁ φθόγγος αὐτοῦ καὶ εἰς τὰ πέρατα.<br>"
+            "Το κοινωνικὸν συνήθως ψάλλεται εἰς τὸν ἦχον εἰς ὃν ἐψάλη καὶ τὸ Χερουβικόν.<br>"
+            "Τὸ Κοινωνικὸν. Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν ὁ φθόγγος αὐτοῦ, Ἀλληλούϊα.<br>"
+        )
+        result = enrich_service_html(
+            date(2026, 11, 14),
+            "litourgia",
+            source,
+            unreviewed_digital_scores={score_id},
+            verified_digital_scores={score_id},
+        )
+
+        self.assertEqual(result.html.count(f'data-music-piece="{score_id}"'), 1)
+        self.assertLess(result.html.index("Τὸ Κοινωνικὸν"), result.html.index(score_id))

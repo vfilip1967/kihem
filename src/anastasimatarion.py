@@ -1749,6 +1749,28 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "litourgia-eie-to-onoma-pandekti",
     ),
 )
+# Digital settings of the fixed Liturgy hymns (papline, Divine Liturgy of the
+# Papadopoulos edition), at the same places as the scans they replace.
+PILOT_RULES += (
+    AttachmentRule(
+        "litourgia",
+        "Κύριε, ἐλέησον.",
+        "papline-lit-kyrie-eirinika-private-draft",
+        digital_title="Κύριε ἐλέησον (Εἰρηνικά) · ἦχος πλ. δ΄ (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Πληρωθήτω τὸ στόμα ἡμῶν αἰνέσεως Κύριε",
+        "papline-lit-plirothito-private-draft",
+        digital_title="Πληρωθήτω τὸ στόμα ἡμῶν · ἦχος δ΄ (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Εἴη τὸ ὄνομα Κυρίου εὐλογημένον ἀπὸ τοῦ νῦν καὶ ἕως τοῦ αἰῶνος",
+        "papline-lit-eie-to-onoma-private-draft",
+        digital_title="Εἴη τὸ ὄνομα Κυρίου · ἦχος δ΄ (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+)
 
 
 _TONE_REQUIREMENTS: Final[dict[int, tuple[str, ...]]] = {
@@ -2315,6 +2337,41 @@ _LITURGY_DIGITAL_DRAFTS: Final[
     ),
     6: (
         (
+            "Παράσχου Κύριε.",
+            "papline-lit6-kyrie-parashou-private-draft",
+            "Κύριε ἐλέησον καὶ Παράσχου Κύριε · ἦχος πλ. β΄ · Μιχαὴλ Χατζηαθανασίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν",
+            (),
+        ),
+        (
+            "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.",
+            "papline-lit6-patera-private-draft",
+            "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα · ἦχος πλ. β΄ · Μιχαὴλ Χατζηαθανασίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
+        ),
+        (
+            _LITOURGIA_SANCTUS,
+            "papline-lit6-axion-dikaion-private-draft",
+            "Ἄξιον καὶ δίκαιον · ἦχος πλ. β΄ · Μιχαὴλ Χατζηαθανασίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
+        ),
+        (
+            "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν",
+            "papline-lit6-se-ymnoumen-private-draft",
+            "Ἀμήν… Σὲ ὑμνοῦμεν · ἦχος πλ. β΄ · Μιχαὴλ Χατζηαθανασίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
+        ),
+        (
+            _LITOURGIA_AXION_ESTIN,
+            "papline-lit6-axion-estin-private-draft",
+            "Ἄξιόν ἐστιν · ἦχος πλ. β΄ · Μιχαὴλ Χατζηαθανασίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
+        ),
+        (
             "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
             "papline-cher-pl2-gregorios-private-draft",
             "Χερουβικὸν · ἦχος πλ. β΄ · Γρηγορίου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
@@ -2386,6 +2443,28 @@ PILOT_RULES += tuple(
     )
     for _tone, _drafts in _LITURGY_DIGITAL_DRAFTS.items()
     for _anchor, _score_id, _title, _preceding, _weekdays in _drafts
+)
+PILOT_RULES += (
+    # Weekday Communion hymns in pl. 2 (Konstantinos Lambrou), when Melodos
+    # selects pl. 2 for the Liturgy.  The Apostles' hymn is anchored without
+    # its last word (Melodos writes «αὐτοῦ», the books «αὐτῶν») and only after
+    # the Communion instruction, so the identical Antiphon verse is skipped.
+    AttachmentRule(
+        "litourgia",
+        "Εἰς μνημόσυνον αἰώνιον ἔσται Δίκαιος",
+        "papline-koin-wk-mnimosynon-pl2-private-draft",
+        required_text_any=_TONE_REQUIREMENTS[6],
+        preceding_text="Το κοινωνικὸν συνήθως ψάλλεται",
+        digital_title="Κοινωνικὸν «Εἰς μνημόσυνον αἰώνιον» · ἦχος πλ. β΄ · Κωνσταντίνου Λάμπρου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "litourgia",
+        "Εἰς πᾶσαν τὴν γῆν ἐξῆλθεν ὁ φθόγγος",
+        "papline-koin-wk-eis-pasan-pl2-private-draft",
+        required_text_any=_TONE_REQUIREMENTS[6],
+        preceding_text="Το κοινωνικὸν συνήθως ψάλλεται",
+        digital_title="Κοινωνικὸν «Εἰς πᾶσαν τὴν γῆν» · ἦχος πλ. β΄ · Κωνσταντίνου Λάμπρου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
 )
 # Fixed Monogenes (Lambadarios, Pandekti 1851) and the Axion Estin in the tone of
 # the day's Leitourgika.  Both sit beside the scanned settings of the same piece.
