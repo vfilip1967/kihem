@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ score.incipit }} · ψηφιακή παρτιτούρα</title>
-  <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261107-compact-player-controls">
+  <link rel="stylesheet" href="{{ request.script_root }}/static/app.css?v=20261112-compact-reader-nav">
   <style>
     /* Inside the service page the score is only a player: no headings or notes. */
     html.embedded .public-score-header, html.embedded .public-score-card,
@@ -12,6 +12,17 @@
     html.embedded .public-score-player > p:not(.playback-status),
     html.embedded .playback-status:not(.error) { display: none; }
     html.embedded .review-main { padding-top: 0; margin-top: 0; }
+    html.embedded .public-score-player { margin-top: 0; }
+    /* Phone: the player's own controls in one compact row. */
+    @media (max-width: 680px) {
+      .player-controls { flex-wrap: nowrap; gap: 3px; overflow-x: auto; scrollbar-width: none; }
+      .player-controls button, .player-controls select, .player-controls .speed-select {
+        font-size: .66rem; padding: 2px 4px; min-height: 26px; white-space: nowrap;
+      }
+      .player-controls .speed-step { min-width: 22px; padding: 0 4px; }
+      .player-controls select { min-width: 58px; }
+      html.embedded .public-score-player { padding: 4px; }
+    }
   </style>
   <script>try { if (window.self !== window.top) document.documentElement.classList.add('embedded'); } catch (error) { document.documentElement.classList.add('embedded'); }</script>
 </head>
@@ -214,6 +225,36 @@
         }
       };
 
+
+      // Phrases end at a martyria and break the line, so many lines are short
+      // and leave white space on the right.  Enlarge Neanes' zoom (at most
+      // 1.6x) until the widest rendered line reaches the right edge.
+      const fitContentWidth = () => {
+        const frameDocument = player.contentDocument;
+        const page = frameDocument && frameDocument.querySelector('.page');
+        const holder = frameDocument && [...frameDocument.querySelectorAll('[style]')]
+          .find((element) => element.style.getPropertyValue('--zoom'));
+        if (!page || !holder) return;
+        const boxes = [...frameDocument.querySelectorAll('.page .element-box[id^="element-"]')]
+          .filter((box) => box.id !== 'element-null');
+        if (!boxes.length) return;
+        const pageLeft = page.getBoundingClientRect().left;
+        const right = Math.max(...boxes.map((box) => box.getBoundingClientRect().right)) - pageLeft;
+        const scroller = page.parentElement;
+        const available = (scroller ? scroller.clientWidth : frameDocument.documentElement.clientWidth) - 6;
+        const zoom = Number.parseFloat(holder.style.getPropertyValue('--zoom'));
+        const factor = Math.min(1.6, available / right);
+        if (!(zoom > 0) || !(factor > 1.03)) return;
+        holder.style.setProperty('--zoom', String(zoom * factor));
+        // The enlarged page keeps an empty right margin past the screen edge;
+        // only the element that scrolls the pages loses its sideways scroll.
+        let scrolling = page.parentElement;
+        while (scrolling && scrolling !== frameDocument.body
+               && !/(auto|scroll)/.test(frameDocument.defaultView.getComputedStyle(scrolling).overflowX)) {
+          scrolling = scrolling.parentElement;
+        }
+        if (scrolling && scrolling !== frameDocument.body) scrolling.style.overflowX = 'hidden';
+      };
 
       const noteLabels = {{ note_labels|tojson }};
       // Elements that sound but are not source notation (a pause added for the
@@ -493,6 +534,23 @@
           .toolbar-primary-group-zoom { display: flex !important; }
           .toolbar-primary-group-zoom > :not(.zoom-control) { display: none !important; }
           .toolbar-playback-section { flex: 0 1 auto !important; }
+          /* Kihem's «Ταχ.» control sets this same speed field, so Neanes' own
+             Speed row is kept in the DOM but out of sight (one toolbar row). */
+          label[for="audio-speed-slider"], #audio-speed-slider,
+          .audio-container > div:has(#audio-speed-input) {
+            position: absolute !important; width: 1px !important; height: 1px !important;
+            opacity: 0 !important; overflow: hidden !important; pointer-events: none !important;
+          }
+          .audio-container > [data-slot="toolbar-separator"]:has(+ label[for="audio-speed-slider"]),
+          .audio-container > div:has(#audio-speed-input) + span { display: none !important; }
+          /* Narrow phone frame: keep play, settings, time and BPM in one row. */
+          @media (max-width: 420px) {
+            .audio-container button { width: 30px !important; height: 30px !important; min-width: 0 !important; padding: 2px !important; }
+            .audio-container .playback-time, .audio-container .label-bpm { font-size: 13px !important; }
+            .audio-container [data-slot="toolbar-separator"] { margin: 0 2px !important; }
+          }
+          /* The editor's insertion box after the last neume. */
+          #element-null { visibility: hidden !important; }
           .contextual-toolbar-panel { display: none !important; }
           /* The editor's line-break icons; the breaks themselves stay. */
           .line-break, .line-break-2 { display: none !important; }
@@ -547,6 +605,7 @@
           input.files = transfer.files;
           input.dispatchEvent(new Event('change', { bubbles: true }));
           await configureReaderWidth();
+          fitContentWidth();
           rememberElementIdBase();
           hideElements();
           isLoaded = true;

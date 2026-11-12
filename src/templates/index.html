@@ -199,7 +199,28 @@
     (() => {
       const readerToolbar = document.querySelector('.service-nav');
       const isokratisPanel = document.querySelector('[data-isokratis]');
-      if (readerToolbar && isokratisPanel) readerToolbar.append(isokratisPanel);
+      if (!readerToolbar || !isokratisPanel) return;
+      readerToolbar.append(isokratisPanel);
+      // On a phone the panel folds behind one thin bar (CSS shows the bar
+      // only on narrow screens); the drone keeps sounding while it is folded.
+      const key = 'kihem-isokratis-open';
+      let open = false;
+      try { open = localStorage.getItem(key) === '1'; } catch (error) { /* default: folded */ }
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'isokratis-toggle';
+      const render = () => {
+        isokratisPanel.classList.toggle('is-folded', !open);
+        toggle.textContent = open ? 'Ἴσον & προσόμοια ▴' : 'Ἴσον & προσόμοια ▾';
+        toggle.setAttribute('aria-expanded', String(open));
+      };
+      toggle.addEventListener('click', () => {
+        open = !open;
+        try { localStorage.setItem(key, open ? '1' : '0'); } catch (error) { /* this visit only */ }
+        render();
+      });
+      isokratisPanel.before(toggle);
+      render();
     })();
 
     document.querySelectorAll('.bookmark-menu-list a').forEach((link) => {

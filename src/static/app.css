@@ -468,6 +468,7 @@ button:hover { background: var(--wine-dark); }
 }
 .scroll-controls button:disabled:hover { border-color: transparent; color: #bdb3a6; background: transparent; }
 .reader-nav-row .label-short { display: none; }
+.isokratis-toggle { display: none; }
 .reader-nav-row summary b { font-weight: inherit; }
 
 .service-card { margin-top: 18px; border: 1px solid #303030; background: #000; box-shadow: var(--shadow); }
@@ -597,6 +598,13 @@ button:hover { background: var(--wine-dark); }
 .music-page figcaption { padding: 7px 10px; color: #685c53; background: #f2eee7; font: 0.7rem Arial, sans-serif; }
 .music-source { margin: 0; padding: 13px 22px 16px; color: #bfb09e; font: 0.72rem/1.5 Arial, sans-serif; }
 .music-source a { color: #e4bd73; }
+/* Digital (Neanes) scores: a single compact title line above the player. */
+.digital-attachment .music-attachment-heading { padding: 6px 10px; }
+.digital-attachment .music-bookmark {
+  display: -webkit-box; margin: 0; overflow: hidden;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 0.7rem;
+}
+.digital-attachment .music-source { padding: 6px 10px 8px; }
 
 .site-footer { display: flex; justify-content: space-between; gap: 20px; padding: 24px 0 38px; border-top: 1px solid var(--line); color: var(--muted); font: 0.78rem Arial, sans-serif; }
 
@@ -668,12 +676,18 @@ button:hover { background: var(--wine-dark); }
   .reader-nav-row > .reading-bookmarks-menu summary { padding: 5px 5px; font-size: 0.66rem; }
   .reader-nav-row .label-long { display: none; }
   .reader-nav-row .label-short { display: inline; }
+  .isokratis-toggle {
+    display: block; width: 100%; margin: 4px 0 0; padding: 3px 8px;
+    border: 1px solid var(--line); color: var(--wine-dark); background: var(--card);
+    font: 700 0.7rem/1.3 Arial, sans-serif; text-align: left; cursor: pointer; min-height: 0;
+  }
+  .service-nav > .isokratis-panel.is-folded { display: none; }
   .isokratis-heading { align-items: stretch; flex-direction: column; gap: 12px; }
   .ison-status { max-width: none; }
   .ison-note-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .date-form { grid-template-columns: 1fr; }
   .date-form button { grid-column: auto; }
-  .service-card > header, .service-text { padding: 22px; }
+  .service-card > header, .service-text { padding: 22px 10px; }
   .result-heading, .site-footer { align-items: flex-start; flex-direction: column; }
   .music-bookmarks-list, .reading-bookmarks-list { right: auto; left: 0; }
 }

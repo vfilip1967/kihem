@@ -2716,14 +2716,15 @@ def _digital_music_markup(rule: AttachmentRule, instance: int, *, unreviewed: bo
     # Relative, like the scanned excerpts, so it works below the /kihem/ prefix.
     url = f"digital-scores/{score_id}/"
     return (
-        f'<aside id="{bookmark_id}" class="music-attachment" '
+        f'<aside id="{bookmark_id}" class="music-attachment digital-attachment" '
         f'data-music-piece="{html.escape(score_id)}" '
         f'data-music-instance="{instance}">'
+        # One compact line: the title is itself the permanent bookmark link
+        # (it used to be printed twice and took half a phone screen).
         '<div class="music-attachment-heading">'
         f'<a class="music-bookmark" href="#{bookmark_id}" '
-        'title="Μόνιμος σύνδεσμος προς αυτό το μουσικό απόσπασμα">'
-        f'🔖 Σελιδοδείκτης · {html.escape(title)}</a>'
-        f"<h3>{html.escape(title)}</h3>"
+        f'title="Μόνιμος σύνδεσμος · {html.escape(title)}">'
+        f'🔖 {html.escape(title)}</a>'
         "</div>"
         f'<iframe class="digital-score-frame" src="{url}" loading="lazy" '
         f'title="{html.escape(title)}" '
