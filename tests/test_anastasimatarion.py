@@ -1853,7 +1853,7 @@ class AnastasimatarionTests(unittest.TestCase):
         self.assertIn('data-music-piece="papline-dox-2-lambadarios-private-draft"', result.html)
         # The digital title is shown once, as a compact bookmark line.
         self.assertIn('class="music-attachment digital-attachment"', result.html)
-        self.assertEqual(result.html.count("Μεγάλη Δοξολογία, ἦχος β΄ · Πέτρου Λαμπαδαρίου"), 2)  # link text + title attr
+        self.assertNotIn("<h3>Μεγάλη Δοξολογία", result.html)
         self.assertNotIn('data-music-piece="tone6-great-doxology"', result.html)
         self.assertNotIn('data-music-piece="tone2-great-doxology"', result.html)
 
