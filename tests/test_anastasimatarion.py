@@ -1829,3 +1829,27 @@ class AnastasimatarionTests(unittest.TestCase):
         result = enrich_service_html(date(2026, 9, 10), "orthros", source)
 
         self.assertNotIn("data-music-piece=\"kypseli-", result.html)
+
+    def test_explicit_doxology_tone_replaces_scan_and_blocks_plagal_second(self):
+        # 14/11/2026: Melodos names tone 2 for the Doxology; the generic
+        # «στον ήχο του δοξαστικού» sentence must not add the pl. 2 scan too.
+        source = (
+            "Ἦχος πλ β΄ <br>"
+            "Σύμφωνα με το άγραφο τυπικό, η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού.<br>"
+            "Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος β΄<br>"
+            "ΜΕΓΑΛΗ ΔΟΞΟΛΟΓΙΑ<br>"
+            "ἐν τῷ φωτί σου ὀψόμεθα φῶς.<br>"
+            "Παράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.<br>"
+            "Ἅγιος ὁ Θεός, Ἅγιος Ἰσχυρός, Ἅγιος Ἀθάνατος, ἐλέησον ἡμᾶς.<br>"
+        )
+        result = enrich_service_html(
+            date(2026, 11, 14),
+            "orthros",
+            source,
+            unreviewed_digital_scores={"papline-dox-2-lambadarios-private-draft"},
+            verified_digital_scores={"papline-dox-2-lambadarios-private-draft"},
+        )
+
+        self.assertIn('data-music-piece="papline-dox-2-lambadarios-private-draft"', result.html)
+        self.assertNotIn('data-music-piece="tone6-great-doxology"', result.html)
+        self.assertNotIn('data-music-piece="tone2-great-doxology"', result.html)

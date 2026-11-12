@@ -942,6 +942,10 @@ _TONE6_DOXOLOGY_INSTRUCTIONS: Final[tuple[str, ...]] = (
     "η δοξολογία σήμερα ψάλλεται στον ήχο του δοξαστικού",
     "η δοξολογία σήμερα ψάλλεται στην ήχο της ημέρας δηλαδή ήχο πλ β",
 )
+_DOXOLOGY_SELECTOR: Final = "Μουσικό απόσπασμα Μεγάλης Δοξολογίας · Ἦχος "
+_OTHER_DOXOLOGY_SELECTORS_THAN_PL2: Final[tuple[str, ...]] = tuple(
+    _DOXOLOGY_SELECTOR + _tone for _tone in ("α΄", "β΄", "γ΄", "δ΄", "πλ. α΄", "βαρύς", "πλ. δ΄")
+)
 
 # Matching is accent- and punctuation-insensitive; the stored polytonic text
 # and the HTML delivered to the browser are never altered.
@@ -1243,6 +1247,37 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         expected_reviewer_choice="short_ainoi",
         insert_before=True,
     ),
+    # Digital Anastasimatarion of Petros Ephesios (papline): «Πᾶσα πνοή»
+    # with its two verses, then the resurrectional stichera, which replace
+    # the scanned barys Ainoi at the same place.
+    AttachmentRule(
+        "orthros",
+        "Σοὶ πρέπει ὕμνος τῶ Θεῷ.",
+        "papline-ephesios-gro-10-pasa-pnoi-private-draft",
+        match_number=2,
+        weekly_tone=7,
+        weekdays=(6,),
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        digital_title="Πᾶσα πνοή · ἦχος βαρύς · Πέτρου Ἐφεσίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        "ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ",
+        "papline-ephesios-gro-11-ainoi-private-draft",
+        weekly_tone=7,
+        weekdays=(6,),
+        required_text=("Στιχηρὰ Ἀναστάσιμα",),
+        insert_before=True,
+        digital_title="Αἶνοι · Στιχηρὰ Ἀναστάσιμα · ἦχος βαρύς · Πέτρου Ἐφεσίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+    AttachmentRule(
+        "orthros",
+        # Melodos breaks the last line, so the anchor is its final text node.
+        "ὡς ζωοδότην καὶ Κύριον.",
+        "papline-ephesios-eothinon-2-private-draft",
+        required_text=("ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ Β",),
+        digital_title="Ἑωθινὸν β΄ «Μετὰ μύρων» · ἦχος β΄ · Πέτρου Ἐφεσίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
     AttachmentRule(
         "orthros",
         "τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.",
@@ -1462,6 +1497,9 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         # Trust Melodos' explicit Doxology instruction, not the week's tone.
         required_text=("Ἦχος πλ β΄",),
         required_text_any=_TONE6_DOXOLOGY_INSTRUCTIONS,
+        # When Melodos names the Doxology's tone explicitly and it is not
+        # pl. 2 (14/11/2026 names tone 2), only that tone's setting is shown.
+        excluded_text_any=_OTHER_DOXOLOGY_SELECTORS_THAN_PL2,
         # The Great Doxology belongs immediately before the resurrectional
         # dismissal hymn, never at the opening Trisagion.
         insert_before=True,
@@ -1506,6 +1544,24 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         weekdays=(6,),
         digital_title="Μεγάλη Δοξολογία, ἦχος δ΄ · Μανουὴλ Πρωτοψάλτου (ψηφιακή)",
     ),
+    # Digital Great Doxologies of Petros Lambadarios (papline) in the tone that
+    # Melodos' own Doxology selector names; each replaces the scan attached
+    # at the same place.
+    *(
+        AttachmentRule(
+            "orthros",
+            "αράτεινον τὸ ἔλεός σου τοὶς γινώσκουσί σε.",
+            _score_id,
+            required_text=(_DOXOLOGY_SELECTOR + _tone,),
+            preceding_text=_DOXOLOGY_SELECTOR + _tone,
+            digital_title=f"Μεγάλη Δοξολογία, ἦχος {_tone} · Πέτρου Λαμπαδαρίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+        )
+        for _tone, _score_id in (
+            ("β΄", "papline-dox-2-lambadarios-private-draft"),
+            ("βαρύς", "papline-dox-7-lambadarios-private-draft"),
+            ("πλ. δ΄", "papline-dox-8-lambadarios-private-draft"),
+        )
+    ),
     # Compatibility for a shortened source extract which contains the
     # Doxology but not its following resurrectional dismissal hymn.
     AttachmentRule(
@@ -1514,7 +1570,7 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "tone6-great-doxology",
         required_text=("Ἦχος πλ β΄",),
         required_text_any=_TONE6_DOXOLOGY_INSTRUCTIONS,
-        excluded_text_any=("Σήμερον σωτηρία τῷ κόσμῳ γέγονεν.",),
+        excluded_text_any=("Σήμερον σωτηρία τῷ κόσμῳ γέγονεν.",) + _OTHER_DOXOLOGY_SELECTORS_THAN_PL2,
         preceding_text="ἐν τῷ φωτί σου ὀψόμεθα φῶς.",
     ),
     AttachmentRule(
@@ -2271,6 +2327,50 @@ _LITURGY_DIGITAL_DRAFTS: Final[
             "Κοινωνικὸν Κυριακῆς · Αἰνεῖτε τὸν Κύριον · ἦχος πλ. β΄ · Γεωργίου Καρακάση (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
             "Τῇ Κυριακῇ ψάλλεται το Κοινωνικόν",
             (6,),
+        ),
+    ),
+    7: (
+        (
+            "Οἱ τὰ Χερουβεὶμ μυστικῶς εἰκονίζοντες",
+            "papline-cher-t7-lampadarios-private-draft",
+            "Χερουβικὸν · ἦχος βαρύς · Πέτρου Λαμπαδαρίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
+        ),
+        (
+            "Παράσχου Κύριε.",
+            "papline-lit7-kyrie-parashou-private-draft",
+            "Κύριε ἐλέησον καὶ Παράσχου Κύριε · ἦχος βαρύς · Βασιλείου Νικολαΐδου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            "Χριστιανὰ τὰ τέλη τῆς ζωῆς ἡμῶν",
+            (),
+        ),
+        (
+            "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα, Τριάδα ὁμοούσιον καὶ ἀχώριστον.",
+            "papline-lit7-patera-private-draft",
+            "Πατέρα, Υἱὸν καὶ Ἅγιον Πνεῦμα · ἦχος βαρύς · Βασιλείου Νικολαΐδου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
+        ),
+        (
+            _LITOURGIA_SANCTUS,
+            "papline-lit7-axion-dikaion-private-draft",
+            "Ἄξιον καὶ δίκαιον · ἦχος βαρύς · Βασιλείου Νικολαΐδου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
+        ),
+        (
+            "Σὲ ὑμνοῦμεν, σὲ εὐλογοῦμεν, σοὶ εὐχαριστοῦμεν, Κύριε, καὶ δεόμεθά σου, ὁ Θεὸς ἡμῶν",
+            "papline-lit7-se-ymnoumen-private-draft",
+            "Ἀμήν… Σὲ ὑμνοῦμεν · ἦχος βαρύς · Βασιλείου Νικολαΐδου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
+        ),
+        (
+            _LITOURGIA_AXION_ESTIN,
+            "papline-lit7-axion-estin-private-draft",
+            "Ἄξιόν ἐστιν · ἦχος βαρύς · Βασιλείου Νικολαΐδου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+            None,
+            (),
         ),
     ),
 }
