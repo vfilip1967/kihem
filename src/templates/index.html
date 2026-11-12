@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>Κιβωτός Ακολουθιών</title>
-  <link rel="stylesheet" href="static/app.css?v=20261107-compact-player-controls">
+  <link rel="stylesheet" href="static/app.css?v=20261112-compact-reader-nav">
 </head>
 <body>
   <header class="site-header">
@@ -137,12 +137,12 @@
 
       <nav class="service-nav" aria-label="Περιεχόμενα ακολουθίας">
         <div class="reader-nav-row">
-          <a class="service-switch-link {{ 'active' if selected_services == 'esperinos' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=esperinos">Εσπερινός</a>
-          <a class="service-switch-link {{ 'active' if selected_services == 'orthros' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=orthros">Όρθρος</a>
-          <a class="service-switch-link {{ 'active' if selected_services == 'litourgia' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=litourgia">Θεία Λειτουργία</a>
+          <a class="service-switch-link {{ 'active' if selected_services == 'esperinos' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=esperinos" title="Εσπερινός"><span class="label-long">Εσπερινός</span><span class="label-short" aria-hidden="true">Εσπερ.</span></a>
+          <a class="service-switch-link {{ 'active' if selected_services == 'orthros' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=orthros" title="Όρθρος">Όρθρος</a>
+          <a class="service-switch-link {{ 'active' if selected_services == 'litourgia' else '' }}" href="?date={{ calendar.current_date.isoformat() }}&amp;services=litourgia" title="Θεία Λειτουργία"><span class="label-long">Θεία Λειτουργία</span><span class="label-short" aria-hidden="true">Λειτουρ.</span></a>
           {% if music_bookmarks %}
             <details class="music-bookmarks-menu">
-              <summary>Μουσικά <span>{{ music_bookmarks|length }}</span></summary>
+              <summary title="Μουσικά"><b class="label-long">Μουσικά</b><b class="label-short" aria-hidden="true">Μουσ.</b> <span>{{ music_bookmarks|length }}</span></summary>
               <div class="bookmark-menu-list music-bookmarks-list" aria-label="Σελιδοδείκτες μουσικών κειμένων">
                 {% for bookmark in music_bookmarks %}
                   <a href="#{{ bookmark.anchor_id }}" title="{{ bookmark.title }}">{{ bookmark.label }}</a>
@@ -152,7 +152,7 @@
           {% endif %}
           {% if reading_bookmarks %}
             <details class="reading-bookmarks-menu">
-              <summary>Αναγνώσεις <span>{{ reading_bookmarks|length }}</span></summary>
+              <summary title="Αναγνώσεις"><b class="label-long">Αναγνώσεις</b><b class="label-short" aria-hidden="true">Αναγν.</b> <span>{{ reading_bookmarks|length }}</span></summary>
               <div class="bookmark-menu-list reading-bookmarks-list" aria-label="Σελιδοδείκτες αναγνωσμάτων">
                 {% for bookmark in reading_bookmarks %}
                   <a href="#{{ bookmark.anchor_id }}">{{ bookmark.label }}</a>
@@ -161,7 +161,7 @@
             </details>
           {% endif %}
           <div class="scroll-controls" data-scroll-controls aria-label="Αυτόματη κύλιση">
-            <button type="button" data-scroll-toggle aria-label="Παύση αυτόματης κύλισης" title="Παύση/συνέχιση κύλισης">⏸</button>
+            <button type="button" data-scroll-toggle aria-label="Έναρξη αυτόματης κύλισης" title="Έναρξη/παύση κύλισης">▶</button>
           </div>
         </div>
       </nav>
@@ -238,7 +238,8 @@
       if (!controls) return;
 
       const toggleButton = controls.querySelector('[data-scroll-toggle]');
-      let paused = false;
+      // The page never scrolls by itself on load; the reader starts it.
+      let paused = true;
       let scrollTimer = null;
 
       const stopTimer = () => {

@@ -71,7 +71,10 @@ class AppTests(unittest.TestCase):
         response = self.client.get("/?date=2026-09-13&services=orthros")
         self.assertEqual(response.status_code, 200)
         text = response.get_data(as_text=True)
-        self.assertIn('href="static/app.css?v=20261107-compact-player-controls"', text)
+        self.assertIn('href="static/app.css?v=20261112-compact-reader-nav"', text)
+        # The reading scroll never starts by itself; the reader presses ▶.
+        self.assertIn("let paused = true;", text)
+        self.assertIn('<span class="label-short" aria-hidden="true">Λειτουρ.</span>', text)
         self.assertIn("Όρθρος", text)
         self.assertIn("Θεία Λειτουργία", text)  # separate-page navigation
         self.assertIn('class="service-switch-link active" href="?date=2026-09-13&amp;services=orthros"', text)
@@ -84,10 +87,10 @@ class AppTests(unittest.TestCase):
         self.assertIn('class="reading-bookmarks-menu"', text)
         self.assertIn('class="reader-nav-row"', text)
         self.assertLess(text.index('class="music-bookmarks-menu"'), text.index('class="reading-bookmarks-menu"'))
-        self.assertIn('<summary>Αναγνώσεις <span>2</span></summary>', text)
+        self.assertIn('<summary title="Αναγνώσεις"><b class="label-long">Αναγνώσεις</b><b class="label-short" aria-hidden="true">Αναγν.</b> <span>2</span></summary>', text)
         self.assertIn('href="#reading-orthros-first-apostolos"', text)
         self.assertIn('href="#reading-orthros-first-evangelion"', text)
-        self.assertIn('<summary>Μουσικά <span>1</span></summary>', text)
+        self.assertIn('<summary title="Μουσικά"><b class="label-long">Μουσικά</b><b class="label-short" aria-hidden="true">Μουσ.</b> <span>1</span></summary>', text)
         self.assertNotIn('Μουσικά κείμενα', text)
         self.assertIn(
             '<a href="#music-tone6-apolytikion-1" title="Ἀναστάσιμον Ἀπολυτίκιον, πλ. β΄">Απολ. πλ.β΄</a>',

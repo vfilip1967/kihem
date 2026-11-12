@@ -467,6 +467,8 @@ button:hover { background: var(--wine-dark); }
   cursor: default;
 }
 .scroll-controls button:disabled:hover { border-color: transparent; color: #bdb3a6; background: transparent; }
+.reader-nav-row .label-short { display: none; }
+.reader-nav-row summary b { font-weight: inherit; }
 
 .service-card { margin-top: 18px; border: 1px solid #303030; background: #000; box-shadow: var(--shadow); }
 .service-card > header { padding: 30px 34px 22px; border-bottom: 1px solid #303030; background: #000; }
@@ -658,7 +660,14 @@ button:hover { background: var(--wine-dark); }
     font-size: 0.62rem;
   }
   .reader-nav-row > .scroll-controls { margin-left: auto; padding: 1px; }
-  .reader-nav-row > .scroll-controls button { min-width: 28px; min-height: 28px; padding: 0 5px; }
+  .reader-nav-row > .scroll-controls button { min-width: 26px; min-height: 26px; padding: 0 4px; }
+  /* Service tabs, Μουσικά/Αναγνώσεις and the scroll button share one phone row. */
+  .reader-nav-row { gap: 2px; }
+  .reader-nav-row > a,
+  .reader-nav-row > .music-bookmarks-menu summary,
+  .reader-nav-row > .reading-bookmarks-menu summary { padding: 5px 5px; font-size: 0.66rem; }
+  .reader-nav-row .label-long { display: none; }
+  .reader-nav-row .label-short { display: inline; }
   .isokratis-heading { align-items: stretch; flex-direction: column; gap: 12px; }
   .ison-status { max-width: none; }
   .ison-note-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
