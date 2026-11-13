@@ -212,12 +212,20 @@
             reclaimReaderWidth();
             if (await useNeanesPageWidth()) {
               // Neanes lays the score out asynchronously; fit the width again once
-              // the page size is final, otherwise the zoom keeps the empty-score fit.
-              for (const delay of [700, 1500]) {
-                await new Promise((resolve) => window.setTimeout(resolve, delay));
-                reclaimReaderWidth();
-                await useNeanesPageWidth();
+              // the layout is final.  Wait only until the neumes stop moving
+              // (two equal readings 120 ms apart, at most 3 s), not a fixed 2.2 s.
+              let previous = '';
+              for (let attempt = 0; attempt < 25; attempt += 1) {
+                await new Promise((resolve) => window.setTimeout(resolve, 120));
+                const doc = player.contentDocument;
+                const boxes = doc ? doc.querySelectorAll('.page .element-box') : [];
+                const last = boxes.length ? boxes[boxes.length - 1].getBoundingClientRect() : null;
+                const reading = `${boxes.length}:${last ? Math.round(last.right) + ',' + Math.round(last.top) : ''}`;
+                if (boxes.length && reading === previous) break;
+                previous = reading;
               }
+              reclaimReaderWidth();
+              await useNeanesPageWidth();
               return;
             }
           }

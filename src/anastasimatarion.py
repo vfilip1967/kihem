@@ -2745,7 +2745,10 @@ def _digital_music_markup(rule: AttachmentRule, instance: int, *, unreviewed: bo
         f'title="Μόνιμος σύνδεσμος · {html.escape(title)}">'
         f'🔖 {html.escape(title)}</a>'
         "</div>"
-        f'<iframe class="digital-score-frame" src="{url}" loading="lazy" '
+        # The player starts only when it nears the screen (see index.html):
+        # every score is a whole Neanes app, and several starting together
+        # on a phone made one score take about a minute.
+        f'<iframe class="digital-score-frame" data-src="{url}" '
         f'title="{html.escape(title)}" '
         'style="width:100%;height:640px;border:1px solid #ccc;border-radius:6px"></iframe>'
         '<p class="music-source">'

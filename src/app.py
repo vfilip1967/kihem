@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 from hmac import compare_digest
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -25,6 +26,96 @@ from src.music_labels import short_music_label
 from src.scripture_interpretations import ScriptureInterpretationService, add_reading_bookmarks
 from src.typesafe_decisions import TypesafeDecisionService
 from src.vespers_music import attach_music
+
+
+# Neanes is a PWA: its service worker pre-caches the whole app for offline use
+# (about 23 MB, sixty fonts the score never shows).  Kihem only plays scores
+# online, and on a phone that download competed with the score being opened
+# (about 30 s for one Eothinon, 13/11/2026).  The worker is therefore never
+# registered, and a browser that installed it before removes it.
+_NEANES_SW_KILL_SWITCH = (
+    "self.addEventListener('install', () => self.skipWaiting());\n"
+    "self.addEventListener('activate', (event) => event.waitUntil(\n"
+    "  self.registration.unregister().then(() => self.clients.matchAll())\n"
+    "));\n"
+)
+_NEANES_SW_UNREGISTER = (
+    "<script>if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations()"
+    ".then((rs) => rs.forEach((r) => r.unregister())).catch(() => {});</script>"
+)
+
+
+# Before showing a score Neanes awaits document.fonts.load() for every style of
+# every bundled family (about 15 MB of OpenType files).  A Kihem score uses
+# the Neanes neume font and Source Serif for the lyrics; any other face is
+# still fetched by the browser on first use.  Matched as a pattern so that a
+# rebuilt Neanes with other minified names is left unchanged, not broken.
+_NEANES_FONT_PRELOAD = re.compile(
+    r"for\(let (\w+) of (\w+)\.bundledFamilies\(\)\)for\(let (\w+) of \2\.getStyles\(\1\)\)"
+    r"(\w+)\.add\((\w+)\(\1,\3\)\);return \4\.add\(\5\(`NeanesRTL`\)\),\4\.add\(\5\(`NeanesRTLLegacy`\)\),\[\.\.\.\4\]"
+)
+
+
+def _neanes_reader_fonts(content: str) -> str:
+    return _NEANES_FONT_PRELOAD.sub(
+        lambda m: (
+            f"for(let {m[1]} of [`Neanes`])for(let {m[3]} of {m[2]}.getStyles({m[1]})){m[4]}.add({m[5]}({m[1]},{m[3]}));"
+            f"return {m[4]}.add({m[5]}(`Source Serif`)),[...{m[4]}]"
+        ),
+        content,
+    )
+
+
+_NEANES_PREFETCH_CACHE: dict[str, tuple[float, tuple[str, ...]]] = {}
+
+
+def _neanes_prefetch_assets(neanes_dir: str) -> tuple[str, ...]:
+    """The Neanes files every score needs, for a low-priority prefetch.
+
+    The service page asks the browser to fetch them while the reader is still
+    reading, so the first score opened finds the player already cached.
+    """
+    index = os.path.join(neanes_dir, "index.html")
+    try:
+        mtime = os.path.getmtime(index)
+    except OSError:
+        return ()
+    cached = _NEANES_PREFETCH_CACHE.get(neanes_dir)
+    if cached and cached[0] == mtime:
+        return cached[1]
+    try:
+        with open(index, encoding="utf-8") as source:
+            html_text = source.read()
+        assets = re.findall(r'assets/index-[A-Za-z0-9_-]+\.(?:js|css)', html_text)
+        for name in [a for a in assets if a.endswith(".js")]:
+            with open(os.path.join(neanes_dir, name), encoding="utf-8", errors="ignore") as source:
+                assets += re.findall(r'assets/Home-[A-Za-z0-9_-]+\.(?:js|css)', source.read())
+        # The neume font itself (the score cannot be drawn without it).
+        assets += sorted(
+            f"assets/{name}" for name in os.listdir(os.path.join(neanes_dir, "assets"))
+            if re.fullmatch(r"Neanes-[A-Za-z0-9_-]+\.otf", name)
+        )
+    except OSError:
+        return ()
+    result = tuple(dict.fromkeys(assets))
+    _NEANES_PREFETCH_CACHE[neanes_dir] = (mtime, result)
+    return result
+
+
+def _neanes_without_pwa(filename: str, content: str) -> str:
+    if filename.endswith(".js"):
+        content = _neanes_reader_fonts(content)
+    if filename == "index.html":
+        content = re.sub(r'<link rel="manifest"[^>]*>', "", content)
+        content = re.sub(r'<script id="vite-plugin-pwa:register-sw"[^>]*></script>', _NEANES_SW_UNREGISTER, content)
+    return content
+
+
+def _neanes_asset_cache(filename: str) -> str:
+    # Built assets carry a content hash in their name and never change.
+    if filename.startswith("assets/"):
+        return "public, max-age=31536000, immutable"
+    return "public, max-age=86400"
 
 
 def create_app(config: dict | None = None) -> Flask:
@@ -245,8 +336,13 @@ def create_app(config: dict | None = None) -> Flask:
                     }
                 )
 
+        neanes_prefetch = [
+            f"digital-scores/neanes/app/{asset}"
+            for asset in _neanes_prefetch_assets(os.fspath(app.config["NEANES_WEB_DIR"]))
+        ] if any("digital-score-frame" in str(document["html"]) for document in documents) else []
         return render_template(
             "index.html",
+            neanes_prefetch=neanes_prefetch,
             calendar=calendar,
             selected_services=selected_services,
             documents=documents,
@@ -564,7 +660,16 @@ def create_app(config: dict | None = None) -> Flask:
         directory = os.fspath(app.config["NEANES_WEB_DIR"])
         if not os.path.isfile(os.path.join(directory, "index.html")):
             abort(503, description="Ο ιδιωτικός player Neanes δεν έχει εγκατασταθεί ακόμη.")
-        return send_from_directory(directory, filename, conditional=True, max_age=86400)
+        if filename in {"sw.js", "registerSW.js"}:
+            return Response(_NEANES_SW_KILL_SWITCH if filename == "sw.js" else "", mimetype="application/javascript",
+                            headers={"Cache-Control": "no-store"})
+        if filename == "index.html":
+            with open(os.path.join(directory, "index.html"), encoding="utf-8") as source:
+                return Response(_neanes_without_pwa(filename, source.read()), mimetype="text/html",
+                                headers={"Cache-Control": "no-cache"})
+        response = send_from_directory(directory, filename, conditional=True, max_age=86400)
+        response.headers["Cache-Control"] = _neanes_asset_cache(filename)
+        return response
 
     @app.get("/digital-scores/neanes/app/")
     @app.get("/digital-scores/neanes/app/<path:filename>")
@@ -594,18 +699,24 @@ def create_app(config: dict | None = None) -> Flask:
             ".webmanifest": "application/manifest+json",
             ".svg": "image/svg+xml",
         }
+        if filename in {"sw.js", "registerSW.js"}:
+            return Response(_NEANES_SW_KILL_SWITCH if filename == "sw.js" else "", mimetype="application/javascript",
+                            headers={"Cache-Control": "no-store"})
         suffix = os.path.splitext(target)[1].lower()
         if suffix not in text_mimetypes:
-            return send_from_directory(directory, filename, conditional=True, max_age=86400)
+            response = send_from_directory(directory, filename, conditional=True, max_age=86400)
+            response.headers["Cache-Control"] = _neanes_asset_cache(filename)
+            return response
 
         private_base = f"{request.script_root.rstrip('/')}/review/neanes/app/"
         public_base = f"{request.script_root.rstrip('/')}/digital-scores/neanes/app/"
         try:
             with open(target, encoding="utf-8") as source:
-                content = source.read().replace(private_base, public_base)
+                content = _neanes_without_pwa(filename, source.read().replace(private_base, public_base))
         except OSError:
             abort(404)
-        return Response(content, mimetype=text_mimetypes[suffix], headers={"Cache-Control": "public, max-age=86400"})
+        cache = "no-cache" if filename == "index.html" else _neanes_asset_cache(filename)
+        return Response(content, mimetype=text_mimetypes[suffix], headers={"Cache-Control": cache})
 
     @app.get("/health")
     def health():

@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>Κιβωτός Ακολουθιών</title>
-  <link rel="stylesheet" href="static/app.css?v=20261112-compact-reader-nav">
+  {% for asset in neanes_prefetch %}<link rel="prefetch" href="{{ asset }}">
+  {% endfor %}<link rel="stylesheet" href="static/app.css?v=20261112-compact-reader-nav">
 </head>
 <body>
   <header class="site-header">
@@ -223,6 +224,25 @@
       render();
     })();
 
+    // Digital scores (each a full Neanes app) start only when they come
+    // within half a screen, never several screens ahead as the browser's own
+    // lazy loading would, and a bookmark starts its own score at once.
+    const startScore = (frame) => {
+      if (frame && !frame.src && frame.dataset.src) frame.src = frame.dataset.src;
+    };
+    if ('IntersectionObserver' in window) {
+      const scoreObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          startScore(entry.target);
+          scoreObserver.unobserve(entry.target);
+        });
+      }, { rootMargin: '50% 0px' });
+      document.querySelectorAll('iframe.digital-score-frame[data-src]').forEach((frame) => scoreObserver.observe(frame));
+    } else {
+      document.querySelectorAll('iframe.digital-score-frame[data-src]').forEach(startScore);
+    }
+
     document.querySelectorAll('.bookmark-menu-list a').forEach((link) => {
       link.addEventListener('click', (event) => {
         const target = document.querySelector(link.hash);
@@ -234,6 +254,14 @@
         event.preventDefault();
         link.closest('details').open = false;
         history.pushState(null, '', link.hash);
+        startScore(target.querySelector('iframe.digital-score-frame'));
+        // Jump at once; the browser's scroll anchoring keeps the target in
+        // place while scanned pages above it finish loading, and one final
+        // correction follows unless the reader has already scrolled away.
+        target.scrollIntoView({ behavior: 'instant', block: 'start' });
+        let readerMoved = false;
+        const noteReader = () => { readerMoved = true; };
+        for (const type of ['wheel', 'touchstart', 'keydown']) window.addEventListener(type, noteReader, { once: true, passive: true });
         const precedingImages = [...document.images].filter((image) =>
           image.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING
         );
@@ -246,6 +274,7 @@
           });
         });
         Promise.all(ready).then(() => {
+          if (readerMoved || Math.abs(target.getBoundingClientRect().top) < 40) return;
           // Jump directly: a smooth scroll passes dozens of score players on
           // the way and makes each of them start loading.
           requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
