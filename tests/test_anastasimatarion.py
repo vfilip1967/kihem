@@ -1192,16 +1192,8 @@ class AnastasimatarionTests(unittest.TestCase):
             self.assertNotIn(score_id, unverified.html)
 
     def test_short_theotokos_digital_katavasies_join_the_scan_in_ode_order(self):
-        score_ids = [
-            "papline-kat-eisp-s-1-private-draft",
-            "papline-kat-eisp-s-3-private-draft",
-            "papline-kat-eisp-s-4-private-draft",
-            "papline-kat-eisp-s-5-private-draft",
-            "papline-kat-eisp-s-6-private-draft",
-            "papline-kat-eisp-s-7-private-draft",
-            "papline-kat-eisp-s-8-private-draft",
-            "papline-kat-eisp-s-9-private-draft",
-        ]
+        # Owner, 13/11/2026: the katavasies all together, one player, not one per ode.
+        score_ids = ["papline-kat-eisp-s-all-private-draft"]
         refrain = "Τὴν ὄντως Θεοτόκον, σὲ μεγαλύνομεν.<br>"
         source = (
             "Καταβασίες Τῆς Θεοτόκου<br>Ἦχος δ΄.<br>"

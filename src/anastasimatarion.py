@@ -1017,10 +1017,29 @@ def _katavasia_variants(value: str) -> tuple[str, ...]:
     return tuple(variants)
 
 
+# Sets transcribed as ONE score with every ode in order (owner, 13/11/2026:
+# «τις καταβασίες όλες μαζί, όχι μία-μία»): one player instead of one per ode.
+_KATAVASIA_WHOLE_SETS: Final[dict[str, tuple[str, str]]] = {
+    "eisp": (
+        "papline-kat-eisp-s-all-private-draft",
+        "Καταβασίες ᾠδῶν α΄–θ΄ · Ἀνοίξω τὸ στόμα μου · Εἰσόδια Θεοτόκου (προεόρτια) · ἦχος δ΄ · "
+        "Ἰωάννου Πρωτοψάλτου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+    ),
+}
+
+
 def _generated_katavasies_rules() -> tuple[AttachmentRule, ...]:
     entries = json.loads(KATAVASIES_DATA_PATH.read_text(encoding="utf-8"))
     rules: list[AttachmentRule] = []
+    whole_sets_done: set[str] = set()
     for entry in entries:
+        whole = _KATAVASIA_WHOLE_SETS.get(entry["set"])
+        if whole is not None:
+            if entry["set"] in whole_sets_done:
+                continue
+            whole_sets_done.add(entry["set"])
+            # The whole set needs only its first eirmos in the Melodos text.
+            entry = {**entry, "id": whole[0], "title": whole[1], "incipit": entry["first_incipit"]}
         # Melodos often quotes the set's first eirmos and the ode's own
         # incipit.  Both must be present; a short incipit alone would match
         # ordinary psalm text.  The generator already drops shorter incipits,
@@ -1276,7 +1295,7 @@ PILOT_RULES: Final[tuple[AttachmentRule, ...]] = (
         "ὡς ζωοδότην καὶ Κύριον.",
         "papline-ephesios-eothinon-2-private-draft",
         required_text=("ΔΟΞΑΣΤΙΚΟΝ ΕΩΘΙΝΟΝ Β",),
-        digital_title="Ἑωθινὸν β΄ «Μετὰ μύρων» · ἦχος β΄ · Πέτρου Ἐφεσίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
+        digital_title="Ἑωθινὸν β΄ «Μετὰ μύρων» · ἦχος β΄ · Πέτρου Λαμπαδαρίου (ψηφιακή) · πρόχειρη αυτόματη μεταγραφή",
     ),
     AttachmentRule(
         "orthros",

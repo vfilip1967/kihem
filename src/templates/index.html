@@ -246,7 +246,9 @@
           });
         });
         Promise.all(ready).then(() => {
-          requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+          // Jump directly: a smooth scroll passes dozens of score players on
+          // the way and makes each of them start loading.
+          requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
         });
       });
     });

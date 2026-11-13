@@ -516,6 +516,43 @@
         parallageObserver.observe(frameDocument.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
       };
 
+      // Inside a service page a score must never move the page around it.
+      // Neanes focuses and scrolls elements into view (on load, on selecting
+      // a note, while following the playback); in a nested frame the browser
+      // then scrolls every ancestor page too, so a score loading higher up
+      // threw the reader away from the bookmark just reached.  Scrolling is
+      // kept inside the score's own scroller, focus never scrolls, and the
+      // lyrics (editable text in Neanes) no longer open the phone keyboard.
+      const containFrameScrolling = () => {
+        const win = player.contentWindow;
+        const doc = player.contentDocument;
+        if (!win || !doc || win.__kihemContained) return;
+        win.__kihemContained = true;
+        win.Element.prototype.scrollIntoView = function () {
+          const target = this.getBoundingClientRect();
+          for (let box = this.parentElement; box && box !== doc.body; box = box.parentElement) {
+            const style = win.getComputedStyle(box);
+            if (/(auto|scroll)/.test(style.overflowY) && box.scrollHeight > box.clientHeight) {
+              const area = box.getBoundingClientRect();
+              if (target.top < area.top) box.scrollTop += target.top - area.top - 8;
+              else if (target.bottom > area.bottom) box.scrollTop += target.bottom - area.bottom + 8;
+              return;
+            }
+          }
+        };
+        const focus = win.HTMLElement.prototype.focus;
+        win.HTMLElement.prototype.focus = function (options) {
+          return focus.call(this, Object.assign({}, options, { preventScroll: true }));
+        };
+        doc.addEventListener('focusin', (event) => {
+          const target = event.target;
+          if (target && target.id !== 'audio-speed-input'
+              && (target.isContentEditable || /^(INPUT|TEXTAREA)$/.test(target.tagName))) {
+            target.blur();
+          }
+        }, true);
+      };
+
       const applyReaderMode = () => {
         const frameDocument = player.contentDocument;
         if (!frameDocument || frameDocument.getElementById('kihem-neanes-reader-mode')) return;
@@ -549,6 +586,9 @@
             .audio-container .playback-time, .audio-container .label-bpm { font-size: 13px !important; }
             .audio-container [data-slot="toolbar-separator"] { margin: 0 2px !important; }
           }
+          /* Lyrics are editable text in Neanes: a tap must not open the keyboard. */
+          .lyrics-container, .lyrics, [contenteditable] { -webkit-user-modify: read-only !important; caret-color: transparent !important; }
+          .lyrics-container { pointer-events: none !important; }
           /* The editor's insertion box after the last neume. */
           #element-null { visibility: hidden !important; }
           .contextual-toolbar-panel { display: none !important; }
@@ -584,6 +624,7 @@
               frameDocument.addEventListener(type, window.kihemIsonGesture, type === 'pointerdown' ? { passive: true } : undefined);
             }
           }
+          containFrameScrolling();
           applyReaderMode();
           watchParallage();
           const transfer = new DataTransfer();
@@ -620,7 +661,7 @@
         }
       };
 
-      player.addEventListener('load', () => { void loadScore(); });
+      player.addEventListener('load', () => { containFrameScrolling(); void loadScore(); });
       retry.addEventListener('click', () => { void loadScore(); });
       window.setTimeout(() => { void loadScore(); }, 0);
       window.setTimeout(() => { void loadScore(); }, 500);
