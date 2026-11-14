@@ -184,15 +184,31 @@
         return true;
       };
 
+      // Close with Escape: clicking the toggle again re-opened a menu that the
+      // option click had already closed (the menu stayed over the score).
+      const closeZoomMenu = () => {
+        const frameDocument = player.contentDocument;
+        if (!frameDocument || !frameDocument.querySelector('[role="menuitemcheckbox"]')) return;
+        const target = frameDocument.activeElement || frameDocument.body;
+        target.dispatchEvent(new frameDocument.defaultView.KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', bubbles: true }));
+      };
+
       const useNeanesPageWidth = async () => {
         const frameDocument = player.contentDocument;
         if (!frameDocument) return false;
         for (let attempt = 0; attempt < 30; attempt += 1) {
           const toggle = frameDocument.querySelector('button[aria-label="Show zoom options"]');
           if (toggle) {
-            const existingOptions = frameDocument.querySelectorAll('[role="menuitemcheckbox"]');
+            const existingOptions = [...frameDocument.querySelectorAll('[role="menuitemcheckbox"]')];
             if (existingOptions.length) {
-              existingOptions[0].click(); // Neanes' first zoom-fit option: Page Width.
+              // Neanes' first zoom-fit option is Page Width.  Re-select it by
+              // name so the fit is repeated even when a page-width zoom has
+              // already been applied to a former center width.
+              const pageWidth = existingOptions.find((option) => /^Page Width$/i.test(option.textContent.trim()))
+                || existingOptions[0];
+              pageWidth.click();
+              await new Promise((resolve) => window.setTimeout(resolve, 80));
+              closeZoomMenu();
               return true;
             }
             toggle.click();
@@ -202,66 +218,210 @@
         return false;
       };
 
-      const configureReaderWidth = async () => {
+      // Neanes lays the score out asynchronously; wait until the neumes and
+      // --zoom stop moving (two equal readings, with a short grace period so a
+      // delayed Page Width pass is not mistaken for a settled layout).
+      const waitForStableScore = async () => {
+        let previous = '';
+        let stable = 0;
+        const started = Date.now();
+        for (let attempt = 0; attempt < 40; attempt += 1) {
+          await new Promise((resolve) => window.setTimeout(resolve, 150));
+          const doc = player.contentDocument;
+          const boxes = doc ? doc.querySelectorAll('.page .element-box') : [];
+          const last = boxes.length ? boxes[boxes.length - 1].getBoundingClientRect() : null;
+          const zoom = doc ? doc.documentElement.style.getPropertyValue('--zoom') : '';
+          const reading = `${boxes.length}:${last ? Math.round(last.right) + ',' + Math.round(last.top) : ''}:${zoom}`;
+          if (boxes.length && reading === previous) stable += 1;
+          else stable = 0;
+          previous = reading;
+          if (boxes.length && stable >= 2 && Date.now() - started > 400) break;
+        }
+      };
+
+      // Re-applies the whole public-reader fit.  It is used once after loading
+      // and again whenever Neanes re-lays the score out on its own.
+      const applyReaderFit = async () => {
         for (let attempt = 0; attempt < 30; attempt += 1) {
-          if (reclaimReaderWidth()) {
-            // Dockview applies its outer split reflow on the next frame. Run
-            // the inner-grid reset once more after that reflow, otherwise its
-            // native Page Width command can still see the former center width.
-            await new Promise((resolve) => window.setTimeout(resolve, 150));
-            reclaimReaderWidth();
-            if (await useNeanesPageWidth()) {
-              // Neanes lays the score out asynchronously; fit the width again once
-              // the layout is final.  Wait only until the neumes stop moving
-              // (two equal readings 120 ms apart, at most 3 s), not a fixed 2.2 s.
-              let previous = '';
-              for (let attempt = 0; attempt < 25; attempt += 1) {
-                await new Promise((resolve) => window.setTimeout(resolve, 120));
-                const doc = player.contentDocument;
-                const boxes = doc ? doc.querySelectorAll('.page .element-box') : [];
-                const last = boxes.length ? boxes[boxes.length - 1].getBoundingClientRect() : null;
-                const reading = `${boxes.length}:${last ? Math.round(last.right) + ',' + Math.round(last.top) : ''}`;
-                if (boxes.length && reading === previous) break;
-                previous = reading;
-              }
-              reclaimReaderWidth();
-              await useNeanesPageWidth();
-              return;
-            }
-          }
+          if (reclaimReaderWidth()) break;
           await new Promise((resolve) => window.setTimeout(resolve, 100));
         }
+        // Dockview applies its outer split reflow on the next frame. Run
+        // the inner-grid reset once more after that reflow, otherwise its
+        // native Page Width command can still see the former center width.
+        await new Promise((resolve) => window.setTimeout(resolve, 150));
+        reclaimReaderWidth();
+        if (!(await useNeanesPageWidth())) return false;
+        await waitForStableScore();
+        reclaimReaderWidth();
+        await fitContentWidth();
+        rememberElementIdBase();
+        hideElements();
+        return true;
       };
 
 
       // Phrases end at a martyria and break the line, so many lines are short
       // and leave white space on the right.  Enlarge Neanes' zoom (at most
       // 1.6x) until the widest rendered line reaches the right edge.
-      const fitContentWidth = () => {
+      let selfZoom = null;
+      const readContentFit = () => {
         const frameDocument = player.contentDocument;
         const page = frameDocument && frameDocument.querySelector('.page');
         const holder = frameDocument && [...frameDocument.querySelectorAll('[style]')]
           .find((element) => element.style.getPropertyValue('--zoom'));
-        if (!page || !holder) return;
+        if (!page || !holder) return null;
         const boxes = [...frameDocument.querySelectorAll('.page .element-box[id^="element-"]')]
           .filter((box) => box.id !== 'element-null');
-        if (!boxes.length) return;
+        if (!boxes.length) return null;
         const pageLeft = page.getBoundingClientRect().left;
         const right = Math.max(...boxes.map((box) => box.getBoundingClientRect().right)) - pageLeft;
         const scroller = page.parentElement;
         const available = (scroller ? scroller.clientWidth : frameDocument.documentElement.clientWidth) - 6;
         const zoom = Number.parseFloat(holder.style.getPropertyValue('--zoom'));
-        const factor = Math.min(1.6, available / right);
-        if (!(zoom > 0) || !(factor > 1.03)) return;
-        holder.style.setProperty('--zoom', String(zoom * factor));
-        // The enlarged page keeps an empty right margin past the screen edge;
-        // only the element that scrolls the pages loses its sideways scroll.
-        let scrolling = page.parentElement;
-        while (scrolling && scrolling !== frameDocument.body
-               && !/(auto|scroll)/.test(frameDocument.defaultView.getComputedStyle(scrolling).overflowX)) {
-          scrolling = scrolling.parentElement;
+        return { page, holder, frameDocument, right, available, zoom };
+      };
+
+      const fitContentWidth = async () => {
+        // Neanes may still be reflowing after Page Width; confirm a reading
+        // twice before using it, then repeat once so our own zoom write is
+        // followed by a final measurement.
+        for (let pass = 0; pass < 3; pass += 1) {
+          const reading = readContentFit();
+          if (!reading) return;
+          await new Promise((resolve) => window.setTimeout(resolve, 120));
+          const confirm = readContentFit();
+          if (!confirm || confirm.zoom !== reading.zoom
+              || Math.abs(confirm.right - reading.right) > 1) continue;
+          const { page, holder, frameDocument, right, available, zoom } = confirm;
+          const factor = Math.min(1.6, available / right);
+          if (!(zoom > 0) || !(factor > 1.03)) return;
+          selfZoom = zoom * factor;
+          holder.style.setProperty('--zoom', String(selfZoom));
+          // The enlarged page keeps an empty right margin past the screen edge;
+          // only the element that scrolls the pages loses its sideways scroll.
+          let scrolling = page.parentElement;
+          while (scrolling && scrolling !== frameDocument.body
+                 && !/(auto|scroll)/.test(frameDocument.defaultView.getComputedStyle(scrolling).overflowX)) {
+            scrolling = scrolling.parentElement;
+          }
+          if (scrolling && scrolling !== frameDocument.body) scrolling.style.overflowX = 'hidden';
+          await new Promise((resolve) => window.setTimeout(resolve, 180));
         }
-        if (scrolling && scrolling !== frameDocument.body) scrolling.style.overflowX = 'hidden';
+      };
+
+      // The fit above is intentionally self-healing.  Neanes re-runs its own
+      // Page Width zoom for internal reasons (selection, restoring Dockview
+      // panes, on-screen keyboard, viewport changes), which shrinks the score
+      // on a phone.  Observe the center editor, the --zoom holder and the
+      // Dockview grid, then repeat the fit unless the change was ours.
+      let lastReaderSnapshot = '';
+      let refitTimer = 0;
+      let refitRunning = false;
+      let refitQueued = false;
+      let suppressReaderObservers = false;
+      let readerObservers = null;
+      let readerSelfHealing = false;
+
+      const readerZoom = () => {
+        const frameDocument = player.contentDocument;
+        if (!frameDocument) return null;
+        const value = Number.parseFloat(frameDocument.documentElement.style.getPropertyValue('--zoom'));
+        return Number.isFinite(value) && value > 0 ? value : null;
+      };
+
+      const readerSnapshot = () => {
+        const frameDocument = player.contentDocument;
+        if (!frameDocument) return '';
+        const center = frameDocument.querySelector('.workspace-center-editor');
+        const root = frameDocument.documentElement;
+        const centerRect = center ? center.getBoundingClientRect() : null;
+        const zoom = readerZoom();
+        return [
+          centerRect ? Math.round(centerRect.width) : 0,
+          centerRect ? Math.round(centerRect.height) : 0,
+          Math.round(root.clientWidth),
+          Math.round(root.clientHeight),
+          zoom == null ? '' : zoom.toFixed(6),
+        ].join('|');
+      };
+
+      const rememberReaderSnapshot = () => { lastReaderSnapshot = readerSnapshot(); };
+
+      const runReaderRefit = async () => {
+        if (!isLoaded) return;
+        if (refitRunning) { refitQueued = true; return; }
+        refitRunning = true;
+        suppressReaderObservers = true;
+        try {
+          await applyReaderFit();
+        } catch (error) {
+          // Keep the reader usable; a later observer event retries.
+        } finally {
+          refitRunning = false;
+          // Neanes writes its final zoom/layout a little after the click.
+          // Ignore those own mutations before recording the fitted state.
+          await new Promise((resolve) => window.setTimeout(resolve, 350));
+          suppressReaderObservers = false;
+          rememberReaderSnapshot();
+          if (refitQueued) { refitQueued = false; scheduleReaderRefit(); }
+        }
+      };
+
+      const scheduleReaderRefit = () => {
+        if (!isLoaded) return;
+        window.clearTimeout(refitTimer);
+        refitTimer = window.setTimeout(() => { void runReaderRefit(); }, 150);
+      };
+
+      const startReaderSelfHealing = () => {
+        if (readerSelfHealing) return true;
+        const frameDocument = player.contentDocument;
+        const frameWindow = player.contentWindow;
+        const center = frameDocument && frameDocument.querySelector('.workspace-center-editor');
+        if (!frameWindow || !center) return false;
+        readerSelfHealing = true;
+        readerObservers = [];
+        const onGeometryChange = () => {
+          if (!isLoaded || refitRunning || suppressReaderObservers) return;
+          if (readerSnapshot() === lastReaderSnapshot) return;
+          scheduleReaderRefit();
+        };
+        if (frameWindow.ResizeObserver) {
+          const centerObserver = new frameWindow.ResizeObserver(onGeometryChange);
+          centerObserver.observe(center);
+          const holderObserver = new frameWindow.ResizeObserver(onGeometryChange);
+          holderObserver.observe(frameDocument.documentElement);
+          readerObservers.push(centerObserver, holderObserver);
+        }
+        const zoomObserver = new frameWindow.MutationObserver((records) => {
+          if (!isLoaded || refitRunning || suppressReaderObservers) return;
+          for (const record of records) {
+            const zoom = Number.parseFloat(record.target.style.getPropertyValue('--zoom'));
+            // Ignore the --zoom write made by fitContentWidth itself.
+            if (Number.isFinite(zoom) && selfZoom != null && Math.abs(zoom - selfZoom) < 1e-6) continue;
+            scheduleReaderRefit();
+            return;
+          }
+        });
+        zoomObserver.observe(frameDocument.documentElement, { attributes: true, attributeFilter: ['style'] });
+        readerObservers.push(zoomObserver);
+        const dockRoot = center.closest('.dv-grid-view') || center.parentElement;
+        if (dockRoot) {
+          // Dockview restores/re-creates hidden views by itself; every such
+          // structural change must be followed by reclaimReaderWidth again.
+          const dockObserver = new frameWindow.MutationObserver(() => {
+            if (!isLoaded || refitRunning || suppressReaderObservers) return;
+            scheduleReaderRefit();
+          });
+          dockObserver.observe(dockRoot, { subtree: true, childList: true, attributes: true, attributeFilter: ['style'] });
+          readerObservers.push(dockObserver);
+        }
+        window.addEventListener('resize', scheduleReaderRefit, { passive: true });
+        window.addEventListener('orientationchange', scheduleReaderRefit, { passive: true });
+        frameWindow.addEventListener('resize', scheduleReaderRefit, { passive: true });
+        rememberReaderSnapshot();
+        return true;
       };
 
       const noteLabels = {{ note_labels|tojson }};
@@ -600,6 +760,8 @@
           /* The editor's insertion box after the last neume. */
           #element-null { visibility: hidden !important; }
           .contextual-toolbar-panel { display: none !important; }
+          /* The reader drives Page Width itself; its zoom menu is never shown. */
+          [role="menu"]:has([role="menuitemcheckbox"]) { visibility: hidden !important; }
           /* The editor's line-break icons; the breaks themselves stay. */
           .line-break, .line-break-2 { display: none !important; }
           /* A reader has no use for the surrounding editor canvas. */
@@ -646,6 +808,9 @@
               Object.assign(doc.pageSetup, {
                 pageSize: 'Custom', pageWidth: 520, pageWidthCustom: 520, pageHeight: 1056, pageHeightCustom: 1056,
                 topMargin: 12, bottomMargin: 12, leftMargin: 12, rightMargin: 12,
+                // Twice Neanes' minimum gap between syllables (0.05 in): on the
+                // narrow phone page syllables such as «ως του αι» touched.
+                lyricsMinimumSpacing: 9.6,
               });
               scoreText = JSON.stringify(doc);
             } catch (error) { /* keep the stored page layout */ }
@@ -653,11 +818,9 @@
           transfer.items.add(new File([scoreText], filename, { type: 'application/json' }));
           input.files = transfer.files;
           input.dispatchEvent(new Event('change', { bubbles: true }));
-          await configureReaderWidth();
-          fitContentWidth();
-          rememberElementIdBase();
-          hideElements();
+          await applyReaderFit();
           isLoaded = true;
+          startReaderSelfHealing();
           status.textContent = 'Η παρτιτούρα φορτώθηκε. Πάτησε ▶ στο Neanes για ακρόαση.';
           status.classList.add('ready');
         } catch (error) {
