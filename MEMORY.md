@@ -989,7 +989,14 @@ This file records only durable implementation decisions.
   Thursday pl.4 (1) and Wednesday tone 4 (2), Ainoi tone 4 (8), Doxologia Manuel
   tone 4 (8); regenerated/patched and installed 2026-10-28 (names of every other
   element unchanged). The other drafts have no cross in their lines. Not pause: the
-  glyph `F022` (blank in BZFthores). For a piece made from an old draft use a
+  glyph `F022` (blank in BZFthores).
+  **2026-11-14 (user):** the cross must also be SEEN, with the pause unchanged,
+  and the hidden pause after each automatic martyria stays. The converter now
+  emits a visible Neanes `Cross` (drawn as «+»; Neanes plays it as a 0-beat rest)
+  followed by the same hidden `VareiaDotted` stavros rest, so the silence and
+  every duration stay as before. Do not remove either hidden rest. All pieces were
+  regenerated (anast-work `regen_cross.py`, installed by `install_cross.py` only
+  where the martyria are identical to the 13/11 baseline). For a piece made from an old draft use a
   patch (insert the rests into the saved draft by matching the source lines).
 - Digital score replaces the scan (owner 2026-10-30): `enrich_service_html` now removes the
   scanned excerpts attached to the same hymn text node as a shown digital (Neanes) score
