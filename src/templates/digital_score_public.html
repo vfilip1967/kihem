@@ -21,6 +21,16 @@
     html.embedded, html.embedded body { overflow: hidden; }
     html.embedded .neanes-player { height: 600px; min-height: 0; }
     html.embedded .review-body, html.embedded body { min-height: 0; }
+    /* Own page: the score comes first, right after the title; the source
+       note, warning and downloads follow it (15/11/2026). */
+    .public-score-main { display: flex; flex-direction: column; }
+    .public-score-main > .public-score-player { order: -1; margin-top: 0; }
+    .public-score-main > .public-score-card { margin-top: 18px; }
+    .playback-status.ready { display: none; }
+    @media (max-width: 680px) {
+      .public-score-player > h2, .public-score-player > p:not(.playback-status) { display: none; }
+      .public-score-header { padding-bottom: 8px; }
+    }
     /* Phone: the player's own controls in one compact row. */
     @media (max-width: 680px) {
       .player-controls { flex-wrap: nowrap; gap: 3px; overflow-x: auto; scrollbar-width: none; }
