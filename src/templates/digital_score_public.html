@@ -155,6 +155,24 @@
         const center = frameDocument && frameDocument.querySelector('.workspace-center-editor');
         if (!center) return false;
 
+        // A stylesheet, not only inline styles: Dockview rewrites the inline
+        // widths when a tap selects a neume or the viewport changes (the
+        // center briefly became 100px), and if Neanes' Page Width ran in that
+        // moment the score stayed at half width on a phone (15/11/2026).
+        // !important rules here beat Dockview's own inline writes, so the
+        // center never shrinks in the first place.
+        if (!frameDocument.getElementById('kihem-reader-layout')) {
+          const layout = frameDocument.createElement('style');
+          layout.id = 'kihem-reader-layout';
+          layout.textContent = `
+            .dv-view:has(.workspace-center-editor) { left: 0 !important; width: 100% !important; }
+            .dv-view-container:has(.workspace-center-editor) > .dv-view:not(:has(.workspace-center-editor)) { display: none !important; width: 0 !important; }
+            .dv-grid-view:has(.workspace-center-editor) { width: 100% !important; }
+            .dv-sash { display: none !important; }
+          `;
+          frameDocument.head.append(layout);
+        }
+
         let view = center.closest('.dv-view');
         while (view) {
           view.style.setProperty('left', '0px', 'important');
@@ -254,6 +272,8 @@
         if (!(await useNeanesPageWidth())) return false;
         await waitForStableScore();
         reclaimReaderWidth();
+        enforcePageWidthZoom();
+        await waitForStableScore();
         await fitContentWidth();
         rememberElementIdBase();
         hideElements();
@@ -280,6 +300,26 @@
         const available = (scroller ? scroller.clientWidth : frameDocument.documentElement.clientWidth) - 6;
         const zoom = Number.parseFloat(holder.style.getPropertyValue('--zoom'));
         return { page, holder, frameDocument, right, available, zoom };
+      };
+
+      // Neanes' Page Width does not always re-apply: when its own zoom value
+      // has not "changed" it leaves whatever --zoom is drawn (a half-width
+      // zoom taken while the center was briefly narrow stayed).  So compute
+      // the page-width zoom from measurements and set it ourselves, every
+      // time: the page is laid out at width = natural width x zoom.
+      let pageWidthZoom = null;
+      const enforcePageWidthZoom = () => {
+        const fit = readContentFit();
+        if (!fit || !(fit.zoom > 0)) return;
+        const pageWidth = fit.page.getBoundingClientRect().width;
+        const scroller = fit.page.parentElement;
+        const width = scroller ? scroller.clientWidth : fit.frameDocument.documentElement.clientWidth;
+        if (!(pageWidth > 0) || !(width > 0)) return;
+        const target = fit.zoom * width / pageWidth;
+        pageWidthZoom = target;
+        if (Math.abs(target - fit.zoom) / target < 0.01) return;
+        selfZoom = target;
+        fit.holder.style.setProperty('--zoom', String(target));
       };
 
       const fitContentWidth = async () => {
@@ -319,6 +359,7 @@
       let refitTimer = 0;
       let refitRunning = false;
       let refitQueued = false;
+      let shrunkRetries = 0;
       let suppressReaderObservers = false;
       let readerObservers = null;
       let readerSelfHealing = false;
@@ -328,6 +369,23 @@
         if (!frameDocument) return null;
         const value = Number.parseFloat(frameDocument.documentElement.style.getPropertyValue('--zoom'));
         return Number.isFinite(value) && value > 0 ? value : null;
+      };
+
+      // The two signs of the "half width" state, measured rather than timed:
+      // the center editor narrower than the frame, or the widest line far
+      // short of the right edge.  A correct fit reaches at least 1/1.6 of the
+      // width (fitContentWidth enlarges up to 1.6x); a Page Width taken from
+      // a briefly shrunk center leaves about half.
+      const readerLooksShrunk = () => {
+        const frameDocument = player.contentDocument;
+        const center = frameDocument && frameDocument.querySelector('.workspace-center-editor');
+        if (!center) return false;
+        if (center.getBoundingClientRect().width < frameDocument.documentElement.clientWidth * 0.95) return true;
+        const fit = readContentFit();
+        if (!fit) return false;
+        // A correct fit lies between 1x and 1.6x the page-width zoom.
+        if (pageWidthZoom && fit.zoom < pageWidthZoom * 0.9) return true;
+        return fit.right < fit.available * 0.58;
       };
 
       const readerSnapshot = () => {
@@ -355,6 +413,14 @@
         suppressReaderObservers = true;
         try {
           await applyReaderFit();
+          // Verify the end state instead of trusting the timing: if the score
+          // still does not reach the right edge (Neanes was reflowing while we
+          // measured), fit again, a bounded number of times.
+          for (let check = 0; check < 3; check += 1) {
+            await new Promise((resolve) => window.setTimeout(resolve, 250));
+            if (!readerLooksShrunk()) break;
+            await applyReaderFit();
+          }
         } catch (error) {
           // Keep the reader usable; a later observer event retries.
         } finally {
@@ -364,7 +430,14 @@
           await new Promise((resolve) => window.setTimeout(resolve, 350));
           suppressReaderObservers = false;
           rememberReaderSnapshot();
-          if (refitQueued) { refitQueued = false; scheduleReaderRefit(); }
+          // Changes that arrived while observers were muted (a long refit
+          // waits for the layout to settle) were dropped; never record a
+          // shrunk state as the good one: measure and fit again (bounded).
+          if (readerLooksShrunk() && shrunkRetries < 4) { shrunkRetries += 1; refitQueued = false; scheduleReaderRefit(); }
+          else {
+            if (!readerLooksShrunk()) shrunkRetries = 0;
+            if (refitQueued) { refitQueued = false; scheduleReaderRefit(); }
+          }
         }
       };
 
