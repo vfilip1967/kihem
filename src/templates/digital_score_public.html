@@ -13,6 +13,14 @@
     html.embedded .playback-status:not(.error) { display: none; }
     html.embedded .review-main { padding-top: 0; margin-top: 0; }
     html.embedded .public-score-player { margin-top: 0; }
+    /* The service page sizes this iframe to its content (index.html), so the
+       embedded page must never scroll inside its frame (a swipe there pushed
+       the score out and left only the practice panel, 15/11/2026).  A fixed
+       player height, not vh: vh is the iframe's own height, which follows
+       the content, and the two would chase each other. */
+    html.embedded, html.embedded body { overflow: hidden; }
+    html.embedded .neanes-player { height: 600px; min-height: 0; }
+    html.embedded .review-body, html.embedded body { min-height: 0; }
     /* Phone: the player's own controls in one compact row. */
     @media (max-width: 680px) {
       .player-controls { flex-wrap: nowrap; gap: 3px; overflow-x: auto; scrollbar-width: none; }

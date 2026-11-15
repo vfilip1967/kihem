@@ -227,8 +227,26 @@
     // Digital scores (each a full Neanes app) start only when they come
     // within half a screen, never several screens ahead as the browser's own
     // lazy loading would, and a bookmark starts its own score at once.
+    // The embedded reader never scrolls inside its frame: the frame takes
+    // the height of its content (player, practice fold, colour legend) and
+    // follows it, e.g. when the practice fold opens.  Same origin.
+    const fitScoreFrame = (frame) => {
+      try {
+        const doc = frame.contentDocument;
+        const height = doc && doc.body ? Math.ceil(doc.body.getBoundingClientRect().height) + 4 : 0;
+        if (height > 200 && Math.abs(height - frame.offsetHeight) > 2) frame.style.height = `${height}px`;
+      } catch (error) { /* keep the fixed height */ }
+    };
     const startScore = (frame) => {
-      if (frame && !frame.src && frame.dataset.src) frame.src = frame.dataset.src;
+      if (!frame || frame.src || !frame.dataset.src) return;
+      frame.addEventListener('load', () => {
+        fitScoreFrame(frame);
+        try {
+          const win = frame.contentWindow;
+          if (win && win.ResizeObserver) new win.ResizeObserver(() => fitScoreFrame(frame)).observe(frame.contentDocument.body);
+        } catch (error) { /* keep the fixed height */ }
+      });
+      frame.src = frame.dataset.src;
     };
     if ('IntersectionObserver' in window) {
       const scoreObserver = new IntersectionObserver((entries) => {
