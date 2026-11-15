@@ -162,7 +162,13 @@
       let elementIdBase = null;
       const elementNumber = (box) => Number.parseInt((box && box.id || '').replace('element-', ''), 10);
       const rememberElementIdBase = () => {
-        const first = player.contentDocument && player.contentDocument.querySelector('.element-box[id^="element-"]');
+        // Only when the first page is rendered: after scrolling, Neanes keeps
+        // just the pages in view, and the first box would be a later element,
+        // shifting every note name and colour (dox-8, 15/11/2026).
+        const doc = player.contentDocument;
+        const first = doc && doc.querySelector('.element-box[id^="element-"]');
+        const firstPage = doc && doc.querySelector('.page');
+        if (!first || !firstPage || first.closest('.page') !== firstPage) { window.kihemElementBase = () => elementIdBase; return; }
         const n = elementNumber(first);
         if (Number.isFinite(n)) elementIdBase = n;
         window.kihemElementBase = () => elementIdBase;

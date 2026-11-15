@@ -1,13 +1,15 @@
+    <details class="practice-fold" id="practice-fold">
+    <summary><span class="practice-summary">Εξάσκηση σε τμήμα</span> <span id="practice-status" class="practice-status" role="status"></span></summary>
     <div class="practice-bar" role="group" aria-label="Εξάσκηση σε τμήμα">
-      <span><strong>Εξάσκηση:</strong> διπλό κλικ σε νεύμα = παίξε από εδώ· πλήκτρο ← = πίσω μία γραμμή· ή πάτησε ένα νεύμα και μετά</span>
+      <p class="practice-help">Διπλό πάτημα σε νεύμα: παίζει από εκεί. Πλήκτρο ←: πίσω μία γραμμή. Για τμήμα: πάτησε ένα νεύμα και μετά «Αρχή εδώ» ή «Τέλος εδώ».</p>
       <button id="practice-start" class="quiet-button" type="button">Αρχή εδώ</button>
       <button id="practice-end" class="quiet-button" type="button">Τέλος εδώ</button>
       <button id="practice-play" class="quiet-button" type="button">▶ Παίξε το τμήμα</button>
       <button id="practice-back" class="quiet-button" type="button" title="Πλήκτρο ← · ξανά πάτημα: προηγούμενη γραμμή">↩ Πίσω μία γραμμή</button>
       <label><input id="practice-loop" type="checkbox" checked> Επανάληψη</label>
       <button id="practice-clear" class="quiet-button" type="button">Καθάρισμα</button>
-      <span id="practice-status" class="practice-status" role="status"></span>
     </div>
+    </details>
     <script>
       /* Students replay a difficult passage.  Neanes already plays from the
          selected neume and treats a click on a neume as selection; the page
@@ -125,10 +127,17 @@
           const doc = frame();
           if (!doc || doc.kihemPracticeWired) return;
           doc.kihemPracticeWired = true;
-          doc.addEventListener('dblclick', (event) => {
+          // Capture phase, and stop it there: Neanes' own double-click opens
+          // its "Neume Positioning" editor over the whole reader (on a phone
+          // a double tap fires it too), 15/11/2026.
+          // On the frame window: listeners on the document came too late.
+          (player.contentWindow || doc).addEventListener('dblclick', (event) => {
             const box = event.target.closest?.('.element-box');
-            if (box) void playFrom(number(box));
-          });
+            if (!box) return;
+            event.stopPropagation();
+            event.preventDefault();
+            void playFrom(number(box));
+          }, true);
           doc.addEventListener('keydown', onKey);
         };
         const onKey = (event) => {

@@ -715,6 +715,13 @@ button:hover { background: var(--wine-dark); }
 .ison-mp3-status { display: block; margin: 0 0 8px; padding: 4px 8px; font-size: .82rem; }
 .ison-mp3-status[hidden] { display: none; }
 .practice-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 8px 0; }
+/* Folded by default: one thin line under the score, like «Ἴσον & προσόμοια». */
+.practice-fold { margin: 6px 0; font-size: .9rem; }
+.practice-fold > summary { cursor: pointer; list-style: none; padding: 4px 0; color: #5b3a06; }
+.practice-fold > summary::-webkit-details-marker { display: none; }
+.practice-fold > summary .practice-summary::after { content: ' ▾'; }
+.practice-fold[open] > summary .practice-summary::after { content: ' ▴'; }
+.practice-help { flex-basis: 100%; margin: 0; font-size: .85rem; color: #5a4a3a; }
 .practice-status { color: #5b3a06; font-weight: 600; }
 .practice-bar label { display: inline-flex; align-items: center; gap: 4px; }
 .practice-bar input[type="checkbox"] { width: auto; height: auto; margin: 0; }
