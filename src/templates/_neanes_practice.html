@@ -131,12 +131,30 @@
           // its "Neume Positioning" editor over the whole reader (on a phone
           // a double tap fires it too), 15/11/2026.
           // On the frame window: listeners on the document came too late.
-          (player.contentWindow || doc).addEventListener('dblclick', (event) => {
+          const target = player.contentWindow || doc;
+          let lastTap = { box: null, at: 0 };
+          let lastPlayed = 0;
+          const playHere = (box) => {
+            if (Date.now() - lastPlayed < 600) return;  // tap pair and dblclick of the same gesture
+            lastPlayed = Date.now();
+            void playFrom(number(box));
+          };
+          target.addEventListener('dblclick', (event) => {
             const box = event.target.closest?.('.element-box');
             if (!box) return;
             event.stopPropagation();
             event.preventDefault();
-            void playFrom(number(box));
+            playHere(box);
+          }, true);
+          // Phones often send a double tap as two separate clicks (detail 1),
+          // so no dblclick at all: two real taps on one neume within 450 ms.
+          target.addEventListener('click', (event) => {
+            if (!event.isTrusted) return;  // our own select() clicks
+            const box = event.target.closest?.('.element-box');
+            if (!box) { lastTap = { box: null, at: 0 }; return; }
+            const now = Date.now();
+            if (lastTap.box === box && now - lastTap.at < 450) { lastTap = { box: null, at: 0 }; playHere(box); return; }
+            lastTap = { box, at: now };
           }, true);
           doc.addEventListener('keydown', onKey);
         };
