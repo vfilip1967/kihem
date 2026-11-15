@@ -71,7 +71,7 @@ class AppTests(unittest.TestCase):
         response = self.client.get("/?date=2026-09-13&services=orthros")
         self.assertEqual(response.status_code, 200)
         text = response.get_data(as_text=True)
-        self.assertIn('href="static/app.css?v=20261112-compact-reader-nav"', text)
+        self.assertIn('href="static/app.css?v=20261115-practice-fold"', text)
         # The reading scroll never starts by itself; the reader presses ▶.
         self.assertIn("let paused = true;", text)
         self.assertIn('<span class="label-short" aria-hidden="true">Λειτουρ.</span>', text)
